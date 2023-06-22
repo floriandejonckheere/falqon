@@ -15,16 +15,16 @@ module Falqon
       @name = name
     end
 
-    # Push one or more messages to the queue
-    def push(*messages)
+    # Push one or more items to the queue
+    def push(*items)
       redis.with do |r|
-        messages.map do |message|
+        items.map do |item|
           # Generate unique identifier
           id = r.incr("#{name}:id")
 
           r.multi do |t|
-            # Store message
-            t.set("#{name}:messages:#{id}", message)
+            # Store item
+            t.set("#{name}:items:#{id}", item)
 
             # Push identifier to queue
             t.rpush(name, id)
@@ -36,14 +36,14 @@ module Falqon
       end
     end
 
-    # Pop a message from the queue
+    # Pop an item from the queue
     def pop
       redis.with do |r|
         # Pop identifier from queue
         id = r.lpop(name).to_i
 
-        # Retrieve message
-        r.get("#{name}:messages:#{id}")
+        # Retrieve item
+        r.get("#{name}:items:#{id}")
       end
     end
 
@@ -53,8 +53,11 @@ module Falqon
         # Get all identifiers from queue
         ids = r.lrange(name, 0, -1)
 
-        # Delete all messages and clear queue
-        r.del(*ids.map { |id| "#{name}:messages:#{id}" }, name, "#{name}:id")
+        # Delete all items and clear queue
+        r.del(*ids.map { |id| "#{name}:items:#{id}" }, name, "#{name}:id")
+
+        # Return number of deleted items
+        ids.size
       end
     end
 
