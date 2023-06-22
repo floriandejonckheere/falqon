@@ -24,5 +24,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "connection_pool"
   spec.add_runtime_dependency "redis"
+  spec.add_runtime_dependency "sorbet-runtime"
   spec.add_runtime_dependency "zeitwerk"
 end

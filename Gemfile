@@ -26,6 +26,10 @@ group :development, :test do
   gem "rubocop-performance", require: false
   gem "rubocop-rspec", require: false
 
+  # Type checker
+  gem "sorbet", require: false
+  gem "tapioca", require: false
+
   # Time control
   gem "timecop", require: false
 end

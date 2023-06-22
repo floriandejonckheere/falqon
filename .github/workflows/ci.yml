@@ -47,6 +47,9 @@ jobs:
       - name: Lint
         run: bundle exec rubocop --parallel --display-cop-names
 
+      - name: Type check
+        run: bundle exec srb tc
+
   release:
     name: Release application
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
