@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# typed: true
+
 require "forwardable"
 
 module Falqon
@@ -8,14 +10,18 @@ module Falqon
   #
   class Queue
     extend Forwardable
+    extend T::Sig
 
+    sig { returns(String) }
     attr_reader :name
 
+    sig { params(name: String).void }
     def initialize(name)
       @name = name
     end
 
     # Push one or more items to the queue
+    sig { params(items: String).returns(T::Array[Integer]) }
     def push(*items)
       redis.with do |r|
         items.map do |item|
@@ -37,6 +43,7 @@ module Falqon
     end
 
     # Pop an item from the queue
+    sig { returns(T.nilable(String)) }
     def pop
       redis.with do |r|
         # Pop identifier from queue
@@ -48,6 +55,7 @@ module Falqon
     end
 
     # Clear the queue
+    sig { returns(Integer) }
     def clear
       redis.with do |r|
         # Get all identifiers from queue
@@ -62,10 +70,13 @@ module Falqon
     end
 
     # Size of the queue
+    sig { returns(Integer) }
     def size
       redis.with { |r| r.llen(name) }
     end
 
+    # Whether the queue is empty
+    sig { returns(T::Boolean) }
     def empty?
       size.zero?
     end

@@ -2,6 +2,7 @@
 
 require "connection_pool"
 require "redis"
+require "sorbet-runtime"
 require "zeitwerk"
 
 module Falqon
