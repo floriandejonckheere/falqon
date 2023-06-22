@@ -8,10 +8,5 @@ require "falqon"
 require "connection_pool"
 require "redis"
 
-# Configure Redis connection pool
-Falqon.configure do |config|
-  config.redis = ConnectionPool.new(size: 5, timeout: 5) { Redis.new(url: ENV.fetch("REDIS_URL", "redis://redis:6379/0")) }
-end
-
 require "irb"
 IRB.start(__FILE__)

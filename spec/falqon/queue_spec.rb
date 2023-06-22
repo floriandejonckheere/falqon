@@ -10,6 +10,13 @@ RSpec.describe Falqon::Queue do
       expect(queue.pop).to eq("item1")
       expect(queue.pop).to eq("item2")
     end
+
+    it "returns the pushed items' identifiers" do
+      id1, id2 = queue.push("item1", "item2")
+
+      expect(id1).to eq 1
+      expect(id2).to eq 2
+    end
   end
 
   describe "#pop" do

@@ -109,7 +109,9 @@ RSpec.configure do |config|
   #   Kernel.srand config.seed
 
   # Configure Redis connection pool
-  Falqon.configure do |config|
-    config.redis = ConnectionPool.new(size: 1) { MockRedis.new }
+  config.before do
+    Falqon.configure do |c|
+      c.redis = ConnectionPool.new(size: 1) { MockRedis.new }
+    end
   end
 end
