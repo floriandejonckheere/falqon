@@ -25,7 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apk add build-base cmake git tar
+          apk add build-base cmake git tar bash
 
       - name: Cache Gems
         uses: actions/cache@v3.3.1
