@@ -3,7 +3,7 @@
 ![Continuous Integration](https://github.com/floriandejonckheere/falqon/workflows/Continuous%20Integration/badge.svg)
 ![Release](https://img.shields.io/github/v/release/floriandejonckheere/falqon?label=Latest%20release)
 
-Simple, efficient messaging queue for Ruby.
+Simple, efficient, and reliable messaging queue for Ruby.
 
 Falqon offers a simple messaging queue implementation backed by Redis.
 
