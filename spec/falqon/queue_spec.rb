@@ -27,4 +27,12 @@ RSpec.describe Falqon::Queue do
       expect(queue.pop).to eq("item2")
     end
   end
+
+  describe "#size" do
+    it "returns the size of the queue" do
+      queue.push("item1", "item2")
+
+      expect(queue.size).to eq(2)
+    end
+  end
 end

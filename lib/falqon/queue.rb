@@ -47,6 +47,11 @@ module Falqon
       end
     end
 
+    # Size of the queue
+    def size
+      redis.with { |r| r.llen(name) }
+    end
+
     def_delegator :Falqon, :redis
   end
 end
