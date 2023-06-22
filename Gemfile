@@ -6,12 +6,23 @@ source "https://rubygems.org"
 gemspec
 
 group :development, :test do
+  # Debugger
   gem "debug", require: false
+
+  # Generate fake data
   gem "ffaker", require: false
+
+  # Task runner
   gem "rake", require: false
+
+  # Behavior-driven test framework
   gem "rspec", require: false
+
+  # Linter
   gem "rubocop", require: false
   gem "rubocop-performance", require: false
   gem "rubocop-rspec", require: false
+
+  # Time control
   gem "timecop", require: false
 end
