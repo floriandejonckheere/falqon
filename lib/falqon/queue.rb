@@ -47,6 +47,17 @@ module Falqon
       end
     end
 
+    # Clear the queue
+    def clear
+      redis.with do |r|
+        # Get all identifiers from queue
+        ids = r.lrange(name, 0, -1)
+
+        # Delete all messages and clear queue
+        r.del(*ids.map { |id| "#{name}:messages:#{id}" }, name, "#{name}:id")
+      end
+    end
+
     # Size of the queue
     def size
       redis.with { |r| r.llen(name) }

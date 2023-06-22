@@ -28,6 +28,19 @@ RSpec.describe Falqon::Queue do
     end
   end
 
+  describe "#clear" do
+    it "clears the queue" do
+      queue.push("item1", "item2")
+
+      queue.clear
+
+      expect(queue).to be_empty
+
+      # Check that all keys have been deleted
+      expect(Falqon.redis.with(&:keys)).to be_empty
+    end
+  end
+
   describe "#size" do
     it "returns the size of the queue" do
       queue.push("item1", "item2")
