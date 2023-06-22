@@ -59,6 +59,12 @@ bundle exec rspec
 To release a new version, update the version number in `lib/falqon/version.rb`, update the changelog, commit the files and create a git tag starting with `v`, and push it to the repository.
 Github Actions will automatically run the test suite, build the `.gem` file and push it to [rubygems.org](https://rubygems.org).
 
+## Architecture
+
+A queue is identified with a name, which is used as a key prefix.
+Queues are stored in Redis as a list of incrementing integers representing unique message identifiers.
+The messages itself are stored in Redis as strings.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at [https://github.com/floriandejonckheere/falqon](https://github.com/floriandejonckheere/falqon). 
