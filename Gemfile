@@ -12,6 +12,9 @@ group :development, :test do
   # Generate fake data
   gem "ffaker", require: false
 
+  # Mock Redis server
+  gem "mock_redis"
+
   # Task runner
   gem "rake", require: false
 
