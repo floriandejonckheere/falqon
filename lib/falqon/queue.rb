@@ -52,6 +52,10 @@ module Falqon
       redis.with { |r| r.llen(name) }
     end
 
+    def empty?
+      size.zero?
+    end
+
     def_delegator :Falqon, :redis
   end
 end

@@ -35,4 +35,16 @@ RSpec.describe Falqon::Queue do
       expect(queue.size).to eq(2)
     end
   end
+
+  describe "#empty?" do
+    it "returns true if the queue is empty" do
+      expect(queue).to be_empty
+    end
+
+    it "returns false if the queue is not empty" do
+      queue.push("item1", "item2")
+
+      expect(queue).not_to be_empty
+    end
+  end
 end
