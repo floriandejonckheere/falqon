@@ -18,6 +18,9 @@
 
 require "timecop"
 
+require "connection_pool"
+require "mock_redis"
+
 require "falqon"
 
 Dir[File.join(__dir__, "support/**/*.rb")].each { |f| require f }
@@ -104,4 +107,9 @@ RSpec.configure do |config|
   #   # test failures related to randomization by passing the same `--seed` value
   #   # as the one that triggered the failure.
   #   Kernel.srand config.seed
+
+  # Configure Redis connection pool
+  Falqon.configure do |config|
+    config.redis = ConnectionPool.new(size: 1) { MockRedis.new }
+  end
 end

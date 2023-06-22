@@ -7,6 +7,10 @@ Simple, efficient, and reliable messaging queue for Ruby.
 
 Falqon offers a simple messaging queue implementation backed by Redis.
 
+## Requirements
+
+Falqon requires a Redis 6+ server to be available.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -22,6 +26,17 @@ And then execute:
 Or install it yourself as:
 
     $ gem install falqon
+
+## Configuration
+
+Configure Falqon's Redis connection pool before use.
+By default, Falqon will initialize a connection pool of size 5 to `redis://localhost:6379/0`.
+
+```ruby
+Falqon.configure do |config|
+  config.redis = ConnectionPool.new(size: 5, timeout: 5) { Redis.new(url: "redis://localhost:6379/0") }
+end
+```
 
 ## Usage
 
