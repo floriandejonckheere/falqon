@@ -43,9 +43,30 @@ end
 ```ruby
 require "falqon"
 
-# TODO
-```
+queue = Falqon::Queue.new("my_queue")
 
+# Push a message to the queue
+queue.push("Hello, world!", "Hello, world again!")
+
+# Pop a message from the queue (return style)
+puts queue.pop # => "Hello, world!"
+
+queue.empty? # => false
+
+# Pop a message from the queue (block style)
+queue.pop do |item|
+  puts item # => "Hello, world again!"
+  
+  # Raising a Falqon::Error exception will cause the message to be requeued
+  raise Falqon::Error, "Something went wrong"
+end
+
+queue.empty? # => false
+
+puts queue.pop # => "Hello, world again!"
+
+queue.empty? # => true
+```
 
 ## Testing
 

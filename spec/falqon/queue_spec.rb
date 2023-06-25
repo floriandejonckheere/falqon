@@ -20,20 +20,41 @@ RSpec.describe Falqon::Queue do
   end
 
   describe "#pop" do
-    it "pops items from the queue" do
+    it "pops an item from the queue and returns it" do
       queue.push("item1", "item2")
 
-      expect { |b| queue.pop(&b) }.to yield_with_args("item1")
-      expect { |b| queue.pop(&b) }.to yield_with_args("item2")
+      expect(queue.pop).to eq "item1"
+      expect(queue.pop).to eq "item2"
     end
 
-    it "requeues items if they fail" do
-      queue.push("item1", "item2")
+    context "when the queue is empty" do
+      it "blocks until an item is pushed to the queue" do
+        expect { queue.pop }.to raise_error MockRedis::WouldBlock
+      end
+    end
 
-      queue.pop { raise }
+    context "when a block is given" do
+      it "pops an item from the queue and yields it" do
+        queue.push("item1", "item2")
 
-      expect { |b| queue.pop(&b) }.to yield_with_args("item2")
-      expect { |b| queue.pop(&b) }.to yield_with_args("item1")
+        expect { |b| queue.pop(&b) }.to yield_with_args("item1")
+        expect { |b| queue.pop(&b) }.to yield_with_args("item2")
+      end
+
+      it "requeues items if they fail" do
+        queue.push("item1", "item2")
+
+        queue.pop { raise Falqon::Error }
+
+        expect { |b| queue.pop(&b) }.to yield_with_args("item2")
+        expect { |b| queue.pop(&b) }.to yield_with_args("item1")
+      end
+
+      context "when the queue is empty" do
+        it "blocks until an item is pushed to the queue" do
+          expect { |b| queue.pop(&b) }.to raise_error MockRedis::WouldBlock
+        end
+      end
     end
   end
 
