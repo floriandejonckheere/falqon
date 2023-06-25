@@ -17,29 +17,16 @@ jobs:
       matrix:
         ruby: [ "3.0", "3.1", "3.2" ]
 
-    container:
-      image: ruby:${{ matrix.ruby }}-alpine
-
     steps:
       - uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: |
-          apk add build-base cmake git tar bash
+        run: sudo apt-get update && sudo apt-get install -y build-essential cmake git tar
 
-      - name: Cache Gems
-        uses: actions/cache@v3.3.1
+      - uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-${{ matrix.ruby }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.ruby }}-gem-
-
-      - name: Install Gems
-        run: |
-          gem install bundler
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
 
       - name: Test
         run: bundle exec rspec --profile 10 --format progress
