@@ -68,7 +68,7 @@ The messages itself are stored in Redis as strings.
 The following Redis keys are used:
 - `{name}`: list of message identifiers on the queue
 - `{name}:id`: message identifier sequence
-- `{name}:messages:{id}`: message content for message with identifier `{id}`
+- `{name}:items:{id}`: message content for message with identifier `{id}`
 
 ## Contributing
 

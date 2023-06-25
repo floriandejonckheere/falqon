@@ -43,14 +43,34 @@ module Falqon
     end
 
     # Pop an item from the queue
-    sig { returns(T.nilable(String)) }
-    def pop
-      redis.with do |r|
-        # Pop identifier from queue
-        id = r.lpop(name).to_i
+    sig { params(_: T.proc.params(item: String).void).void }
+    def pop(&_)
+      id, item = redis.with do |r|
+        [
+          # Move identifier from queue to processing queue
+          id = r.blmove(name, "#{name}:processing", :left, :right).to_i,
 
-        # Retrieve item
-        r.get("#{name}:items:#{id}")
+          # Retrieve item
+          r.get("#{name}:items:#{id}"),
+        ]
+      end
+
+      yield item
+
+      redis.with do |r|
+        # Remove identifier from processing queue
+        r.lrem("#{name}:processing", 0, id)
+
+        # Delete item
+        r.del("#{name}:items:#{id}")
+      end
+    rescue StandardError
+      redis.with do |r|
+        # Add identifier back to queue
+        r.rpush(name, id)
+
+        # Remove identifier from processing queue
+        r.lrem("#{name}:processing", 0, id)
       end
     end
 

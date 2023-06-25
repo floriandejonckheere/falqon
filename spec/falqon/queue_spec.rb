@@ -7,8 +7,8 @@ RSpec.describe Falqon::Queue do
     it "pushes items to the queue" do
       queue.push("item1", "item2")
 
-      expect(queue.pop).to eq("item1")
-      expect(queue.pop).to eq("item2")
+      expect { |b| queue.pop(&b) }.to yield_with_args("item1")
+      expect { |b| queue.pop(&b) }.to yield_with_args("item2")
     end
 
     it "returns the pushed items' identifiers" do
@@ -23,8 +23,17 @@ RSpec.describe Falqon::Queue do
     it "pops items from the queue" do
       queue.push("item1", "item2")
 
-      expect(queue.pop).to eq("item1")
-      expect(queue.pop).to eq("item2")
+      expect { |b| queue.pop(&b) }.to yield_with_args("item1")
+      expect { |b| queue.pop(&b) }.to yield_with_args("item2")
+    end
+
+    it "requeues items if they fail" do
+      queue.push("item1", "item2")
+
+      queue.pop { raise }
+
+      expect { |b| queue.pop(&b) }.to yield_with_args("item2")
+      expect { |b| queue.pop(&b) }.to yield_with_args("item1")
     end
   end
 
