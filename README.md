@@ -68,6 +68,14 @@ puts queue.pop # => "Hello, world again!"
 queue.empty? # => true
 ```
 
+### Acknowledgement
+
+When using the block-style `pop` method, the message will be acknowledged when the block returns without raising a `Falqon::Error` exception.
+Acknowledgement will remove the message and its data from the queue.
+If the block raises a `Falqon::Error` exception, the message will be requeued at the end of the queue.
+
+The return-style `pop` method immediately acknowledges the message before returning it.
+
 ## Testing
 
 ```ssh
