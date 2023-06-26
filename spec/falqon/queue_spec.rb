@@ -11,8 +11,20 @@ RSpec.describe Falqon::Queue do
     it "pushes items to the queue" do
       queue.push("item1", "item2")
 
-      expect { |b| queue.pop(&b) }.to yield_with_args("item1")
-      expect { |b| queue.pop(&b) }.to yield_with_args("item2")
+      redis.with do |r|
+        # Check that the identifiers have been pushed to the queue
+        expect(r.lrange("falqon/name", 0, -1)).to eq ["1", "2"]
+
+        # Check that the items have been stored
+        expect(r.get("falqon/name:items:1")).to eq "item1"
+        expect(r.get("falqon/name:items:2")).to eq "item2"
+
+        # Check that the processing queue is empty
+        expect(r.llen("falqon/name:processing")).to eq 0
+
+        # Check that the identifier counter is incremented
+        expect(r.get("falqon/name:id")).to eq "2"
+      end
     end
 
     it "returns the pushed items' identifiers" do
@@ -50,8 +62,10 @@ RSpec.describe Falqon::Queue do
 
         queue.pop { raise Falqon::Error }
 
-        expect { |b| queue.pop(&b) }.to yield_with_args("item2")
-        expect { |b| queue.pop(&b) }.to yield_with_args("item1")
+        redis.with do |r|
+          # Check that the identifiers have been pushed to the queue
+          expect(r.lrange("falqon/name", 0, -1)).to eq ["2", "1"]
+        end
       end
 
       it "discards items if they fail too many times" do
@@ -63,9 +77,12 @@ RSpec.describe Falqon::Queue do
 
         expect { |b| queue.pop(&b) }.to raise_error MockRedis::WouldBlock
 
-        # TODO: Check that the item has been moved to the dead queue
-        # TODO: Check that the retry count has been reset
-        expect(queue).to be_empty
+        redis.with do |r|
+          expect(r.lrange("falqon/name", 0, -1)).to be_empty
+          expect(r.lrange("falqon/name:dead", 0, -1)).to eq ["1"]
+
+          expect(r.get("falqon/name:retries:1")).to be_nil
+        end
       end
 
       context "when the queue is empty" do
@@ -84,8 +101,10 @@ RSpec.describe Falqon::Queue do
 
       expect(queue).to be_empty
 
-      # Check that all keys have been deleted
-      expect(Falqon.redis.with(&:keys)).to be_empty
+      redis.with do |r|
+        # Check that all keys have been deleted
+        expect(r.keys).to be_empty
+      end
     end
 
     it "returns the number of deleted items" do
@@ -113,5 +132,9 @@ RSpec.describe Falqon::Queue do
 
       expect(queue).not_to be_empty
     end
+  end
+
+  def redis
+    Falqon.redis
   end
 end
