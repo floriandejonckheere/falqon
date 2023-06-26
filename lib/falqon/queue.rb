@@ -70,7 +70,9 @@ module Falqon
       end
 
       item
-    rescue Error
+    rescue Error => e
+      logger.debug "Error processing item #{id}: #{e.message}"
+
       redis.with do |r|
         r.multi do |t|
           # Add identifier back to queue
