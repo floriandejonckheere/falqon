@@ -5,8 +5,13 @@ require "bundler/setup"
 
 require "falqon"
 
-require "connection_pool"
-require "redis"
+Falqon.configure do |config|
+  # Configure Redis connection pool
+  config.redis = ConnectionPool.new(size: 5, timeout: 5) { Redis.new(url: "redis://localhost:6379/0") }
+
+  # Configure logger
+  config.logger = Logger.new($stdout)
+end
 
 require "irb"
 IRB.start(__FILE__)

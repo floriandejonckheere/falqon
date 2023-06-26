@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "logger"
+
 require "connection_pool"
 require "redis"
 require "sorbet-runtime"
@@ -13,8 +15,15 @@ module Falqon
     # Redis connection pool
     attr_writer :redis
 
+    # Logger instance
+    attr_writer :logger
+
     def redis
       @redis ||= ConnectionPool.new(size: 5, timeout: 5) { Redis.new(url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0")) }
+    end
+
+    def logger
+      @logger ||= Logger.new(File::NULL)
     end
 
     def root

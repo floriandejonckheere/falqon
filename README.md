@@ -34,7 +34,11 @@ By default, Falqon will initialize a connection pool of size 5 to `redis://local
 
 ```ruby
 Falqon.configure do |config|
+  # Configure Redis connection pool
   config.redis = ConnectionPool.new(size: 5, timeout: 5) { Redis.new(url: "redis://localhost:6379/0") }
+
+  # Configure logger
+  config.logger = Logger.new(STDOUT)
 end
 ```
 

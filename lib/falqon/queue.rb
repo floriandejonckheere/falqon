@@ -23,6 +23,8 @@ module Falqon
     # Push one or more items to the queue
     sig { params(items: String).returns(T::Array[Integer]) }
     def push(*items)
+      logger.debug "Pushing #{items.size} items onto queue #{name}"
+
       redis.with do |r|
         items.map do |item|
           # Generate unique identifier
@@ -45,6 +47,8 @@ module Falqon
     # Pop an item from the queue
     sig { params(block: T.nilable(T.proc.params(item: String).void)).returns(T.nilable(String)) }
     def pop(&block)
+      logger.debug "Popping item from queue #{name}"
+
       id, item = redis.with do |r|
         [
           # Move identifier from queue to processing queue
@@ -83,6 +87,8 @@ module Falqon
     # Clear the queue
     sig { returns(Integer) }
     def clear
+      logger.debug "Clearing queue #{name}"
+
       redis.with do |r|
         # Get all identifiers from queue
         ids = r.lrange(name, 0, -1)
@@ -108,5 +114,6 @@ module Falqon
     end
 
     def_delegator :Falqon, :redis
+    def_delegator :Falqon, :logger
   end
 end
