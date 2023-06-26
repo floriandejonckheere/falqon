@@ -54,6 +54,20 @@ RSpec.describe Falqon::Queue do
         expect { |b| queue.pop(&b) }.to yield_with_args("item1")
       end
 
+      it "discards items if they fail too many times" do
+        queue.push("item1")
+
+        queue.pop { raise Falqon::Error }
+        queue.pop { raise Falqon::Error }
+        queue.pop { raise Falqon::Error }
+
+        expect { |b| queue.pop(&b) }.to raise_error MockRedis::WouldBlock
+
+        # TODO: Check that the item has been moved to the dead queue
+        # TODO: Check that the retry count has been reset
+        expect(queue).to be_empty
+      end
+
       context "when the queue is empty" do
         it "blocks until an item is pushed to the queue" do
           expect { |b| queue.pop(&b) }.to raise_error MockRedis::WouldBlock

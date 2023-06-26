@@ -15,9 +15,13 @@ module Falqon
     sig { returns(String) }
     attr_reader :name
 
-    sig { params(name: String, prefix: String).void }
-    def initialize(name, prefix: "falqon")
+    sig { returns(Integer) }
+    attr_reader :max_retries
+
+    sig { params(name: String, prefix: String, max_retries: Integer).void }
+    def initialize(name, prefix: "falqon", max_retries: 3)
       @name = "#{prefix}/#{name}"
+      @max_retries = max_retries
     end
 
     # Push one or more items to the queue
@@ -66,7 +70,7 @@ module Falqon
         r.lrem("#{name}:processing", 0, id)
 
         # Delete item
-        r.del("#{name}:items:#{id}")
+        r.del("#{name}:items:#{id}", "#{name}:retries:#{id}")
       end
 
       item
@@ -74,9 +78,24 @@ module Falqon
       logger.debug "Error processing item #{id}: #{e.message}"
 
       redis.with do |r|
+        # Increment retry count
+        retries = r.incr("#{name}:retries:#{id}")
+
         r.multi do |t|
-          # Add identifier back to queue
-          t.rpush(name, id)
+          if retries < max_retries
+            logger.debug "Requeuing item #{id} on queue #{name} (attempt #{retries})"
+
+            # Add identifier back to queue
+            t.rpush(name, id)
+          else
+            logger.debug "Discarding item #{id} on queue #{name} (attempt #{retries})"
+
+            # Add identifier to dead queue
+            t.rpush("#{name}:dead", id)
+
+            # Clear retry count
+            t.del("#{name}:retries:#{id}")
+          end
 
           # Remove identifier from processing queue
           t.lrem("#{name}:processing", 0, id)
@@ -96,7 +115,7 @@ module Falqon
         ids = r.lrange(name, 0, -1)
 
         # Delete all items and clear queue
-        r.del(*ids.map { |id| "#{name}:items:#{id}" }, name, "#{name}:id")
+        r.del(*ids.flat_map { |id| ["#{name}:items:#{id}", "#{name}:retries:#{id}"] }, name, "#{name}:id")
 
         # Return number of deleted items
         ids.size
