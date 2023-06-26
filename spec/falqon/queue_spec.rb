@@ -3,6 +3,10 @@
 RSpec.describe Falqon::Queue do
   subject(:queue) { described_class.new("name") }
 
+  it "has a prefix" do
+    expect(queue.name).to eq "falqon/name"
+  end
+
   describe "#push" do
     it "pushes items to the queue" do
       queue.push("item1", "item2")

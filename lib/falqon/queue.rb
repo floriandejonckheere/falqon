@@ -15,9 +15,9 @@ module Falqon
     sig { returns(String) }
     attr_reader :name
 
-    sig { params(name: String).void }
-    def initialize(name)
-      @name = name
+    sig { params(name: String, prefix: String).void }
+    def initialize(name, prefix: "falqon")
+      @name = "#{prefix}/#{name}"
     end
 
     # Push one or more items to the queue
