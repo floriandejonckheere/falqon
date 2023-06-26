@@ -11,6 +11,12 @@ module Falqon
   class Configuration
     extend T::Sig
 
+    DEFAULT_PREFIX = "falqon"
+
+    # Queue name prefix
+    sig { params(prefix: String).returns(String) }
+    attr_writer :prefix
+
     # Redis connection pool
     sig { params(redis: ConnectionPool).returns(ConnectionPool) }
     attr_writer :redis
@@ -18,6 +24,11 @@ module Falqon
     # Logger instance
     sig { params(logger: Logger).returns(Logger) }
     attr_writer :logger
+
+    sig { returns(String) }
+    def prefix
+      @prefix ||= DEFAULT_PREFIX
+    end
 
     sig { returns(ConnectionPool) }
     def redis

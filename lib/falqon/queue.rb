@@ -18,9 +18,9 @@ module Falqon
     sig { returns(Integer) }
     attr_reader :max_retries
 
-    sig { params(name: String, prefix: String, max_retries: Integer).void }
-    def initialize(name, prefix: "falqon", max_retries: 3)
-      @name = "#{prefix}/#{name}"
+    sig { params(name: String, max_retries: Integer).void }
+    def initialize(name, max_retries: 3)
+      @name = "#{Falqon.configuration.prefix}/#{name}"
       @max_retries = max_retries
     end
 
