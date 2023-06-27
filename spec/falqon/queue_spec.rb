@@ -36,7 +36,7 @@ RSpec.describe Falqon::Queue do
   end
 
   describe "#pop" do
-    it "pops an message from the queue and returns it" do
+    it "pops a message from the queue and returns it" do
       queue.push("message1", "message2")
 
       expect(queue.pop).to eq "message1"
@@ -44,13 +44,13 @@ RSpec.describe Falqon::Queue do
     end
 
     context "when the queue is empty" do
-      it "blocks until an message is pushed to the queue" do
+      it "blocks until a message is pushed to the queue" do
         expect { queue.pop }.to raise_error MockRedis::WouldBlock
       end
     end
 
     context "when a block is given" do
-      it "pops an message from the queue and yields it" do
+      it "pops a message from the queue and yields it" do
         queue.push("message1", "message2")
 
         expect { |b| queue.pop(&b) }.to yield_with_args("message1")
@@ -86,7 +86,7 @@ RSpec.describe Falqon::Queue do
       end
 
       context "when the queue is empty" do
-        it "blocks until an message is pushed to the queue" do
+        it "blocks until a message is pushed to the queue" do
           expect { |b| queue.pop(&b) }.to raise_error MockRedis::WouldBlock
         end
       end

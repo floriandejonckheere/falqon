@@ -48,7 +48,7 @@ module Falqon
       end
     end
 
-    # Pop an message from the queue
+    # Pop a message from the queue
     sig { params(block: T.nilable(T.proc.params(message: String).void)).returns(T.nilable(String)) }
     def pop(&block)
       logger.debug "Popping message from queue #{name}"
