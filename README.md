@@ -61,8 +61,8 @@ puts queue.pop # => "Hello, world!"
 queue.empty? # => false
 
 # Pop a message from the queue (block style)
-queue.pop do |item|
-  puts item # => "Hello, world again!"
+queue.pop do |message|
+  puts message # => "Hello, world again!"
   
   # Raising a Falqon::Error exception will cause the message to be requeued
   raise Falqon::Error, "Something went wrong"
@@ -104,7 +104,7 @@ The messages itself are stored in Redis as strings.
 The following Redis keys are used:
 - `{name}`: list of message identifiers on the queue
 - `{name}:id`: message identifier sequence
-- `{name}:items:{id}`: message content for message with identifier `{id}`
+- `{name}:messages:{id}`: message content for message with identifier `{id}`
 
 ## Contributing
 

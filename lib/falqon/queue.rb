@@ -24,19 +24,19 @@ module Falqon
       @max_retries = max_retries
     end
 
-    # Push one or more items to the queue
-    sig { params(items: String).returns(T::Array[Integer]) }
-    def push(*items)
-      logger.debug "Pushing #{items.size} items onto queue #{name}"
+    # Push one or more messages to the queue
+    sig { params(messages: String).returns(T::Array[Integer]) }
+    def push(*messages)
+      logger.debug "Pushing #{messages.size} messages onto queue #{name}"
 
       redis.with do |r|
-        items.map do |item|
+        messages.map do |message|
           # Generate unique identifier
           id = r.incr("#{name}:id")
 
           r.multi do |t|
-            # Store item
-            t.set("#{name}:items:#{id}", item)
+            # Store message
+            t.set("#{name}:messages:#{id}", message)
 
             # Push identifier to queue
             t.rpush(name, id)
@@ -48,34 +48,34 @@ module Falqon
       end
     end
 
-    # Pop an item from the queue
-    sig { params(block: T.nilable(T.proc.params(item: String).void)).returns(T.nilable(String)) }
+    # Pop an message from the queue
+    sig { params(block: T.nilable(T.proc.params(message: String).void)).returns(T.nilable(String)) }
     def pop(&block)
-      logger.debug "Popping item from queue #{name}"
+      logger.debug "Popping message from queue #{name}"
 
-      id, item = redis.with do |r|
+      id, message = redis.with do |r|
         [
           # Move identifier from queue to processing queue
           id = r.blmove(name, "#{name}:processing", :left, :right).to_i,
 
-          # Retrieve item
-          r.get("#{name}:items:#{id}"),
+          # Retrieve message
+          r.get("#{name}:messages:#{id}"),
         ]
       end
 
-      yield item if block
+      yield message if block
 
       redis.with do |r|
         # Remove identifier from processing queue
         r.lrem("#{name}:processing", 0, id)
 
-        # Delete item
-        r.del("#{name}:items:#{id}", "#{name}:retries:#{id}")
+        # Delete message
+        r.del("#{name}:messages:#{id}", "#{name}:retries:#{id}")
       end
 
-      item
+      message
     rescue Error => e
-      logger.debug "Error processing item #{id}: #{e.message}"
+      logger.debug "Error processing message #{id}: #{e.message}"
 
       redis.with do |r|
         # Increment retry count
@@ -83,12 +83,12 @@ module Falqon
 
         r.multi do |t|
           if retries < max_retries
-            logger.debug "Requeuing item #{id} on queue #{name} (attempt #{retries})"
+            logger.debug "Requeuing message #{id} on queue #{name} (attempt #{retries})"
 
             # Add identifier back to queue
             t.rpush(name, id)
           else
-            logger.debug "Discarding item #{id} on queue #{name} (attempt #{retries})"
+            logger.debug "Discarding message #{id} on queue #{name} (attempt #{retries})"
 
             # Add identifier to dead queue
             t.rpush("#{name}:dead", id)
@@ -114,10 +114,10 @@ module Falqon
         # Get all identifiers from queue
         ids = r.lrange(name, 0, -1)
 
-        # Delete all items and clear queue
-        r.del(*ids.flat_map { |id| ["#{name}:items:#{id}", "#{name}:retries:#{id}"] }, name, "#{name}:id")
+        # Delete all messages and clear queue
+        r.del(*ids.flat_map { |id| ["#{name}:messages:#{id}", "#{name}:retries:#{id}"] }, name, "#{name}:id")
 
-        # Return number of deleted items
+        # Return number of deleted messages
         ids.size
       end
     end

@@ -8,16 +8,16 @@ RSpec.describe Falqon::Queue do
   end
 
   describe "#push" do
-    it "pushes items to the queue" do
-      queue.push("item1", "item2")
+    it "pushes messages to the queue" do
+      queue.push("message1", "message2")
 
       redis.with do |r|
         # Check that the identifiers have been pushed to the queue
         expect(r.lrange("falqon/name", 0, -1)).to eq ["1", "2"]
 
-        # Check that the items have been stored
-        expect(r.get("falqon/name:items:1")).to eq "item1"
-        expect(r.get("falqon/name:items:2")).to eq "item2"
+        # Check that the messages have been stored
+        expect(r.get("falqon/name:messages:1")).to eq "message1"
+        expect(r.get("falqon/name:messages:2")).to eq "message2"
 
         # Check that the processing queue is empty
         expect(r.llen("falqon/name:processing")).to eq 0
@@ -27,8 +27,8 @@ RSpec.describe Falqon::Queue do
       end
     end
 
-    it "returns the pushed items' identifiers" do
-      id1, id2 = queue.push("item1", "item2")
+    it "returns the pushed messages' identifiers" do
+      id1, id2 = queue.push("message1", "message2")
 
       expect(id1).to eq 1
       expect(id2).to eq 2
@@ -36,29 +36,29 @@ RSpec.describe Falqon::Queue do
   end
 
   describe "#pop" do
-    it "pops an item from the queue and returns it" do
-      queue.push("item1", "item2")
+    it "pops an message from the queue and returns it" do
+      queue.push("message1", "message2")
 
-      expect(queue.pop).to eq "item1"
-      expect(queue.pop).to eq "item2"
+      expect(queue.pop).to eq "message1"
+      expect(queue.pop).to eq "message2"
     end
 
     context "when the queue is empty" do
-      it "blocks until an item is pushed to the queue" do
+      it "blocks until an message is pushed to the queue" do
         expect { queue.pop }.to raise_error MockRedis::WouldBlock
       end
     end
 
     context "when a block is given" do
-      it "pops an item from the queue and yields it" do
-        queue.push("item1", "item2")
+      it "pops an message from the queue and yields it" do
+        queue.push("message1", "message2")
 
-        expect { |b| queue.pop(&b) }.to yield_with_args("item1")
-        expect { |b| queue.pop(&b) }.to yield_with_args("item2")
+        expect { |b| queue.pop(&b) }.to yield_with_args("message1")
+        expect { |b| queue.pop(&b) }.to yield_with_args("message2")
       end
 
-      it "requeues items if they fail" do
-        queue.push("item1", "item2")
+      it "requeues messages if they fail" do
+        queue.push("message1", "message2")
 
         queue.pop { raise Falqon::Error }
 
@@ -68,8 +68,8 @@ RSpec.describe Falqon::Queue do
         end
       end
 
-      it "discards items if they fail too many times" do
-        queue.push("item1")
+      it "discards messages if they fail too many times" do
+        queue.push("message1")
 
         queue.pop { raise Falqon::Error }
         queue.pop { raise Falqon::Error }
@@ -86,7 +86,7 @@ RSpec.describe Falqon::Queue do
       end
 
       context "when the queue is empty" do
-        it "blocks until an item is pushed to the queue" do
+        it "blocks until an message is pushed to the queue" do
           expect { |b| queue.pop(&b) }.to raise_error MockRedis::WouldBlock
         end
       end
@@ -95,7 +95,7 @@ RSpec.describe Falqon::Queue do
 
   describe "#clear" do
     it "clears the queue" do
-      queue.push("item1", "item2")
+      queue.push("message1", "message2")
 
       queue.clear
 
@@ -107,8 +107,8 @@ RSpec.describe Falqon::Queue do
       end
     end
 
-    it "returns the number of deleted items" do
-      queue.push("item1", "item2")
+    it "returns the number of deleted messages" do
+      queue.push("message1", "message2")
 
       expect(queue.clear).to eq 2
     end
@@ -116,7 +116,7 @@ RSpec.describe Falqon::Queue do
 
   describe "#size" do
     it "returns the size of the queue" do
-      queue.push("item1", "item2")
+      queue.push("message1", "message2")
 
       expect(queue.size).to eq 2
     end
@@ -128,7 +128,7 @@ RSpec.describe Falqon::Queue do
     end
 
     it "returns false if the queue is not empty" do
-      queue.push("item1", "item2")
+      queue.push("message1", "message2")
 
       expect(queue).not_to be_empty
     end
