@@ -37,7 +37,7 @@ Falqon.configure do |config|
   # Configure queue name prefix
   config.prefix = "falqon"
   
-  # Configure Redis connection pool
+  # Configure Redis connection pool (defaults to $REDIS_URL)
   config.redis = ConnectionPool.new(size: 5, timeout: 5) { Redis.new(url: "redis://localhost:6379/0") }
 
   # Configure logger
