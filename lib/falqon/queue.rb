@@ -12,6 +12,9 @@ module Falqon
     extend Forwardable
     extend T::Sig
 
+    Message = T.type_alias { String }
+    Identifier = T.type_alias { Integer }
+
     sig { returns(String) }
     attr_reader :name
 
@@ -25,7 +28,7 @@ module Falqon
     end
 
     # Push one or more messages to the queue
-    sig { params(messages: String).returns(T::Array[Integer]) }
+    sig { params(messages: Message).returns(T::Array[Identifier]) }
     def push(*messages)
       logger.debug "Pushing #{messages.size} messages onto queue #{name}"
 
@@ -49,7 +52,7 @@ module Falqon
     end
 
     # Pop a message from the queue
-    sig { params(block: T.nilable(T.proc.params(message: String).void)).returns(T.nilable(String)) }
+    sig { params(block: T.nilable(T.proc.params(message: Message).void)).returns(T.nilable(Message)) }
     def pop(&block)
       logger.debug "Popping message from queue #{name}"
 
@@ -106,7 +109,7 @@ module Falqon
     end
 
     # Peek at the next message in the queue
-    sig { returns(T.nilable(String)) }
+    sig { returns(T.nilable(Message)) }
     def peek
       logger.debug "Peeking at next message in queue #{name}"
 
@@ -120,7 +123,7 @@ module Falqon
     end
 
     # Clear the queue
-    sig { returns(T::Array[Integer]) }
+    sig { returns(T::Array[Identifier]) }
     def clear
       logger.debug "Clearing queue #{name}"
 
