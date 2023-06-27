@@ -105,6 +105,20 @@ module Falqon
       nil
     end
 
+    # Peek at the next message in the queue
+    sig { returns(T.nilable(String)) }
+    def peek
+      logger.debug "Peeking at next message in queue #{name}"
+
+      redis.with do |r|
+        # Get identifier from queue
+        id = r.lindex(name, 0).to_i
+
+        # Retrieve message
+        r.get("#{name}:messages:#{id}")
+      end
+    end
+
     # Clear the queue
     sig { returns(T::Array[Integer]) }
     def clear

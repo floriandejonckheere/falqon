@@ -60,6 +60,8 @@ puts queue.pop # => "Hello, world!"
 
 queue.empty? # => false
 
+queue.peek # => "Hello, world again!"
+
 # Pop a message from the queue (block style)
 queue.pop do |message|
   puts message # => "Hello, world again!"
@@ -73,6 +75,8 @@ queue.empty? # => false
 puts queue.pop # => "Hello, world again!"
 
 queue.empty? # => true
+
+queue.peek # => nil
 ```
 
 ### Acknowledgement
