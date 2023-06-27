@@ -106,7 +106,7 @@ module Falqon
     end
 
     # Clear the queue
-    sig { returns(Integer) }
+    sig { returns(T::Array[Integer]) }
     def clear
       logger.debug "Clearing queue #{name}"
 
@@ -117,8 +117,8 @@ module Falqon
         # Delete all messages and clear queue
         r.del(*ids.flat_map { |id| ["#{name}:messages:#{id}", "#{name}:retries:#{id}"] }, name, "#{name}:id")
 
-        # Return number of deleted messages
-        ids.size
+        # Return identifiers
+        ids.map(&:to_i)
       end
     end
 

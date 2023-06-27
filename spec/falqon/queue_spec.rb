@@ -107,10 +107,10 @@ RSpec.describe Falqon::Queue do
       end
     end
 
-    it "returns the number of deleted messages" do
+    it "returns the deleted messages' identifiers" do
       queue.push("message1", "message2")
 
-      expect(queue.clear).to eq 2
+      expect(queue.clear).to eq [1, 2]
     end
   end
 
