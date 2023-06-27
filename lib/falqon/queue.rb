@@ -29,22 +29,14 @@ module Falqon
     def push(*messages)
       logger.debug "Pushing #{messages.size} messages onto queue #{name}"
 
-      redis.with do |r|
-        messages.map do |message|
-          # Generate unique identifier
-          id = r.incr("#{name}:id")
+      messages.map do |data|
+        # Create and enqueue message
+        message = Message
+          .new(self, data:)
+          .tap(&:save)
 
-          r.multi do |t|
-            # Store message
-            t.set("#{name}:messages:#{id}", message)
-
-            # Push identifier to queue
-            t.rpush(name, id)
-          end
-
-          # Return identifier
-          next id
-        end
+        # Return identifier
+        next message.id
       end
     end
 
@@ -114,8 +106,12 @@ module Falqon
         # Get all identifiers from queue
         ids = r.lrange(name, 0, -1)
 
-        # Delete all messages and clear queue
-        r.del(*ids.flat_map { |id| ["#{name}:messages:#{id}", "#{name}:retries:#{id}"] }, name, "#{name}:id")
+        # Delete all messages
+        ids.each do |id|
+          Message
+            .new(self, id:)
+            .delete
+        end
 
         # Return identifiers
         ids.map(&:to_i)
