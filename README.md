@@ -27,4 +27,4 @@ Bug reports and pull requests are welcome on GitHub at [https://github.com/flori
 
 ## License
 
-The software is available as open source under the terms of the [LGPLv3 License](https://www.gnu.org/licenses/lgpl-3.0.html).
+The software is available as open source under the terms of the [LGPL-3.0 License](https://www.gnu.org/licenses/lgpl-3.0.html).
