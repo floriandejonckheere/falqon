@@ -43,7 +43,7 @@ module Falqon
             t.set("#{name}:messages:#{id}", message)
 
             # Push identifier to queue
-            t.rpush(name, id)
+            queue.add(id)
           end
 
           # Return identifier(s)
@@ -59,7 +59,7 @@ module Falqon
       id, message = redis.with do |r|
         [
           # Move identifier from queue to processing queue
-          id = r.blmove(name, "#{name}:processing", :left, :right).to_i,
+          id = r.blmove(name, processing.name, :left, :right).to_i,
 
           # Retrieve message
           r.get("#{name}:messages:#{id}"),
@@ -70,7 +70,7 @@ module Falqon
 
       redis.with do |r|
         # Remove identifier from processing queue
-        r.lrem("#{name}:processing", 0, id)
+        processing.remove(id)
 
         # Delete message
         r.del("#{name}:messages:#{id}", "#{name}:retries:#{id}")
@@ -89,19 +89,19 @@ module Falqon
             logger.debug "Requeuing message #{id} on queue #{name} (attempt #{retries})"
 
             # Add identifier back to queue
-            t.rpush(name, id)
+            queue.add(id)
           else
             logger.debug "Discarding message #{id} on queue #{name} (attempt #{retries})"
 
             # Add identifier to dead queue
-            t.rpush("#{name}:dead", id)
+            dead.add(id)
 
             # Clear retry count
             t.del("#{name}:retries:#{id}")
           end
 
           # Remove identifier from processing queue
-          t.lrem("#{name}:processing", 0, id)
+          t.lrem(processing.name, 0, id)
         end
       end
 
@@ -114,7 +114,9 @@ module Falqon
 
       redis.with do |r|
         # Get identifier from queue
-        id = r.lindex(name, 0).to_i
+        id = queue.peek
+
+        next unless id
 
         # Retrieve message
         r.get("#{name}:messages:#{id}")
@@ -125,26 +127,33 @@ module Falqon
     def clear
       logger.debug "Clearing queue #{name}"
 
-      redis.with do |r|
-        # Get all identifiers from queue
-        ids = r.lrange(name, 0, -1)
-
-        # Delete all messages and clear queue
-        r.del(*ids.flat_map { |id| ["#{name}:messages:#{id}", "#{name}:retries:#{id}"] }, name, "#{name}:id")
-
-        # Return identifiers
-        ids.map(&:to_i)
-      end
+      # Clear all sub-queues
+      queue.clear + processing.clear + dead.clear
     end
 
     sig { returns(Integer) }
     def size
-      redis.with { |r| r.llen(name) }
+      queue.size
     end
 
     sig { returns(T::Boolean) }
     def empty?
       size.zero?
+    end
+
+    sig { returns(SubQueue) }
+    def queue
+      @queue ||= SubQueue.new(self)
+    end
+
+    sig { returns(SubQueue) }
+    def processing
+      @processing ||= SubQueue.new(self, "processing")
+    end
+
+    sig { returns(SubQueue) }
+    def dead
+      @dead ||= SubQueue.new(self, "dead")
     end
   end
 end

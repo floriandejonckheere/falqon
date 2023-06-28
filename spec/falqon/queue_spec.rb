@@ -19,14 +19,13 @@ RSpec.describe Falqon::Queue do
     end
   end
 
-
   describe "#push" do
     it "pushes a single message to the queue and returns the identifier" do
       id = queue.push("message1")
 
       expect(id).to eq 1
 
-      redis.with do |r|
+      queue.redis.with do |r|
         # Check that the identifiers have been pushed to the queue
         expect(r.lrange("falqon/name", 0, -1)).to eq ["1"]
 
@@ -47,7 +46,7 @@ RSpec.describe Falqon::Queue do
       expect(id1).to eq 1
       expect(id2).to eq 2
 
-      redis.with do |r|
+      queue.redis.with do |r|
         # Check that the identifiers have been pushed to the queue
         expect(r.lrange("falqon/name", 0, -1)).to eq ["1", "2"]
 
@@ -91,7 +90,7 @@ RSpec.describe Falqon::Queue do
 
         queue.pop { raise Falqon::Error }
 
-        redis.with do |r|
+        queue.redis.with do |r|
           # Check that the identifiers have been pushed to the queue
           expect(r.lrange("falqon/name", 0, -1)).to eq ["2", "1"]
         end
@@ -106,7 +105,7 @@ RSpec.describe Falqon::Queue do
 
         expect { |b| queue.pop(&b) }.to raise_error MockRedis::WouldBlock
 
-        redis.with do |r|
+        queue.redis.with do |r|
           expect(r.lrange("falqon/name", 0, -1)).to be_empty
           expect(r.lrange("falqon/name:dead", 0, -1)).to eq ["1"]
 
@@ -145,7 +144,7 @@ RSpec.describe Falqon::Queue do
 
       expect(queue).to be_empty
 
-      redis.with do |r|
+      queue.redis.with do |r|
         # Check that all keys have been deleted
         expect(r.keys).to be_empty
       end
@@ -156,6 +155,12 @@ RSpec.describe Falqon::Queue do
 
       expect(queue.clear).to eq [1, 2]
     end
+
+    context "when the queue is empty" do
+      it "returns an empty array" do
+        expect(queue.clear).to be_empty
+      end
+    end
   end
 
   describe "#size" do
@@ -163,6 +168,12 @@ RSpec.describe Falqon::Queue do
       queue.push("message1", "message2")
 
       expect(queue.size).to eq 2
+    end
+
+    context "when the queue is empty" do
+      it "returns 0" do
+        expect(queue.size).to eq 0
+      end
     end
   end
 
@@ -176,9 +187,5 @@ RSpec.describe Falqon::Queue do
 
       expect(queue).not_to be_empty
     end
-  end
-
-  def redis
-    Falqon.redis
   end
 end
