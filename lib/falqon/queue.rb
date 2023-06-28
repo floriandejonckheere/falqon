@@ -2,14 +2,11 @@
 
 # typed: true
 
-require "forwardable"
-
 module Falqon
   ##
   # Simple, efficient, and reliable messaging queue implementation
   #
   class Queue
-    extend Forwardable
     extend T::Sig
 
     Message = T.type_alias { String }
@@ -21,10 +18,18 @@ module Falqon
     sig { returns(Integer) }
     attr_reader :max_retries
 
-    sig { params(name: String, max_retries: Integer).void }
-    def initialize(name, max_retries: 3)
+    sig { returns(ConnectionPool) }
+    attr_reader :redis
+
+    sig { returns(Logger) }
+    attr_reader :logger
+
+    sig { params(name: String, max_retries: Integer, redis: ConnectionPool, logger: Logger).void }
+    def initialize(name, max_retries: Falqon.configuration.max_retries, redis: Falqon.configuration.redis, logger: Falqon.configuration.logger)
       @name = "#{Falqon.configuration.prefix}/#{name}"
       @max_retries = max_retries
+      @redis = redis
+      @logger = logger
     end
 
     # Push one or more messages to the queue
@@ -150,8 +155,5 @@ module Falqon
     def empty?
       size.zero?
     end
-
-    def_delegator :Falqon, :redis
-    def_delegator :Falqon, :logger
   end
 end

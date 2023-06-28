@@ -17,6 +17,10 @@ module Falqon
     sig { params(prefix: String).returns(String) }
     attr_writer :prefix
 
+    # Maximum number of retries before a message is discarded
+    sig { params(max_retries: Integer).returns(Integer) }
+    attr_writer :max_retries
+
     # Redis connection pool
     sig { params(redis: ConnectionPool).returns(ConnectionPool) }
     attr_writer :redis
@@ -28,6 +32,11 @@ module Falqon
     sig { returns(String) }
     def prefix
       @prefix ||= DEFAULT_PREFIX
+    end
+
+    sig { returns(Integer) }
+    def max_retries
+      @max_retries ||= 3
     end
 
     sig { returns(ConnectionPool) }
