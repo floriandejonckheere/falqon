@@ -3,9 +3,22 @@
 RSpec.describe Falqon::Queue do
   subject(:queue) { described_class.new("name") }
 
-  it "has a prefix" do
-    expect(queue.name).to eq "falqon/name"
+  describe "#name" do
+    it "prepends a prefix" do
+      expect(queue.name).to eq "falqon/name"
+    end
+
+    context "when no prefix is configured" do
+      it "does not prepend a prefix" do
+        allow(Falqon.configuration)
+          .to receive(:prefix)
+          .and_return(nil)
+
+        expect(queue.name).to eq "name"
+      end
+    end
   end
+
 
   describe "#push" do
     it "pushes messages to the queue" do

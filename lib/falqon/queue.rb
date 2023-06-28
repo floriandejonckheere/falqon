@@ -26,7 +26,7 @@ module Falqon
 
     sig { params(name: String, max_retries: Integer, redis: ConnectionPool, logger: Logger).void }
     def initialize(name, max_retries: Falqon.configuration.max_retries, redis: Falqon.configuration.redis, logger: Falqon.configuration.logger)
-      @name = "#{Falqon.configuration.prefix}/#{name}"
+      @name = [Falqon.configuration.prefix, name].compact.join("/")
       @max_retries = max_retries
       @redis = redis
       @logger = logger
