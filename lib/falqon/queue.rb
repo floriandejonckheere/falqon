@@ -29,7 +29,6 @@ module Falqon
       @logger = logger
     end
 
-    # Push one or more messages to the queue
     sig { params(messages: Message).returns(T.any(Identifier, T::Array[Identifier])) }
     def push(*messages)
       logger.debug "Pushing #{messages.size} messages onto queue #{name}"
@@ -53,7 +52,6 @@ module Falqon
       end
     end
 
-    # Pop a message from the queue
     sig { params(block: T.nilable(T.proc.params(message: Message).void)).returns(T.nilable(Message)) }
     def pop(&block)
       logger.debug "Popping message from queue #{name}"
@@ -110,7 +108,6 @@ module Falqon
       nil
     end
 
-    # Peek at the next message in the queue
     sig { returns(T.nilable(Message)) }
     def peek
       logger.debug "Peeking at next message in queue #{name}"
@@ -124,7 +121,6 @@ module Falqon
       end
     end
 
-    # Clear the queue
     sig { returns(T::Array[Identifier]) }
     def clear
       logger.debug "Clearing queue #{name}"
@@ -141,13 +137,11 @@ module Falqon
       end
     end
 
-    # Size of the queue
     sig { returns(Integer) }
     def size
       redis.with { |r| r.llen(name) }
     end
 
-    # Whether the queue is empty
     sig { returns(T::Boolean) }
     def empty?
       size.zero?
