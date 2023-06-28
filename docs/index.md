@@ -26,3 +26,11 @@ Falqon offers an elegant solution for messaging queues in Ruby.
 - Install Falqon and get working with messaging queues in a heartbeat using the [quickstart guide](quickstart)
 - Check out the [API documentation](api) for more information on how to use Falqon in your application
 - Read the [architecture documentation](architecture) to learn more about how Falqon works under the hood
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at [https://github.com/floriandejonckheere/falqon](https://github.com/floriandejonckheere/falqon). 
+
+## License
+
+The software is available as open source under the terms of the [LGPL-3.0 License](https://www.gnu.org/licenses/lgpl-3.0.html).
