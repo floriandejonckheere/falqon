@@ -21,8 +21,31 @@ RSpec.describe Falqon::Queue do
 
 
   describe "#push" do
-    it "pushes messages to the queue" do
-      queue.push("message1", "message2")
+    it "pushes a single message to the queue and returns the identifier" do
+      id = queue.push("message1")
+
+      expect(id).to eq 1
+
+      redis.with do |r|
+        # Check that the identifiers have been pushed to the queue
+        expect(r.lrange("falqon/name", 0, -1)).to eq ["1"]
+
+        # Check that the messages have been stored
+        expect(r.get("falqon/name:messages:1")).to eq "message1"
+
+        # Check that the processing queue is empty
+        expect(r.llen("falqon/name:processing")).to eq 0
+
+        # Check that the identifier counter is incremented
+        expect(r.get("falqon/name:id")).to eq "1"
+      end
+    end
+
+    it "pushes messages to the queue and returns the identifiers" do
+      id1, id2 = queue.push("message1", "message2")
+
+      expect(id1).to eq 1
+      expect(id2).to eq 2
 
       redis.with do |r|
         # Check that the identifiers have been pushed to the queue
@@ -38,13 +61,6 @@ RSpec.describe Falqon::Queue do
         # Check that the identifier counter is incremented
         expect(r.get("falqon/name:id")).to eq "2"
       end
-    end
-
-    it "returns the pushed messages' identifiers" do
-      id1, id2 = queue.push("message1", "message2")
-
-      expect(id1).to eq 1
-      expect(id2).to eq 2
     end
   end
 

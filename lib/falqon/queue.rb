@@ -33,7 +33,7 @@ module Falqon
     end
 
     # Push one or more messages to the queue
-    sig { params(messages: Message).returns(T::Array[Identifier]) }
+    sig { params(messages: Message).returns(T.any(Identifier, T::Array[Identifier])) }
     def push(*messages)
       logger.debug "Pushing #{messages.size} messages onto queue #{name}"
 
@@ -50,8 +50,8 @@ module Falqon
             t.rpush(name, id)
           end
 
-          # Return identifier
-          next id
+          # Return identifier(s)
+          messages.size == 1 ? (return id) : (next id)
         end
       end
     end
