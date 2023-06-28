@@ -9,9 +9,6 @@ module Falqon
   class Queue
     extend T::Sig
 
-    Message = T.type_alias { String }
-    Identifier = T.type_alias { Integer }
-
     sig { returns(String) }
     attr_reader :name
 
