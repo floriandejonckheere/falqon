@@ -25,7 +25,7 @@ And then execute:
 
 Or install it yourself as:
     
-        $ gem install falqon
+    $ gem install falqon
 
 ## Configuration
 
@@ -34,8 +34,11 @@ It's recommended to configure Falqon in an initializer file, such as `config/ini
 
 ```ruby
 Falqon.configure do |config|
-  # Configure queue name prefix
+  # Configure global queue name prefix
   # config.prefix = "falqon"
+  
+  # Maximum number of retries before a message is discarded
+  # config.max_retries = 3
   
   # Configure Redis connection pool (defaults to $REDIS_URL)
   # config.redis = ConnectionPool.new(size: 5, timeout: 5) { Redis.new(url: "redis://localhost:6379/0") }
@@ -44,6 +47,9 @@ Falqon.configure do |config|
   # config.logger = Logger.new(STDOUT)
 end
 ```
+
+In addition, it is recommended to configure Redis to be persistent in production environments, in order not to lose data.
+Refer to the [Redis documentation](https://redis.io/docs/management/persistence/) for more information.
 
 ## Usage
 
