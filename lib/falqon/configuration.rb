@@ -11,8 +11,6 @@ module Falqon
   class Configuration
     extend T::Sig
 
-    DEFAULT_PREFIX = "falqon"
-
     # Queue name prefix
     sig { params(prefix: String).returns(String) }
     attr_writer :prefix
@@ -31,7 +29,7 @@ module Falqon
 
     sig { returns(String) }
     def prefix
-      @prefix ||= DEFAULT_PREFIX
+      @prefix ||= "falqon"
     end
 
     sig { returns(Integer) }
