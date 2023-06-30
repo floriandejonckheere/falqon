@@ -14,6 +14,21 @@ RSpec.describe Falqon::Configuration do
     end
   end
 
+  describe "#retry_strategy" do
+    it "has a default value" do
+      expect(configuration.retry_strategy).to eq :linear
+    end
+
+    it "can be set" do
+      configuration.retry_strategy = :none
+      expect(configuration.retry_strategy).to eq :none
+    end
+
+    it "rejects invalid values" do
+      expect { configuration.retry_strategy = :foo }.to raise_error ArgumentError
+    end
+  end
+
   describe "#max_retries" do
     it "has a default value" do
       expect(configuration.max_retries).to eq 3

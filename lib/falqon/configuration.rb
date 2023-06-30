@@ -32,6 +32,18 @@ module Falqon
       @prefix ||= "falqon"
     end
 
+    sig { returns(Symbol) }
+    def retry_strategy
+      @retry_strategy ||= :linear
+    end
+
+    sig { params(retry_strategy: Symbol).returns(Symbol) }
+    def retry_strategy=(retry_strategy)
+      raise ArgumentError, "Invalid retry strategy #{retry_strategy.inspect}" unless [:none, :linear].include? retry_strategy
+
+      @retry_strategy = retry_strategy
+    end
+
     sig { returns(Integer) }
     def max_retries
       @max_retries ||= 3

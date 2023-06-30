@@ -14,6 +14,9 @@ Falqon.configure do |config|
   # Configure global queue name prefix
   # config.prefix = "falqon"
 
+  # Retry strategy (none or linear)
+  # config.retry_strategy = :linear
+
   # Maximum number of retries before a message is discarded
   # config.max_retries = 3
 
