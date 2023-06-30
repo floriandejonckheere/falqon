@@ -12,6 +12,9 @@ module Falqon
     sig { returns(String) }
     attr_reader :name
 
+    sig { returns(Strategy) }
+    attr_reader :retry_strategy
+
     sig { returns(Integer) }
     attr_reader :max_retries
 
@@ -21,9 +24,10 @@ module Falqon
     sig { returns(Logger) }
     attr_reader :logger
 
-    sig { params(name: String, max_retries: Integer, redis: ConnectionPool, logger: Logger).void }
-    def initialize(name, max_retries: Falqon.configuration.max_retries, redis: Falqon.configuration.redis, logger: Falqon.configuration.logger)
+    sig { params(name: String, retry_strategy: Symbol, max_retries: Integer, redis: ConnectionPool, logger: Logger).void }
+    def initialize(name, retry_strategy: Falqon.configuration.retry_strategy, max_retries: Falqon.configuration.max_retries, redis: Falqon.configuration.redis, logger: Falqon.configuration.logger)
       @name = [Falqon.configuration.prefix, name].compact.join("/")
+      @retry_strategy = Strategies.const_get(retry_strategy.to_s.capitalize).new(self)
       @max_retries = max_retries
       @redis = redis
       @logger = logger
@@ -80,30 +84,8 @@ module Falqon
     rescue Error => e
       logger.debug "Error processing message #{id}: #{e.message}"
 
-      redis.with do |r|
-        # Increment retry count
-        retries = r.incr("#{name}:retries:#{id}")
-
-        r.multi do |t|
-          if retries < max_retries
-            logger.debug "Requeuing message #{id} on queue #{name} (attempt #{retries})"
-
-            # Add identifier back to queue
-            queue.add(id)
-          else
-            logger.debug "Discarding message #{id} on queue #{name} (attempt #{retries})"
-
-            # Add identifier to dead queue
-            dead.add(id)
-
-            # Clear retry count
-            t.del("#{name}:retries:#{id}")
-          end
-
-          # Remove identifier from processing queue
-          t.lrem(processing.name, 0, id)
-        end
-      end
+      # Retry message according to configured strategy
+      retry_strategy.retry(id)
 
       nil
     end

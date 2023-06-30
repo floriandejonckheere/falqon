@@ -85,34 +85,6 @@ RSpec.describe Falqon::Queue do
         expect { |b| queue.pop(&b) }.to yield_with_args("message2")
       end
 
-      it "requeues messages if they fail" do
-        queue.push("message1", "message2")
-
-        queue.pop { raise Falqon::Error }
-
-        queue.redis.with do |r|
-          # Check that the identifiers have been pushed to the queue
-          expect(r.lrange("falqon/name", 0, -1)).to eq ["2", "1"]
-        end
-      end
-
-      it "discards messages if they fail too many times" do
-        queue.push("message1")
-
-        queue.pop { raise Falqon::Error }
-        queue.pop { raise Falqon::Error }
-        queue.pop { raise Falqon::Error }
-
-        expect { |b| queue.pop(&b) }.to raise_error MockRedis::WouldBlock
-
-        queue.redis.with do |r|
-          expect(r.lrange("falqon/name", 0, -1)).to be_empty
-          expect(r.lrange("falqon/name:dead", 0, -1)).to eq ["1"]
-
-          expect(r.get("falqon/name:retries:1")).to be_nil
-        end
-      end
-
       context "when the queue is empty" do
         it "blocks until a message is pushed to the queue" do
           expect { |b| queue.pop(&b) }.to raise_error MockRedis::WouldBlock
