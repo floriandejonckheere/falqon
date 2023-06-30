@@ -11,7 +11,7 @@ Queues are stored in Redis as a list of incrementing integers representing uniqu
 The messages itself are stored in Redis as strings.
 
 The following Redis keys are used:
-- `{name}`: list of message identifiers on the queue
+- `{name}`: list of message identifiers on the (pending) queue
 - `{name}:id`: message identifier sequence
 - `{name}:processing`: list of message identifiers being processed
 - `{name}:dead`: list of message identifiers that have been discarded

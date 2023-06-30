@@ -46,8 +46,8 @@ module Falqon
             # Store message
             t.set("#{name}:messages:#{id}", message)
 
-            # Push identifier to queue
-            queue.add(id)
+            # Push identifier to pending queue
+            pending.add(id)
           end
 
           # Return identifier(s)
@@ -62,7 +62,7 @@ module Falqon
 
       id, message = redis.with do |r|
         [
-          # Move identifier from queue to processing queue
+          # Move identifier from pending queue to processing queue
           id = r.blmove(name, processing.name, :left, :right).to_i,
 
           # Retrieve message
@@ -95,8 +95,8 @@ module Falqon
       logger.debug "Peeking at next message in queue #{name}"
 
       redis.with do |r|
-        # Get identifier from queue
-        id = queue.peek
+        # Get identifier from pending queue
+        id = pending.peek
 
         next unless id
 
@@ -110,12 +110,12 @@ module Falqon
       logger.debug "Clearing queue #{name}"
 
       # Clear all sub-queues
-      queue.clear + processing.clear + dead.clear
+      pending.clear + processing.clear + dead.clear
     end
 
     sig { returns(Integer) }
     def size
-      queue.size
+      pending.size
     end
 
     sig { returns(T::Boolean) }
@@ -124,8 +124,8 @@ module Falqon
     end
 
     sig { returns(SubQueue) }
-    def queue
-      @queue ||= SubQueue.new(self)
+    def pending
+      @pending ||= SubQueue.new(self)
     end
 
     sig { returns(SubQueue) }

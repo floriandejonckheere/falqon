@@ -19,8 +19,8 @@ module Falqon
             if retries < queue.max_retries
               queue.logger.debug "Requeuing message #{id} on queue #{queue.name} (attempt #{retries})"
 
-              # Add identifier back to queue
-              queue.queue.add(id)
+              # Add identifier back to pending queue
+              queue.pending.add(id)
             else
               queue.logger.debug "Discarding message #{id} on queue #{queue.name} (attempt #{retries})"
 
