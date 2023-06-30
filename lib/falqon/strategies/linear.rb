@@ -16,7 +16,7 @@ module Falqon
           retries = r.incr("#{queue.name}:retries:#{id}")
 
           r.multi do |t|
-            if retries < queue.max_retries
+            if retries < queue.max_retries || queue.max_retries == -1
               queue.logger.debug "Requeuing message #{id} on queue #{queue.name} (attempt #{retries})"
 
               # Add identifier back to pending queue

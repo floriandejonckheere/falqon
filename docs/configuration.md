@@ -17,7 +17,7 @@ Falqon.configure do |config|
   # Retry strategy (none or linear)
   # config.retry_strategy = :linear
 
-  # Maximum number of retries before a message is discarded
+  # Maximum number of retries before a message is discarded (-1 for infinite retries)
   # config.max_retries = 3
 
   # Configure Redis connection pool (defaults to $REDIS_URL)
