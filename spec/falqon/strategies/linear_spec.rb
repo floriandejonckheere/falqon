@@ -10,9 +10,9 @@ RSpec.describe Falqon::Strategies::Linear do
       queue.pop { raise Falqon::Error }
 
       queue.redis.with do |r|
-        expect(r.lrange("falqon/name", 0, -1)).to eq ["2", "1"]
+        expect(r.lrange(queue.name, 0, -1)).to eq ["2", "1"]
 
-        expect(r.get("falqon/name:retries:1")).to eq "1"
+        expect(r.get("#{queue.name}:retries:1")).to eq "1"
       end
     end
 
@@ -24,11 +24,11 @@ RSpec.describe Falqon::Strategies::Linear do
       queue.pop { raise Falqon::Error }
 
       queue.redis.with do |r|
-        expect(r.lrange("falqon/name", 0, -1)).to be_empty
-        expect(r.lrange("falqon/name:processing", 0, -1)).to be_empty
-        expect(r.lrange("falqon/name:dead", 0, -1)).to eq ["1"]
+        expect(r.lrange(queue.name, 0, -1)).to be_empty
+        expect(r.lrange(queue.processing.name, 0, -1)).to be_empty
+        expect(r.lrange(queue.dead.name, 0, -1)).to eq ["1"]
 
-        expect(r.get("falqon/name:retries:1")).to be_nil
+        expect(r.get("#{queue.name}:retries:1")).to be_nil
       end
     end
   end

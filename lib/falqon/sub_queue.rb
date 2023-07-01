@@ -21,39 +21,74 @@ module Falqon
       @name = [queue.name, type].compact.join(":")
     end
 
-    sig { params(id: Identifier).void }
-    def add(id)
-      # FIXME: use Redis connection of caller
+    sig { params(messages: Message).returns(T.any(Identifier, T::Array[Identifier])) }
+    def add(*messages)
       queue.redis.with do |r|
-        r.rpush(name, id)
+        messages.map do |message|
+          # Generate unique identifier
+          id = r.incr("#{name}:id")
+
+          r.multi do |t|
+            # Store message
+            t.set("#{name}:messages:#{id}", message)
+
+            # Push identifier to queue
+            r.rpush(name, id)
+          end
+
+          # Return identifier(s)
+          messages.size == 1 ? (return id) : (next id)
+        end
+      end
+    end
+
+    sig { params(to: SubQueue).returns(T::Array[T.untyped]) }
+    def move(to)
+      queue.redis.with do |r|
+        [
+          # Move identifier from queue to queue
+          id = r.blmove(name, to.name, :left, :right).to_i,
+
+          # Retrieve message
+          r.get("#{name}:messages:#{id}"),
+        ]
       end
     end
 
     sig { params(id: Identifier).void }
     def remove(id)
-      # FIXME: use Redis connection of caller
       queue.redis.with do |r|
+        # Remove identifier from queue
         r.lrem(name, 0, id)
+
+        # Delete message
+        r.del("#{name}:messages:#{id}", "#{name}:retries:#{id}")
       end
+
+      nil
     end
 
-    sig { returns(T.nilable(Identifier)) }
+    sig { returns(T.nilable(Message)) }
     def peek
-      # FIXME: use Redis connection of caller
       queue.redis.with do |r|
-        r.lindex(name, 0)&.to_i
+        # Get identifier from queue
+        id = r.lindex(name, 0)&.to_i
+
+        next unless id
+
+        # Retrieve message
+        r.get("#{name}:messages:#{id}")
       end
     end
 
     sig { returns(T::Array[Identifier]) }
     def clear
-      # FIXME: use Redis connection of caller
       queue.redis.with do |r|
         # Get all identifiers from queue
         ids = r.lrange(name, 0, -1)
 
         # Delete all messages and clear queue
-        r.del(*ids.flat_map { |id| ["#{queue.name}:messages:#{id}", "#{queue.name}:retries:#{id}"] }, name, "#{queue.name}:id")
+        r.del(*ids.flat_map { |id| ["#{name}:messages:#{id}", "#{name}:retries:#{id}"] }, name, "#{name}:id")
 
         # Return identifiers
         ids.map(&:to_i)

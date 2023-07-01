@@ -37,48 +37,20 @@ module Falqon
     def push(*messages)
       logger.debug "Pushing #{messages.size} messages onto queue #{name}"
 
-      redis.with do |r|
-        messages.map do |message|
-          # Generate unique identifier
-          id = r.incr("#{name}:id")
-
-          r.multi do |t|
-            # Store message
-            t.set("#{name}:messages:#{id}", message)
-
-            # Push identifier to pending queue
-            pending.add(id)
-          end
-
-          # Return identifier(s)
-          messages.size == 1 ? (return id) : (next id)
-        end
-      end
+      pending.add(*messages)
     end
 
     sig { params(block: T.nilable(T.proc.params(message: Message).void)).returns(T.nilable(Message)) }
     def pop(&block)
       logger.debug "Popping message from queue #{name}"
 
-      id, message = redis.with do |r|
-        [
-          # Move identifier from pending queue to processing queue
-          id = r.blmove(name, processing.name, :left, :right).to_i,
-
-          # Retrieve message
-          r.get("#{name}:messages:#{id}"),
-        ]
-      end
+      # Move message from pending to processing
+      id, message = pending.move(processing)
 
       yield message if block
 
-      redis.with do |r|
-        # Remove identifier from processing queue
-        processing.remove(id)
-
-        # Delete message
-        r.del("#{name}:messages:#{id}", "#{name}:retries:#{id}")
-      end
+      # Remove message from processing
+      processing.remove(id)
 
       message
     rescue Error => e
@@ -94,15 +66,8 @@ module Falqon
     def peek
       logger.debug "Peeking at next message in queue #{name}"
 
-      redis.with do |r|
-        # Get identifier from pending queue
-        id = pending.peek
-
-        next unless id
-
-        # Retrieve message
-        r.get("#{name}:messages:#{id}")
-      end
+      # Retrieve message from pending queue
+      pending.peek
     end
 
     sig { returns(T::Array[Identifier]) }
