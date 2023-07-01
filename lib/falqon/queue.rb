@@ -37,22 +37,13 @@ module Falqon
     def push(*messages)
       logger.debug "Pushing #{messages.size} messages onto queue #{name}"
 
-      redis.with do |r|
-        messages.map do |message|
-          # Generate unique identifier
-          id = r.incr("#{name}:id")
+      messages.map do |message|
+        entry = Entry
+          .new(self, message:)
+          .create
 
-          r.multi do |t|
-            # Store message
-            t.set("#{name}:messages:#{id}", message)
-
-            # Push identifier to pending queue
-            pending.add(id)
-          end
-
-          # Return identifier(s)
-          messages.size == 1 ? (return id) : (next id)
-        end
+        # Return identifier(s)
+        messages.size == 1 ? (return entry.id) : (next entry.id)
       end
     end
 
@@ -60,32 +51,30 @@ module Falqon
     def pop(&block)
       logger.debug "Popping message from queue #{name}"
 
-      id, message = redis.with do |r|
-        [
-          # Move identifier from pending queue to processing queue
-          id = r.blmove(name, processing.name, :left, :right).to_i,
+      entry = redis.with do |r|
+        # Move identifier from pending queue to processing queue
+        id = r.blmove(name, processing.name, :left, :right).to_i,
 
-          # Retrieve message
-          r.get("#{name}:messages:#{id}"),
-        ]
+        # Retrieve message
+        Entry.new(self, id:),
       end
 
-      yield message if block
+      yield entry.message if block
 
       redis.with do |r|
         # Remove identifier from processing queue
-        processing.remove(id)
+        processing.remove(entry.id)
 
         # Delete message
-        r.del("#{name}:messages:#{id}", "#{name}:retries:#{id}")
+        entry.delete
       end
 
-      message
+      entry.message
     rescue Error => e
-      logger.debug "Error processing message #{id}: #{e.message}"
+      logger.debug "Error processing message #{entry.id}: #{e.message}"
 
       # Retry message according to configured strategy
-      retry_strategy.retry(id)
+      retry_strategy.retry(entry.id)
 
       nil
     end
@@ -101,7 +90,7 @@ module Falqon
         next unless id
 
         # Retrieve message
-        r.get("#{name}:messages:#{id}")
+        Entry.new(self, id:).message
       end
     end
 
