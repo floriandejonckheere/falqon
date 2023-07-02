@@ -37,18 +37,16 @@ module Falqon
     def push(*messages)
       logger.debug "Pushing #{messages.size} messages onto queue #{name}"
 
-      redis.with do |r|
-        messages.map do |message|
-          entry = Entry
-            .new(self, message:)
-            .create
+      messages.map do |message|
+        entry = Entry
+          .new(self, message:)
+          .create
 
-          # Push identifier to queue
-          r.rpush(pending.name, entry.id)
+        # Push identifier to queue
+        pending.add(entry.id)
 
-          # Return identifier(s)
-          messages.size == 1 ? (return entry.id) : (next entry.id)
-        end
+        # Return identifier(s)
+        messages.size == 1 ? (return entry.id) : (next entry.id)
       end
     end
 
@@ -88,15 +86,13 @@ module Falqon
     def peek
       logger.debug "Peeking at next message in queue #{name}"
 
-      redis.with do |_r|
-        # Get identifier from pending queue
-        id = pending.peek
+      # Get identifier from pending queue
+      id = pending.peek
 
-        next unless id
+      return unless id
 
-        # Retrieve message
-        Entry.new(self, id:).message
-      end
+      # Retrieve message
+      Entry.new(self, id:).message
     end
 
     sig { returns(T::Array[Identifier]) }
