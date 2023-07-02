@@ -65,3 +65,5 @@ queue.empty? # => true
 
 queue.peek # => nil
 ```
+
+For more comprehensive examples, see the [`examples/` directory](https://github.com/floriandejonckheere/falqon/tree/master/examples) in the repository.
