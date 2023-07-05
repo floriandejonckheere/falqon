@@ -26,6 +26,9 @@ module Falqon
       # Register inflections
       require root.join("config/inflections.rb")
 
+      # Collapse concerns directory
+      loader.collapse(root.join("lib/falqon/concerns"))
+
       loader.setup
       loader.eager_load
     end
