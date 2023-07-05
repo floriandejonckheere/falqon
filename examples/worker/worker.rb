@@ -19,7 +19,7 @@ loop do
     print "Got job: #{job.inspect}... "
 
     # Do some work
-    sleep 0.3
+    sleep rand(0.1..0.3)
 
     # Fail sometimes
     raise RuntimeError if rand(3).zero?

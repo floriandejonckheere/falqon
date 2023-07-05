@@ -14,9 +14,13 @@ require "falqon"
 queue = Falqon::Queue.new("jobs")
 
 puts "Enqueueing jobs..."
-10.times do |i|
+
+i = 0
+loop do
   puts "Enqueueing job #{i}..."
   queue.push("job #{i}")
 
-  sleep rand(0..0.5)
+  i += 1
+
+  sleep rand(0.4..0.5)
 end
