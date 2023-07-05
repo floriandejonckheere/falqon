@@ -7,6 +7,7 @@ module Falqon
   # Simple, efficient, and reliable messaging queue implementation
   #
   class Queue
+    include Hooks
     extend T::Sig
 
     sig { returns(String) }
@@ -35,13 +36,17 @@ module Falqon
       @max_retries = max_retries
       @redis = redis
       @logger = logger
+
+      run_hook :initialize
     end
 
     sig { params(messages: Message).returns(T.any(Identifier, T::Array[Identifier])) }
     def push(*messages)
       logger.debug "Pushing #{messages.size} messages onto queue #{name}"
 
-      messages.map do |message|
+      run_hook :push, :before
+
+      ids = messages.map do |message|
         entry = Entry
           .new(self, message:)
           .create
@@ -52,11 +57,18 @@ module Falqon
         # Return identifier(s)
         messages.size == 1 ? (return entry.id) : (next entry.id)
       end
+
+      run_hook :push, :after
+
+      # Return identifier(s)
+      ids
     end
 
     sig { params(block: T.nilable(T.proc.params(message: Message).void)).returns(T.nilable(Message)) }
     def pop(&block)
       logger.debug "Popping message from queue #{name}"
+
+      run_hook :pop, :before
 
       entry = redis.with do |r|
         # Move identifier from pending queue to processing queue
@@ -69,6 +81,8 @@ module Falqon
       message = entry.message
 
       yield message if block
+
+      run_hook :pop, :after
 
       # Remove identifier from processing queue
       processing.remove(entry.id)
@@ -90,10 +104,14 @@ module Falqon
     def peek
       logger.debug "Peeking at next message in queue #{name}"
 
+      run_hook :peek, :before
+
       # Get identifier from pending queue
       id = pending.peek
 
       return unless id
+
+      run_hook :peek, :after
 
       # Retrieve message
       Entry.new(self, id:).message
@@ -103,17 +121,28 @@ module Falqon
     def clear
       logger.debug "Clearing queue #{name}"
 
+      run_hook :clear, :before
+
       # Clear all sub-queues
-      pending.clear + processing.clear + dead.clear
+      ids = pending.clear + processing.clear + dead.clear
+
+      run_hook :clear, :after
+
+      # Return identifiers
+      ids
     end
 
     sig { void }
     def delete
       logger.debug "Deleting queue #{name}"
 
+      run_hook :delete, :before
+
       # Clear all sub-queues
       [pending, processing, dead]
         .each(&:clear)
+
+      run_hook :delete, :after
     end
 
     sig { returns(Integer) }
