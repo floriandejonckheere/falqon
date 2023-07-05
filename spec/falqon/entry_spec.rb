@@ -60,7 +60,7 @@ RSpec.describe Falqon::Entry do
 
       queue.redis.with do |r|
         expect(r.get("falqon/name:messages:2")).to be_nil
-        expect(r.get("falqon/name:retries:2")).to be_nil
+        expect(r.get("falqon/name:stats:2")).to be_nil
       end
     end
   end

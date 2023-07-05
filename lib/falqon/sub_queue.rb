@@ -53,7 +53,7 @@ module Falqon
         ids = r.lrange(name, 0, -1)
 
         # Delete all messages and clear queue
-        r.del(*ids.flat_map { |id| ["#{queue.name}:messages:#{id}", "#{queue.name}:retries:#{id}"] }, name, "#{queue.name}:id")
+        r.del(*ids.flat_map { |id| ["#{queue.name}:messages:#{id}", "#{queue.name}:stats:#{id}"] }, name, "#{queue.name}:id")
 
         # Return identifiers
         ids.map(&:to_i)

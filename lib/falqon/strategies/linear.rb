@@ -13,7 +13,7 @@ module Falqon
         # FIXME: use Redis connection of caller
         queue.redis.with do |r|
           # Increment retry count
-          retries = r.incr("#{queue.name}:retries:#{id}")
+          retries = r.hincrby("#{queue.name}:stats:#{id}", :retries, 1)
 
           r.multi do |t|
             if retries < queue.max_retries || queue.max_retries == -1
@@ -28,7 +28,7 @@ module Falqon
               queue.dead.add(id)
 
               # Clear retry count
-              t.del("#{queue.name}:retries:#{id}")
+              t.hdel("#{queue.name}:stats:#{id}", :retries)
             end
 
             # Remove identifier from processing queue

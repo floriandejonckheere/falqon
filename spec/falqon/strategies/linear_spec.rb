@@ -12,7 +12,7 @@ RSpec.describe Falqon::Strategies::Linear do
       queue.redis.with do |r|
         expect(r.lrange("falqon/name", 0, -1)).to eq ["2", "1"]
 
-        expect(r.get("falqon/name:retries:1")).to eq "1"
+        expect(r.hget("falqon/name:stats:1", :retries)).to eq "1"
       end
     end
 
@@ -28,7 +28,7 @@ RSpec.describe Falqon::Strategies::Linear do
         expect(r.lrange("falqon/name:processing", 0, -1)).to be_empty
         expect(r.lrange("falqon/name:dead", 0, -1)).to eq ["1"]
 
-        expect(r.get("falqon/name:retries:1")).to be_nil
+        expect(r.hget("falqon/name:stats:1", :retries)).to be_nil
       end
     end
   end

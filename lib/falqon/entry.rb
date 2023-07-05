@@ -47,7 +47,7 @@ module Falqon
       # FIXME: use Redis connection of caller
       queue.redis.with do |r|
         # Delete message
-        r.del("#{queue.name}:messages:#{id}", "#{queue.name}:retries:#{id}")
+        r.del("#{queue.name}:messages:#{id}", "#{queue.name}:stats:#{id}")
       end
     end
   end

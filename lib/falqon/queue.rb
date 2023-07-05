@@ -93,7 +93,7 @@ module Falqon
         r.hincrby("#{name}:stats", :processed, 1)
 
         # Increment retry counter if message is retried
-        r.hincrby("#{name}:stats", :retried, 1) if r.get("#{name}:retries:#{id}").to_i.positive?
+        r.hincrby("#{name}:stats", :retried, 1) if r.hget("#{name}:stats:#{id}", :retries).to_i.positive?
 
         # Retrieve message
         Entry.new(self, id:)
