@@ -37,6 +37,11 @@ module Falqon
       @redis = redis
       @logger = logger
 
+      # Register the queue
+      redis.with do |r|
+        r.sadd [Falqon.configuration.prefix, "queues"].compact.join(":"), id
+      end
+
       run_hook :initialize
     end
 
@@ -157,6 +162,11 @@ module Falqon
       # Delete stats
       redis.with { |r| r.del("#{name}:stats") }
 
+      # Deregister the queue
+      redis.with do |r|
+        r.srem [Falqon.configuration.prefix, "queues"].compact.join(":"), id
+      end
+
       run_hook :delete, :after
     end
 
@@ -195,6 +205,16 @@ module Falqon
     sig { returns(SubQueue) }
     def dead
       @dead ||= SubQueue.new(self, "dead")
+    end
+
+    class << self
+      def all
+        Falqon.configuration.redis.with do |r|
+          r
+            .smembers([Falqon.configuration.prefix, "queues"].compact.join(":"))
+            .map { |id| new(id) }
+        end
+      end
     end
   end
 end

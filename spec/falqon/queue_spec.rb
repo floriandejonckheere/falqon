@@ -3,6 +3,14 @@
 RSpec.describe Falqon::Queue do
   subject(:queue) { described_class.new("name") }
 
+  describe "#initialize" do
+    it "registers the queue" do
+      queue
+
+      expect(described_class.all.map(&:id)).to include "name"
+    end
+  end
+
   describe "#name" do
     it "prepends a prefix" do
       expect(queue.name).to eq "falqon/name"
@@ -144,7 +152,7 @@ RSpec.describe Falqon::Queue do
 
       queue.redis.with do |r|
         # Check that all keys have been deleted
-        expect(r.keys).to be_empty
+        expect(r.keys - ["falqon:queues"]).to be_empty
       end
     end
 
@@ -171,8 +179,16 @@ RSpec.describe Falqon::Queue do
 
       queue.redis.with do |r|
         # Check that all keys have been deleted
-        expect(r.keys).to be_empty
+        expect(r.keys - ["falqon:queues"]).to be_empty
       end
+    end
+
+    it "deregisters the queue" do
+      queue.push("message1", "message2")
+
+      queue.delete
+
+      expect(described_class.all.map(&:id)).not_to include "name"
     end
   end
 
@@ -199,6 +215,14 @@ RSpec.describe Falqon::Queue do
       queue.push("message1", "message2")
 
       expect(queue).not_to be_empty
+    end
+  end
+
+  describe ".all" do
+    it "returns all queues" do
+      queue
+
+      expect(described_class.all.map(&:id)).to eq ["name"]
     end
   end
 end
