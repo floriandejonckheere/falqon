@@ -74,6 +74,12 @@ module Falqon
         # Move identifier from pending queue to processing queue
         id = r.blmove(name, processing.name, :left, :right).to_i
 
+        # Increment processing counter
+        r.hincrby("#{name}:stats", :processed, 1)
+
+        # Increment retry counter if message is retried
+        r.hincrby("#{name}:stats", :retried, 1) if r.get("#{name}:retries:#{id}").to_i.positive?
+
         # Retrieve message
         Entry.new(self, id:)
       end
@@ -93,6 +99,9 @@ module Falqon
       message
     rescue Error => e
       logger.debug "Error processing message #{entry.id}: #{e.message}"
+
+      # Increment failure counter
+      redis.with { |r| r.hincrby("#{name}:stats", :failed, 1) }
 
       # Retry message according to configured strategy
       retry_strategy.retry(entry.id)
@@ -126,6 +135,9 @@ module Falqon
       # Clear all sub-queues
       ids = pending.clear + processing.clear + dead.clear
 
+      # Clear stats
+      redis.with { |r| r.del("#{name}:stats") }
+
       run_hook :clear, :after
 
       # Return identifiers
@@ -138,9 +150,12 @@ module Falqon
 
       run_hook :delete, :before
 
-      # Clear all sub-queues
+      # Delete all sub-queues
       [pending, processing, dead]
         .each(&:clear)
+
+      # Delete stats
+      redis.with { |r| r.del("#{name}:stats") }
 
       run_hook :delete, :after
     end
@@ -153,6 +168,18 @@ module Falqon
     sig { returns(T::Boolean) }
     def empty?
       size.zero?
+    end
+
+    sig { returns T::Hash[Symbol, Integer] }
+    def stats
+      redis.with do |r|
+        Hash
+          .new { |h, k| h[k] = 0 }
+          .merge r
+          .hgetall("#{name}:stats")
+          .transform_keys(&:to_sym)
+          .transform_values(&:to_i)
+      end
     end
 
     sig { returns(SubQueue) }

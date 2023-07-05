@@ -71,6 +71,12 @@ RSpec.describe Falqon::Queue do
       expect(queue.pop).to eq "message2"
     end
 
+    it "increments the processing counter" do
+      queue.push("message1")
+
+      expect { queue.pop }.to change { queue.stats[:processed] }.from(0).to 1
+    end
+
     context "when the queue is empty" do
       it "blocks until a message is pushed to the queue" do
         expect { queue.pop }.to raise_error MockRedis::WouldBlock
@@ -83,6 +89,26 @@ RSpec.describe Falqon::Queue do
 
         expect { |b| queue.pop(&b) }.to yield_with_args("message1")
         expect { |b| queue.pop(&b) }.to yield_with_args("message2")
+      end
+
+      it "increments the processing counter" do
+        queue.push("message1")
+
+        expect { queue.pop { nil } }.to change { queue.stats[:processed] }.from(0).to 1
+      end
+
+      it "increments the retry counter if the message is retried" do
+        queue.push("message1")
+
+        queue.pop { raise Falqon::Error }
+
+        expect { queue.pop { nil } }.to change { queue.stats[:retried] }.from(0).to 1
+      end
+
+      it "increments the failure counter if the message raised an error" do
+        queue.push("message1")
+
+        expect { queue.pop { raise Falqon::Error } }.to change { queue.stats[:failed] }.from(0).to 1
       end
 
       context "when the queue is empty" do

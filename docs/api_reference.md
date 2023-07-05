@@ -137,6 +137,7 @@ This method does not block.
 
 Use `Falqon::Queue#clear` to clear the queue.
 This deletes the queue and all its messages.
+It also resets the stats.
 
 ```ruby
 Falqon::Queue#clear
@@ -169,3 +170,18 @@ Falqon::Queue#empty?
 Returns:
 
 - `Boolean`: `true` if the queue is empty, `false` otherwise
+
+### Get the queue stats
+
+Use `Falqon::Queue#stats` to get the queue stats.
+
+```ruby
+Falqon::Queue#stats
+```
+
+Returns:
+
+- `Hash`: queue statistics. Supported keys:
+    - `:processed`: total number of processing attempts
+    - `:failed`: total number of processing failures
+    - `:retried`: total number of processing retries
