@@ -37,9 +37,12 @@ module Falqon
       @redis = redis
       @logger = logger
 
-      # Register the queue
       redis.with do |r|
+        # Register the queue
         r.sadd [Falqon.configuration.prefix, "queues"].compact.join(":"), id
+
+        # Set creation timestamp
+        r.hsetnx("#{name}:stats", :created_at, Time.now.to_i)
       end
 
       run_hook :initialize

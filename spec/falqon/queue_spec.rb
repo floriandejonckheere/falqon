@@ -9,6 +9,22 @@ RSpec.describe Falqon::Queue do
 
       expect(described_class.all.map(&:id)).to include "name"
     end
+
+    it "sets the creation timestamp exactly once" do
+      Timecop.freeze do
+        time = Time.now.to_i
+
+        queue = described_class.new("name")
+
+        expect(queue.stats[:created_at]).to be_within(1).of time
+
+        Timecop.travel(60)
+
+        queue = described_class.new("name")
+
+        expect(queue.stats[:created_at]).to be_within(1).of time
+      end
+    end
   end
 
   describe "#name" do

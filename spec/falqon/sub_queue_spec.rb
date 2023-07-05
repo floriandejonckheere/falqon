@@ -64,7 +64,7 @@ RSpec.describe Falqon::SubQueue do
 
       queue.redis.with do |r|
         # Check that all keys have been deleted
-        expect(r.keys - ["falqon:queues"]).to be_empty
+        expect(r.keys - ["falqon:queues", "falqon/name:stats"]).to be_empty
       end
     end
 
