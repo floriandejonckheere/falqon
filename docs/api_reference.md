@@ -147,6 +147,15 @@ Returns:
 
 - `Array[Integer]`: the identifiers of the messages that were deleted
 
+### Delete the queue
+
+Use `Falqon::Queue#delete` to delete the queue.
+This deletes the queue and all its messages.
+
+```ruby
+Falqon::Queue#delete
+```
+
 ### Get the number of messages in the queue
 
 Use `Falqon::Queue#size` to get the number of messages in the queue.

@@ -17,3 +17,4 @@ The following Redis keys are used:
 - `{name}:dead`: list of message identifiers that have been discarded
 - `{name}:messages:{id}`: message contents for identifier `{id}`
 - `{name}:retries:{id}`: retry count for identifier `{id}`
+- `{name}:stats`: statistics for the queue (hash)
