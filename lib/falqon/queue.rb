@@ -10,6 +10,9 @@ module Falqon
     extend T::Sig
 
     sig { returns(String) }
+    attr_reader :id
+
+    sig { returns(String) }
     attr_reader :name
 
     sig { returns(Strategy) }
@@ -24,9 +27,10 @@ module Falqon
     sig { returns(Logger) }
     attr_reader :logger
 
-    sig { params(name: String, retry_strategy: Symbol, max_retries: Integer, redis: ConnectionPool, logger: Logger).void }
-    def initialize(name, retry_strategy: Falqon.configuration.retry_strategy, max_retries: Falqon.configuration.max_retries, redis: Falqon.configuration.redis, logger: Falqon.configuration.logger)
-      @name = [Falqon.configuration.prefix, name].compact.join("/")
+    sig { params(id: String, retry_strategy: Symbol, max_retries: Integer, redis: ConnectionPool, logger: Logger).void }
+    def initialize(id, retry_strategy: Falqon.configuration.retry_strategy, max_retries: Falqon.configuration.max_retries, redis: Falqon.configuration.redis, logger: Falqon.configuration.logger)
+      @id = id
+      @name = [Falqon.configuration.prefix, id].compact.join("/")
       @retry_strategy = Strategies.const_get(retry_strategy.to_s.capitalize).new(self)
       @max_retries = max_retries
       @redis = redis
