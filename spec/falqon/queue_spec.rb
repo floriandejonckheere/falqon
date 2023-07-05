@@ -10,19 +10,21 @@ RSpec.describe Falqon::Queue do
       expect(described_class.all.map(&:id)).to include "name"
     end
 
-    it "sets the creation timestamp exactly once" do
+    it "sets the creation and update timestamps exactly once" do
       Timecop.freeze do
         time = Time.now.to_i
 
         queue = described_class.new("name")
 
         expect(queue.stats[:created_at]).to be_within(1).of time
+        expect(queue.stats[:updated_at]).to be_within(1).of time
 
         Timecop.travel(60)
 
         queue = described_class.new("name")
 
         expect(queue.stats[:created_at]).to be_within(1).of time
+        expect(queue.stats[:updated_at]).to be_within(1).of time
       end
     end
   end
@@ -85,6 +87,22 @@ RSpec.describe Falqon::Queue do
         expect(r.get("falqon/name:id")).to eq "2"
       end
     end
+
+    it "sets the update timestamp" do
+      Timecop.freeze do
+        time = Time.now.to_i
+
+        queue
+
+        expect(queue.stats[:updated_at]).to be_within(1).of time
+
+        Timecop.travel(60)
+
+        queue.push("message1")
+
+        expect(queue.stats[:updated_at]).to be_within(1).of(time + 60)
+      end
+    end
   end
 
   describe "#pop" do
@@ -93,6 +111,22 @@ RSpec.describe Falqon::Queue do
 
       expect(queue.pop).to eq "message1"
       expect(queue.pop).to eq "message2"
+    end
+
+    it "sets the update timestamp" do
+      Timecop.freeze do
+        time = Time.now.to_i
+
+        queue.push("message1")
+
+        expect(queue.stats[:updated_at]).to be_within(1).of time
+
+        Timecop.travel(60)
+
+        queue.pop
+
+        expect(queue.stats[:updated_at]).to be_within(1).of(time + 60)
+      end
     end
 
     it "increments the processing counter" do
@@ -166,9 +200,29 @@ RSpec.describe Falqon::Queue do
 
       expect(queue).to be_empty
 
+      expect(queue.stats[:processed]).to eq 0
+      expect(queue.stats[:failed]).to eq 0
+      expect(queue.stats[:retried]).to eq 0
+
       queue.redis.with do |r|
         # Check that all keys have been deleted
-        expect(r.keys - ["falqon:queues"]).to be_empty
+        expect(r.keys - ["falqon:queues", "falqon/name:stats"]).to be_empty
+      end
+    end
+
+    it "sets the update timestamp" do
+      Timecop.freeze do
+        time = Time.now.to_i
+
+        queue.push("message1")
+
+        expect(queue.stats[:updated_at]).to be_within(1).of time
+
+        Timecop.travel(60)
+
+        queue.clear
+
+        expect(queue.stats[:updated_at]).to be_within(1).of(time + 60)
       end
     end
 

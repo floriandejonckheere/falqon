@@ -41,8 +41,9 @@ module Falqon
         # Register the queue
         r.sadd [Falqon.configuration.prefix, "queues"].compact.join(":"), id
 
-        # Set creation timestamp
+        # Set creation and update timestamp (if not set)
         r.hsetnx("#{name}:stats", :created_at, Time.now.to_i)
+        r.hsetnx("#{name}:stats", :updated_at, Time.now.to_i)
       end
 
       run_hook :initialize
@@ -53,6 +54,9 @@ module Falqon
       logger.debug "Pushing #{messages.size} messages onto queue #{name}"
 
       run_hook :push, :before
+
+      # Set update timestamp
+      redis.with { |r| r.hset("#{name}:stats", :updated_at, Time.now.to_i) }
 
       ids = messages.map do |message|
         entry = Entry
@@ -81,6 +85,9 @@ module Falqon
       entry = redis.with do |r|
         # Move identifier from pending queue to processing queue
         id = r.blmove(name, processing.name, :left, :right).to_i
+
+        # Set update timestamp
+        r.hset("#{name}:stats", :updated_at, Time.now.to_i)
 
         # Increment processing counter
         r.hincrby("#{name}:stats", :processed, 1)
@@ -143,8 +150,13 @@ module Falqon
       # Clear all sub-queues
       ids = pending.clear + processing.clear + dead.clear
 
-      # Clear stats
-      redis.with { |r| r.del("#{name}:stats") }
+      redis.with do |r|
+        # Clear stats
+        r.hdel("#{name}:stats", :processed, :failed, :retried)
+
+        # Set update timestamp
+        r.hset("#{name}:stats", :updated_at, Time.now.to_i)
+      end
 
       run_hook :clear, :after
 

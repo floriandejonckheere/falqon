@@ -137,7 +137,7 @@ This method does not block.
 
 Use `Falqon::Queue#clear` to clear the queue.
 This deletes the queue and all its messages.
-It also resets the stats, but does not deregister the queue.
+It also resets the stats (except for creation/update timestamp), but does not deregister the queue.
 
 ```ruby
 Falqon::Queue#clear
@@ -195,6 +195,7 @@ Returns:
     - `:processed`: total number of processing attempts
     - `:failed`: total number of processing failures
     - `:retried`: total number of processing retries
+    - `:created_at`: timestamp of the queue creation
 
 ### List all queues
 
