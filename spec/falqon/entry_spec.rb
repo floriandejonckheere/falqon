@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Falqon::Entry do
-  subject(:entry) { described_class.new(queue) }
+  subject(:entry) { described_class.new(queue, message: "message") }
 
   let(:queue) { Falqon::Queue.new("name") }
 
@@ -71,6 +71,16 @@ RSpec.describe Falqon::Entry do
       queue.redis.with do |r|
         expect(r.get("falqon/name:messages:2")).to be_nil
         expect(r.get("falqon/name:stats:2")).to be_nil
+      end
+    end
+  end
+
+  describe "#stats" do
+    it "returns statistics" do
+      Timecop.freeze do
+        entry.create
+
+        expect(entry.stats).to eq({ created_at: Time.now.to_i })
       end
     end
   end

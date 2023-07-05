@@ -56,11 +56,11 @@ module Falqon
 
     sig { returns T::Hash[Symbol, Integer] }
     def stats
-      redis.with do |r|
+      queue.redis.with do |r|
         Hash
           .new { |h, k| h[k] = 0 }
           .merge r
-          .hgetall("#{name}:stats")
+          .hgetall("#{queue.name}:stats:#{id}")
           .transform_keys(&:to_sym)
           .transform_values(&:to_i)
       end

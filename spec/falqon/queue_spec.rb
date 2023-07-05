@@ -288,6 +288,31 @@ RSpec.describe Falqon::Queue do
     end
   end
 
+  describe "#stats" do
+    it "returns statistics" do
+      Timecop.freeze do
+        time = Time.now.to_i
+
+        queue.push("message1", "message2")
+
+        queue.pop
+        queue.pop { raise Falqon::Error }
+
+        Timecop.travel(60)
+
+        queue.pop
+
+        expect(queue.stats).to eq({
+          processed: 3,
+          failed: 1,
+          retried: 1,
+          created_at: time,
+          updated_at: time + 60
+        })
+      end
+    end
+  end
+
   describe ".all" do
     it "returns all queues" do
       queue
