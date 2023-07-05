@@ -49,6 +49,16 @@ RSpec.describe Falqon::Entry do
         expect(r.get("falqon/name:messages:2")).to eq "message1"
       end
     end
+
+    it "sets the creation timestamp" do
+      Timecop.freeze do
+        described_class
+          .new(queue, id: 2, message: "message1")
+          .create
+
+        expect(queue.stats[:created_at]).to be_within(1).of Time.now.to_i
+      end
+    end
   end
 
   describe "#delete" do

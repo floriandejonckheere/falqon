@@ -37,6 +37,9 @@ module Falqon
       queue.redis.with do |r|
         # Store message
         r.set("#{queue.name}:messages:#{id}", message)
+
+        # Set creation and update timestamp
+        r.hset("#{queue.name}:stats:#{id}", :created_at, Time.now.to_i)
       end
 
       self
@@ -48,6 +51,18 @@ module Falqon
       queue.redis.with do |r|
         # Delete message
         r.del("#{queue.name}:messages:#{id}", "#{queue.name}:stats:#{id}")
+      end
+    end
+
+    sig { returns T::Hash[Symbol, Integer] }
+    def stats
+      redis.with do |r|
+        Hash
+          .new { |h, k| h[k] = 0 }
+          .merge r
+          .hgetall("#{name}:stats")
+          .transform_keys(&:to_sym)
+          .transform_values(&:to_i)
       end
     end
   end
