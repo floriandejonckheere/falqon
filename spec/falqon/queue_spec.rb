@@ -135,6 +135,21 @@ RSpec.describe Falqon::Queue do
     end
   end
 
+  describe "#delete" do
+    it "deletes the queue" do
+      queue.push("message1", "message2")
+
+      queue.delete
+
+      expect(queue).to be_empty
+
+      queue.redis.with do |r|
+        # Check that all keys have been deleted
+        expect(r.keys).to be_empty
+      end
+    end
+  end
+
   describe "#size" do
     it "returns the size of the queue" do
       queue.push("message1", "message2")

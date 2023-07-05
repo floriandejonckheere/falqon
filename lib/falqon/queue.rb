@@ -107,6 +107,15 @@ module Falqon
       pending.clear + processing.clear + dead.clear
     end
 
+    sig { void }
+    def delete
+      logger.debug "Deleting queue #{name}"
+
+      # Clear all sub-queues
+      [pending, processing, dead]
+        .each(&:clear)
+    end
+
     sig { returns(Integer) }
     def size
       pending.size
