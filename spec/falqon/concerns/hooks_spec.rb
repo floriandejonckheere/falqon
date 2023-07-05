@@ -21,10 +21,14 @@ RSpec.describe Falqon::Hooks do
         @result = []
       end
 
-      def call
+      def call_with_block
         run_hook :call do
           result << "call"
         end
+      end
+
+      def call_without_block
+        run_hook :call
       end
 
       def after_call
@@ -37,9 +41,15 @@ RSpec.describe Falqon::Hooks do
     end
   end
 
-  it "runs the configured hooks in-order" do
-    instance.call
+  it "runs the configured hooks in-order with a block" do
+    instance.call_with_block
 
     expect(instance.result).to eq ["before", "call", "after"]
+  end
+
+  it "runs the configured hooks in-order without a block" do
+    instance.call_without_block
+
+    expect(instance.result).to eq ["before", "after"]
   end
 end
