@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Falqon::Hooks do
-  subject(:instance) { my_class.new }
+  subject(:my_instance) { my_class.new }
 
   let(:my_class) do
     Class.new do
@@ -21,16 +21,6 @@ RSpec.describe Falqon::Hooks do
         @result = []
       end
 
-      def call_with_block
-        run_hook :call do
-          result << "call"
-        end
-      end
-
-      def call_without_block
-        run_hook :call
-      end
-
       def after_call
         result << "after"
       end
@@ -41,15 +31,47 @@ RSpec.describe Falqon::Hooks do
     end
   end
 
-  it "runs the configured hooks in-order with a block" do
-    instance.call_with_block
+  describe "with a block" do
+    it "runs the configured hooks in-order" do
+      my_instance.instance_eval do
+        run_hook :call do
+          result << "call"
+        end
+      end
 
-    expect(instance.result).to eq ["before", "call", "after"]
+      expect(my_instance.result).to eq ["before", "call", "after"]
+    end
+
+    context "when a type is specified" do
+      it "runs only the hooks of the specified type" do
+        my_instance.instance_eval do
+          run_hook :call, :before do
+            result << "call"
+          end
+        end
+
+        expect(my_instance.result).to eq ["before", "call"]
+      end
+    end
   end
 
-  it "runs the configured hooks in-order without a block" do
-    instance.call_without_block
+  describe "without a block" do
+    it "runs the configured hooks in-order" do
+      my_instance.instance_eval do
+        run_hook :call
+      end
 
-    expect(instance.result).to eq ["before", "after"]
+      expect(my_instance.result).to eq ["before", "after"]
+    end
+
+    context "when a type is specified" do
+      it "runs only the hooks of the specified type" do
+        my_instance.instance_eval do
+          run_hook :call, :before
+        end
+
+        expect(my_instance.result).to eq ["before"]
+      end
+    end
   end
 end

@@ -11,13 +11,13 @@ module Falqon
       base.extend(ClassMethods)
     end
 
-    sig { params(event: Symbol, block: T.nilable(T.proc.void)).void }
-    def run_hook(event, &block)
-      T.unsafe(self).class.hooks[event][:before].each { |hook| instance_eval(&hook) }
+    sig { params(event: Symbol, type: T.nilable(Symbol), block: T.nilable(T.proc.void)).void }
+    def run_hook(event, type = nil, &block) # rubocop:disable Metrics/CyclomaticComplexity
+      T.unsafe(self).class.hooks[event][:before].each { |hook| instance_eval(&hook) } if type.nil? || type == :before
 
       block&.call
 
-      T.unsafe(self).class.hooks[event][:after].each { |hook| instance_eval(&hook) }
+      T.unsafe(self).class.hooks[event][:after].each { |hook| instance_eval(&hook) } if type.nil? || type == :after
     end
 
     module ClassMethods
