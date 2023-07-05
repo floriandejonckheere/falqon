@@ -29,6 +29,6 @@ loop do
     puts "Failed!"
 
     # Re-raise the error to re-queue the job
-    raise
+    raise Falqon::Error
   end
 end
