@@ -88,7 +88,7 @@ RSpec.describe Falqon::Entry do
   end
 
   describe "#delete" do
-    it "deletes the message" do
+    it "removes the message from the queues" do
       entry = described_class
         .new(queue, id: 2, message: "message1")
         .create
@@ -99,6 +99,15 @@ RSpec.describe Falqon::Entry do
       expect(queue.pending).to be_empty
       expect(queue.processing).to be_empty
       expect(queue.dead).to be_empty
+    end
+
+    it "deletes the message and metadata" do
+      entry = described_class
+        .new(queue, id: 2, message: "message1")
+        .create
+
+      entry
+        .delete
 
       queue.redis.with do |r|
         expect(r.get("falqon/name:messages:2")).to be_nil
