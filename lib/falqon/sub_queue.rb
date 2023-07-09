@@ -64,5 +64,10 @@ module Falqon
     def size
       queue.redis.with { |r| r.llen(name) }
     end
+
+    sig { returns(T::Boolean) }
+    def empty?
+      size.zero?
+    end
   end
 end

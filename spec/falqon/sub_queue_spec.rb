@@ -96,4 +96,18 @@ RSpec.describe Falqon::SubQueue do
       end
     end
   end
+
+  describe "#empty?" do
+    it "returns false" do
+      sub_queue.add(1)
+
+      expect(sub_queue).not_to be_empty
+    end
+
+    context "when the queue is empty" do
+      it "returns true" do
+        expect(sub_queue).to be_empty
+      end
+    end
+  end
 end
