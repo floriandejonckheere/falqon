@@ -16,19 +16,29 @@ RSpec.describe Falqon::Strategies::Linear do
       end
     end
 
-    it "discards messages if they fail too many times" do
-      queue.push("message1")
+    context "when processing fails too many times" do
+      it "kills messages" do
+        queue.push("message1")
 
-      queue.pop { raise Falqon::Error }
-      queue.pop { raise Falqon::Error }
-      queue.pop { raise Falqon::Error }
+        queue.pop { raise Falqon::Error }
+        queue.pop { raise Falqon::Error }
+        queue.pop { raise Falqon::Error }
 
-      queue.redis.with do |r|
-        expect(r.lrange("falqon/name", 0, -1)).to be_empty
-        expect(r.lrange("falqon/name:processing", 0, -1)).to be_empty
-        expect(r.lrange("falqon/name:dead", 0, -1)).to eq ["1"]
+        expect(queue.pending).to be_empty
+        expect(queue.processing).to be_empty
+        expect(queue.dead).not_to be_empty
+      end
 
-        expect(r.hget("falqon/name:stats:1", :retries)).to be_nil
+      it "resets the retry counter" do
+        id = queue.push("message1")
+
+        queue.pop { raise Falqon::Error }
+        queue.pop { raise Falqon::Error }
+        queue.pop { raise Falqon::Error }
+
+        entry = Falqon::Entry.new(queue, id:)
+
+        expect(entry.stats[:retries]).to be_zero
       end
     end
   end

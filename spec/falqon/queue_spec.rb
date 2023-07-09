@@ -303,12 +303,12 @@ RSpec.describe Falqon::Queue do
         queue.pop
 
         expect(queue.stats).to eq({
-          processed: 3,
-          failed: 1,
-          retried: 1,
-          created_at: time,
-          updated_at: time + 60
-        })
+                                    processed: 3,
+                                    failed: 1,
+                                    retried: 1,
+                                    created_at: time,
+                                    updated_at: time + 60,
+                                  })
       end
     end
   end

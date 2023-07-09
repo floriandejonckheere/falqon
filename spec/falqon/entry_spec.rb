@@ -61,12 +61,44 @@ RSpec.describe Falqon::Entry do
     end
   end
 
-  describe "#delete" do
-    it "deletes the message" do
-      described_class
+  describe "#kill" do
+    it "moves the message to the dead queue" do
+      entry = described_class
         .new(queue, id: 2, message: "message1")
         .create
+
+      entry
+        .kill
+
+      expect(queue.pending).to be_empty
+      expect(queue.processing).to be_empty
+      expect(queue.dead).not_to be_empty
+    end
+
+    it "resets the retry count" do
+      entry = described_class
+        .new(queue, id: 2, message: "message1")
+        .create
+
+      entry
+        .kill
+
+      expect(entry.stats[:retries]).to be_zero
+    end
+  end
+
+  describe "#delete" do
+    it "deletes the message" do
+      entry = described_class
+        .new(queue, id: 2, message: "message1")
+        .create
+
+      entry
         .delete
+
+      expect(queue.pending).to be_empty
+      expect(queue.processing).to be_empty
+      expect(queue.dead).to be_empty
 
       queue.redis.with do |r|
         expect(r.get("falqon/name:messages:2")).to be_nil

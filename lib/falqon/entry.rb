@@ -46,6 +46,23 @@ module Falqon
     end
 
     sig { void }
+    def kill
+      queue.logger.debug "Killing message #{id} on queue #{queue.name}"
+
+      # FIXME: use Redis connection of caller
+      queue.redis.with do |r|
+        # Add identifier to dead queue
+        queue.dead.add(id)
+
+        # Reset retry count
+        r.hdel("#{queue.name}:stats:#{id}", :retries)
+
+        # Remove identifier from queues
+        queue.pending.remove(id)
+      end
+    end
+
+    sig { void }
     def delete
       # FIXME: use Redis connection of caller
       queue.redis.with do |r|
