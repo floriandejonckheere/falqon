@@ -119,7 +119,7 @@ module Falqon
       redis.with { |r| r.hincrby("#{name}:stats", :failed, 1) }
 
       # Retry message according to configured strategy
-      retry_strategy.retry(entry.id)
+      retry_strategy.retry(entry)
 
       nil
     end

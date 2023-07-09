@@ -17,8 +17,8 @@ module Falqon
       @queue = queue
     end
 
-    sig { params(id: Identifier).void }
-    def retry(id)
+    sig { params(entry: Entry).void }
+    def retry(entry)
       raise NotImplementedError
     end
   end

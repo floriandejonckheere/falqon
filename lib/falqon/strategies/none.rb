@@ -8,17 +8,17 @@ module Falqon
     # Retry strategy that does not retry
     #
     class None < Strategy
-      sig { params(id: Identifier).void }
-      def retry(id)
-        queue.logger.debug "Discarding message #{id} on queue #{queue.name}"
+      sig { params(entry: Entry).void }
+      def retry(entry)
+        queue.logger.debug "Discarding message #{entry.id} on queue #{queue.name}"
 
         # FIXME: use Redis connection of caller
         queue.redis.with do |r|
           # Add identifier to dead queue
-          queue.dead.add(id)
+          queue.dead.add(entry.id)
 
           # Remove identifier from processing queue
-          r.lrem(queue.processing.name, 0, id)
+          r.lrem(queue.processing.name, 0, entry.id)
         end
       end
     end
