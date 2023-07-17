@@ -7,6 +7,8 @@ module Falqon
   # An entry in a queue
   #
   class Entry
+    include Touch
+    extend Forwardable
     extend T::Sig
 
     sig { returns(Queue) }
@@ -22,25 +24,25 @@ module Falqon
     sig { returns(Identifier) }
     def id
       # FIXME: use Redis connection of caller
-      @id ||= queue.redis.with { |r| r.incr("#{queue.name}:id") }
+      @id ||= redis.with { |r| r.incr("#{name}:id") }
     end
 
     sig { returns(String) }
     def message
       # FIXME: use Redis connection of caller
-      @message ||= queue.redis.with { |r| r.get("#{queue.name}:messages:#{id}") }
+      @message ||= redis.with { |r| r.get("#{name}:messages:#{id}") }
     end
 
     sig { returns(Entry) }
     def create
       # FIXME: use Redis connection of caller
-      queue.redis.with do |r|
+      redis.with do |r|
         # Store message
-        r.set("#{queue.name}:messages:#{id}", message)
+        r.set("#{name}:messages:#{id}", message)
 
         # Set creation and update timestamp
-        r.hset("#{queue.name}:stats:#{id}", :created_at, Time.now.to_i)
-        r.hset("#{queue.name}:stats:#{id}", :updated_at, Time.now.to_i)
+        r.hset("#{name}:stats:#{id}", :created_at, Time.now.to_i)
+        r.hset("#{name}:stats:#{id}", :updated_at, Time.now.to_i)
       end
 
       self
@@ -48,15 +50,15 @@ module Falqon
 
     sig { void }
     def kill
-      queue.logger.debug "Killing message #{id} on queue #{queue.name}"
+      logger.debug "Killing message #{id} on queue #{name}"
 
       # FIXME: use Redis connection of caller
-      queue.redis.with do |r|
+      redis.with do |r|
         # Add identifier to dead queue
         queue.dead.add(id)
 
         # Reset retry count
-        r.hdel("#{queue.name}:stats:#{id}", :retries)
+        r.hdel("#{name}:stats:#{id}", :retries)
 
         # Remove identifier from queues
         queue.pending.remove(id)
@@ -66,26 +68,30 @@ module Falqon
     sig { void }
     def delete
       # FIXME: use Redis connection of caller
-      queue.redis.with do |r|
+      redis.with do |r|
         # Delete message from queue
         queue.pending.remove(id)
         queue.dead.remove(id)
 
         # Delete message and metadata
-        r.del("#{queue.name}:messages:#{id}", "#{queue.name}:stats:#{id}")
+        r.del("#{name}:messages:#{id}", "#{name}:stats:#{id}")
       end
     end
 
     sig { returns T::Hash[Symbol, Integer] }
     def stats
-      queue.redis.with do |r|
+      redis.with do |r|
         Hash
           .new { |h, k| h[k] = 0 }
           .merge r
-          .hgetall("#{queue.name}:stats:#{id}")
+          .hgetall("#{name}:stats:#{id}")
           .transform_keys(&:to_sym)
           .transform_values(&:to_i)
       end
     end
+
+    def_delegator :queue, :redis
+    def_delegator :queue, :logger
+    def_delegator :queue, :name
   end
 end
