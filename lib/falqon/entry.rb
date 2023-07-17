@@ -40,6 +40,7 @@ module Falqon
 
         # Set creation and update timestamp
         r.hset("#{queue.name}:stats:#{id}", :created_at, Time.now.to_i)
+        r.hset("#{queue.name}:stats:#{id}", :updated_at, Time.now.to_i)
       end
 
       self

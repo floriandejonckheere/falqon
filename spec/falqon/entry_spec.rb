@@ -50,13 +50,18 @@ RSpec.describe Falqon::Entry do
       end
     end
 
-    it "sets the creation timestamp" do
+    it "sets the creation and update timestamps" do
       Timecop.freeze do
-        described_class
+        time = Time.now.to_i
+
+        entry = described_class
           .new(queue, id: 2, message: "message1")
           .create
 
-        expect(queue.stats[:created_at]).to be_within(1).of Time.now.to_i
+        expect(entry.stats).to eq({
+                                    created_at: time,
+                                    updated_at: time,
+                                  })
       end
     end
   end
@@ -119,9 +124,14 @@ RSpec.describe Falqon::Entry do
   describe "#stats" do
     it "returns statistics" do
       Timecop.freeze do
+        time = Time.now.to_i
+
         entry.create
 
-        expect(entry.stats).to eq({ created_at: Time.now.to_i })
+        expect(entry.stats).to eq({
+                                    created_at: time,
+                                    updated_at: time,
+                                  })
       end
     end
   end
