@@ -7,6 +7,8 @@
 # The application enqueues jobs, which are picked up by a worker process.
 #
 
+require "json"
+
 require "bundler/setup"
 
 require "falqon"
@@ -18,7 +20,11 @@ puts "Enqueueing jobs..."
 i = 0
 loop do
   puts "Enqueueing job #{i}..."
-  queue.push("job #{i}")
+
+  data = { id: i, time: Time.now.to_i, sleep: rand(0.4..0.5) }
+  data[:long] = "x" * 1024 if rand(10).zero?
+
+  queue.push(data.to_json)
 
   i += 1
 

@@ -7,6 +7,8 @@
 # The application enqueues jobs, which are picked up by a worker process.
 #
 
+require "json"
+
 require "bundler/setup"
 
 require "falqon"
@@ -16,10 +18,12 @@ queue = Falqon::Queue.new("jobs")
 puts "Waiting for jobs..."
 loop do
   queue.pop do |job|
-    print "Got job: #{job.inspect}... "
+    data = JSON.parse(job, symbolize_names: true)
+
+    print "Got job: #{data[:id]}... "
 
     # Do some work
-    sleep rand(0.1..0.3)
+    sleep data[:sleep]
 
     # Fail sometimes
     raise RuntimeError if rand(3).zero?
