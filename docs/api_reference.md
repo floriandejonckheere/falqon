@@ -200,11 +200,11 @@ Falqon::Queue#stats
 
 Returns:
 
-- `Hash`: queue statistics. Supported keys:
-    - `:processed`: total number of processing attempts
-    - `:failed`: total number of processing failures
-    - `:retried`: total number of processing retries
-    - `:created_at`: timestamp of the queue creation
+- `Falqon::Queue::Statistics`: queue statistics. Supported attributes:
+    - `processed`: total number of processing attempts
+    - `failed`: total number of processing failures
+    - `retried`: total number of processing retries
+    - `created_at`: timestamp of the queue creation
 
 ### List all queues
 

@@ -195,12 +195,11 @@ module Falqon
       size.zero?
     end
 
-    sig { returns T::Hash[Symbol, Integer] }
+    sig { returns Statistics }
     def stats
       redis.with do |r|
-        Hash
-          .new { |h, k| h[k] = 0 }
-          .merge r
+        Statistics
+          .new r
           .hgetall("#{name}:stats")
           .transform_keys(&:to_sym)
           .transform_values(&:to_i)
@@ -230,6 +229,26 @@ module Falqon
             .map { |id| new(id) }
         end
       end
+    end
+
+    ##
+    # Queue statistics
+    #
+    class Statistics < T::Struct
+      # Total number of messages processed
+      prop :processed, Integer, default: 0
+
+      # Total number of messages failed
+      prop :failed, Integer, default: 0
+
+      # Total number of messages retried
+      prop :retried, Integer, default: 0
+
+      # Timestamp of creation
+      prop :created_at, Integer
+
+      # Timestamp of last update
+      prop :updated_at, Integer
     end
   end
 end
