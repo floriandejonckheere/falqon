@@ -8,10 +8,12 @@ module Falqon
 
     sig { params(names: Symbol).void }
     def touch(*names)
+      time = Time.now.to_i
+
       redis.with do |r|
         names.each do |n|
           # Set timestamp
-          r.hset("#{name}:stats", n, Time.now.to_i)
+          r.hset("#{name}:stats", n, time)
         end
       end
     end
