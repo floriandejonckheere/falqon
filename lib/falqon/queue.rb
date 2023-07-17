@@ -174,11 +174,11 @@ module Falqon
       [pending, processing, dead]
         .each(&:clear)
 
-      # Delete stats
-      redis.with { |r| r.del("#{name}:stats") }
-
-      # Deregister the queue
       redis.with do |r|
+        # Delete stats
+        r.del("#{name}:stats")
+
+        # Deregister the queue
         r.srem [Falqon.configuration.prefix, "queues"].compact.join(":"), id
       end
 

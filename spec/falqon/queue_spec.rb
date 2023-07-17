@@ -258,7 +258,7 @@ RSpec.describe Falqon::Queue do
 
       queue.delete
 
-      expect(described_class.all.map(&:id)).not_to include "name"
+      expect(described_class.all).to be_empty
     end
   end
 
