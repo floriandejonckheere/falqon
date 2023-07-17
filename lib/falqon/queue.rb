@@ -8,6 +8,7 @@ module Falqon
   #
   class Queue
     include Hooks
+    include Touch
     extend T::Sig
 
     sig { returns(String) }

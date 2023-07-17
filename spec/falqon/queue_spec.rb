@@ -3,6 +3,8 @@
 RSpec.describe Falqon::Queue do
   subject(:queue) { described_class.new("name") }
 
+  include_examples "touch"
+
   describe "#initialize" do
     it "registers the queue" do
       queue
