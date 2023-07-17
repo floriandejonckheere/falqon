@@ -15,6 +15,15 @@ nav_order: 4
 
 ## Queue
 
+### Attributes
+
+- `id`: the queue identifier
+- `name`: the queue name (`id` prefixed with `Falqon.config.prefix`)
+- `retry_strategy`: the retry strategy (defaults to `Falqon.config.retry_strategy`)
+- `max_retries`: the maximum number of retries before a message is discarded (defaults to `Falqon.config.max_retries`)
+- `redis`: the Redis connection pool (defaults to `Falqon.config.redis`)
+- `logger`: the logger (defaults to `Falqon.config.logger`)
+
 ### Create a queue
 
 Use `Falqon::Queue.new` to create a new queue.
@@ -209,3 +218,65 @@ Falqon::Queue.all
 Returns:
 
 - `Array[Falqon::Queue]`: active (registered) queues
+
+## Entry
+
+An entry describes an item in a queue.
+
+### Attributes
+
+- `queue`: queue the entry belongs to
+- `id`: the entry identifier
+- `message`: the entry message
+- `stats`: the entry stats
+
+### Create an entry
+
+Use `Falqon::Entry.new` and `Falqon::Entry#save` to create a new entry.
+The `id` attribute will be automatically generated and set.
+
+```ruby
+entry.create
+```
+
+Arguments:
+
+None
+
+Returns:
+
+- `Falqon::Entry`: the entry instance
+
+### Kill an entry
+
+Use `Falqon::Entry#kill` to kill an entry.
+This will move the entry to the dead queue and reset the retry count.
+
+```ruby
+entry.kill
+```
+
+Arguments:
+
+None
+
+Returns:
+
+None
+
+### Delete an entry
+
+Use `Falqon::Entry#delete` to delete an entry.
+This will delete the entry and all its data from the queue.
+
+```ruby
+entry.delete
+```
+
+Arguments:
+
+None
+
+Returns:
+
+None
