@@ -57,7 +57,7 @@ module Falqon
       run_hook :push, :before
 
       # Set update timestamp
-      redis.with { |r| r.hset("#{name}:stats", :updated_at, Time.now.to_i) }
+      touch :updated_at
 
       ids = messages.map do |message|
         entry = Entry
@@ -88,7 +88,7 @@ module Falqon
         id = r.blmove(name, processing.name, :left, :right).to_i
 
         # Set update timestamp
-        r.hset("#{name}:stats", :updated_at, Time.now.to_i)
+        touch :updated_at
 
         # Increment processing counter
         r.hincrby("#{name}:stats", :processed, 1)
@@ -156,7 +156,7 @@ module Falqon
         r.hdel("#{name}:stats", :processed, :failed, :retried)
 
         # Set update timestamp
-        r.hset("#{name}:stats", :updated_at, Time.now.to_i)
+        touch :updated_at
       end
 
       run_hook :clear, :after
