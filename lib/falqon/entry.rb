@@ -41,8 +41,9 @@ module Falqon
         r.set("#{name}:messages:#{id}", message)
 
         # Set creation and update timestamp
-        r.hset("#{name}:stats:#{id}", :created_at, Time.now.to_i)
-        r.hset("#{name}:stats:#{id}", :updated_at, Time.now.to_i)
+        r.hset("#{name}:stats:#{id}",
+               :created_at, Time.now.to_i,
+               :updated_at, Time.now.to_i,)
       end
 
       self
