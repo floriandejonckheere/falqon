@@ -38,7 +38,7 @@ RSpec.describe Falqon::Strategies::Linear do
 
         entry = Falqon::Entry.new(queue, id:)
 
-        expect(entry.stats[:retries]).to be_zero
+        expect(entry.stats.retries).to be_zero
       end
     end
   end

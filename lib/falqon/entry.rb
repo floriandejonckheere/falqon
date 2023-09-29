@@ -79,12 +79,11 @@ module Falqon
       end
     end
 
-    sig { returns T::Hash[Symbol, Integer] }
+    sig { returns Statistics }
     def stats
-      redis.with do |r|
-        Hash
-          .new { |h, k| h[k] = 0 }
-          .merge r
+      queue.redis.with do |r|
+        Statistics
+          .new r
           .hgetall("#{name}:stats:#{id}")
           .transform_keys(&:to_sym)
           .transform_values(&:to_i)
@@ -94,5 +93,19 @@ module Falqon
     def_delegator :queue, :redis
     def_delegator :queue, :logger
     def_delegator :queue, :name
+
+    ##
+    # Statistics for an entry
+    #
+    class Statistics < T::Struct
+      # Number of times the message has been retried
+      prop :retries, Integer, default: 0
+
+      # Timestamp of creation
+      prop :created_at, Integer
+
+      # Timestamp of last update
+      prop :updated_at, Integer
+    end
   end
 end

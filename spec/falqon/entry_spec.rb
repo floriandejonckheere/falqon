@@ -60,10 +60,8 @@ RSpec.describe Falqon::Entry do
           .new(queue, id: 2, message: "message1")
           .create
 
-        expect(entry.stats).to eq({
-                                    created_at: time,
-                                    updated_at: time,
-                                  })
+        expect(queue.stats.created_at).to eq time
+        expect(queue.stats.updated_at).to eq time
       end
     end
   end
@@ -90,7 +88,7 @@ RSpec.describe Falqon::Entry do
       entry
         .kill
 
-      expect(entry.stats[:retries]).to be_zero
+      expect(entry.stats.retries).to be_zero
     end
   end
 
@@ -128,12 +126,15 @@ RSpec.describe Falqon::Entry do
       Timecop.freeze do
         time = Time.now.to_i
 
-        entry.create
+        id = queue.push("message2")
 
-        expect(entry.stats).to eq({
-                                    created_at: time,
-                                    updated_at: time,
-                                  })
+        entry = described_class.new(queue, id:)
+
+        stats = entry.stats
+
+        expect(stats.retries).to eq 0
+        expect(stats.created_at).to eq time
+        expect(stats.updated_at).to eq time
       end
     end
   end

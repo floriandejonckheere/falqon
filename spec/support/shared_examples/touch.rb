@@ -6,14 +6,16 @@ RSpec.shared_examples "touch" do
       Timecop.freeze do
         time = Time.now.to_i
 
-        subject.touch(:created_at, :updated_at)
+        subject.create if subject.respond_to? :create
+
+        subject.touch :created_at, :updated_at
 
         expect(subject.stats.created_at).to eq time
         expect(subject.stats.updated_at).to eq time
 
         Timecop.travel(60)
 
-        subject.touch(:updated_at)
+        subject.touch :updated_at
 
         expect(subject.stats.created_at).to eq time
         expect(subject.stats.updated_at).to eq(time + 60)
