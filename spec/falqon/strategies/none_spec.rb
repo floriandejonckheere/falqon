@@ -9,11 +9,9 @@ RSpec.describe Falqon::Strategies::None do
 
       queue.pop { raise Falqon::Error }
 
-      queue.redis.with do |r|
-        expect(r.lrange("falqon/name", 0, -1)).to be_empty
-        expect(r.lrange("falqon/name:processing", 0, -1)).to be_empty
-        expect(r.lrange("falqon/name:dead", 0, -1)).to eq ["1"]
-      end
+      expect(queue.pending).to be_empty
+      expect(queue.processing).to be_empty
+      expect(queue.dead).not_to be_empty
     end
   end
 end
