@@ -7,7 +7,6 @@ module Falqon
   # An entry in a queue
   #
   class Entry
-    include Touch
     extend Forwardable
     extend T::Sig
 

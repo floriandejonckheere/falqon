@@ -5,8 +5,6 @@ RSpec.describe Falqon::Entry do
 
   let(:queue) { Falqon::Queue.new("name") }
 
-  it_behaves_like "touch"
-
   describe "#id" do
     it "returns an identifier" do
       entry = described_class.new(queue, id: 2)
@@ -56,7 +54,7 @@ RSpec.describe Falqon::Entry do
       Timecop.freeze do
         time = Time.now.to_i
 
-        entry = described_class
+        described_class
           .new(queue, id: 2, message: "message1")
           .create
 

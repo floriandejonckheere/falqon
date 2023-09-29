@@ -8,7 +8,6 @@ module Falqon
   #
   class Queue
     include Hooks
-    include Touch
     extend T::Sig
 
     sig { returns(String) }
@@ -57,7 +56,7 @@ module Falqon
       run_hook :push, :before
 
       # Set update timestamp
-      touch :updated_at
+      redis.with { |r| r.hset("#{name}:stats", :updated_at, Time.now.to_i) }
 
       ids = messages.map do |message|
         entry = Entry
@@ -88,7 +87,8 @@ module Falqon
         id = r.blmove(name, processing.name, :left, :right).to_i
 
         # Set update timestamp
-        touch :updated_at
+        r.hset("#{name}:stats", :updated_at, Time.now.to_i)
+        r.hset("#{name}:stats:#{id}", :updated_at, Time.now.to_i)
 
         # Increment processing counter
         r.hincrby("#{name}:stats", :processed, 1)
@@ -96,7 +96,6 @@ module Falqon
         # Increment retry counter if message is retried
         r.hincrby("#{name}:stats", :retried, 1) if r.hget("#{name}:stats:#{id}", :retries).to_i.positive?
 
-        # Retrieve message
         Entry.new(self, id:)
       end
 
@@ -156,7 +155,7 @@ module Falqon
         r.hdel("#{name}:stats", :processed, :failed, :retried)
 
         # Set update timestamp
-        touch :updated_at
+        r.hset("#{name}:stats", :updated_at, Time.now.to_i)
       end
 
       run_hook :clear, :after
