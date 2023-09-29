@@ -82,9 +82,9 @@ module Falqon
     def metadata
       queue.redis.with do |r|
         Metadata
-          .new r
-          .hgetall("#{name}:metadata:#{id}")
-          .to_h { |k ,v| [k.to_sym, k == "status" ? v : v.to_i] } # Transform all keys to symbols, and values to integers (except status)
+          .new(r
+            .hgetall("#{name}:metadata:#{id}")
+            .to_h { |k, v| [k.to_sym, k == "status" ? v : v.to_i] }) # Transform all keys to symbols, and values to integers (except status)
       end
     end
 
