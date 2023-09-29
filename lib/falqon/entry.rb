@@ -39,8 +39,8 @@ module Falqon
         # Store message
         r.set("#{name}:messages:#{id}", message)
 
-        # Set creation and update timestamp
-        r.hset("#{name}:stats:#{id}",
+        # Set metadata
+        r.hset("#{name}:metadata:#{id}",
                :created_at, Time.now.to_i,
                :updated_at, Time.now.to_i,)
       end
@@ -58,7 +58,7 @@ module Falqon
         queue.dead.add(id)
 
         # Reset retry count
-        r.hdel("#{name}:stats:#{id}", :retries)
+        r.hdel("#{name}:metadata:#{id}", :retries)
 
         # Remove identifier from queues
         queue.pending.remove(id)
@@ -74,16 +74,16 @@ module Falqon
         queue.dead.remove(id)
 
         # Delete message and metadata
-        r.del("#{name}:messages:#{id}", "#{name}:stats:#{id}")
+        r.del("#{name}:messages:#{id}", "#{name}:metadata:#{id}")
       end
     end
 
-    sig { returns Statistics }
-    def stats
+    sig { returns Metadata }
+    def metadata
       queue.redis.with do |r|
-        Statistics
+        Metadata
           .new r
-          .hgetall("#{name}:stats:#{id}")
+          .hgetall("#{name}:metadata:#{id}")
           .transform_keys(&:to_sym)
           .transform_values(&:to_i)
       end
@@ -94,9 +94,9 @@ module Falqon
     def_delegator :queue, :name
 
     ##
-    # Statistics for an entry
+    # Metadata for an entry
     #
-    class Statistics < T::Struct
+    class Metadata < T::Struct
       # Number of times the message has been retried
       prop :retries, Integer, default: 0
 

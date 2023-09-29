@@ -16,15 +16,15 @@ RSpec.describe Falqon::Queue do
 
         queue = described_class.new("name")
 
-        expect(queue.stats.created_at).to be_within(1).of time
-        expect(queue.stats.updated_at).to be_within(1).of time
+        expect(queue.metadata.created_at).to be_within(1).of time
+        expect(queue.metadata.updated_at).to be_within(1).of time
 
         Timecop.travel(60)
 
         queue = described_class.new("name")
 
-        expect(queue.stats.created_at).to be_within(1).of time
-        expect(queue.stats.updated_at).to be_within(1).of time
+        expect(queue.metadata.created_at).to be_within(1).of time
+        expect(queue.metadata.updated_at).to be_within(1).of time
       end
     end
   end
@@ -94,13 +94,13 @@ RSpec.describe Falqon::Queue do
 
         queue
 
-        expect(queue.stats.updated_at).to be_within(1).of time
+        expect(queue.metadata.updated_at).to be_within(1).of time
 
         Timecop.travel(60)
 
         queue.push("message1")
 
-        expect(queue.stats.updated_at).to be_within(1).of(time + 60)
+        expect(queue.metadata.updated_at).to be_within(1).of(time + 60)
       end
     end
   end
@@ -119,20 +119,20 @@ RSpec.describe Falqon::Queue do
 
         queue.push("message1")
 
-        expect(queue.stats.updated_at).to be_within(1).of time
+        expect(queue.metadata.updated_at).to be_within(1).of time
 
         Timecop.travel(60)
 
         queue.pop
 
-        expect(queue.stats.updated_at).to be_within(1).of(time + 60)
+        expect(queue.metadata.updated_at).to be_within(1).of(time + 60)
       end
     end
 
     it "increments the processing counter" do
       queue.push("message1")
 
-      expect { queue.pop }.to change { queue.stats.processed }.from(0).to 1
+      expect { queue.pop }.to change { queue.metadata.processed }.from(0).to 1
     end
 
     context "when the queue is empty" do
@@ -152,7 +152,7 @@ RSpec.describe Falqon::Queue do
       it "increments the processing counter" do
         queue.push("message1")
 
-        expect { queue.pop { nil } }.to change { queue.stats.processed }.from(0).to 1
+        expect { queue.pop { nil } }.to change { queue.metadata.processed }.from(0).to 1
       end
 
       it "increments the retry counter if the message is retried" do
@@ -160,13 +160,13 @@ RSpec.describe Falqon::Queue do
 
         queue.pop { raise Falqon::Error }
 
-        expect { queue.pop { nil } }.to change { queue.stats.retried }.from(0).to 1
+        expect { queue.pop { nil } }.to change { queue.metadata.retried }.from(0).to 1
       end
 
       it "increments the failure counter if the message raised an error" do
         queue.push("message1")
 
-        expect { queue.pop { raise Falqon::Error } }.to change { queue.stats.failed }.from(0).to 1
+        expect { queue.pop { raise Falqon::Error } }.to change { queue.metadata.failed }.from(0).to 1
       end
 
       context "when the queue is empty" do
@@ -200,13 +200,13 @@ RSpec.describe Falqon::Queue do
 
       expect(queue).to be_empty
 
-      expect(queue.stats.processed).to eq 0
-      expect(queue.stats.failed).to eq 0
-      expect(queue.stats.retried).to eq 0
+      expect(queue.metadata.processed).to eq 0
+      expect(queue.metadata.failed).to eq 0
+      expect(queue.metadata.retried).to eq 0
 
       queue.redis.with do |r|
         # Check that all keys have been deleted
-        expect(r.keys - ["falqon:queues", "falqon/name:stats"]).to be_empty
+        expect(r.keys - ["falqon:queues", "falqon/name:metadata"]).to be_empty
       end
     end
 
@@ -216,13 +216,13 @@ RSpec.describe Falqon::Queue do
 
         queue.push("message1")
 
-        expect(queue.stats.updated_at).to be_within(1).of time
+        expect(queue.metadata.updated_at).to be_within(1).of time
 
         Timecop.travel(60)
 
         queue.clear
 
-        expect(queue.stats.updated_at).to be_within(1).of(time + 60)
+        expect(queue.metadata.updated_at).to be_within(1).of(time + 60)
       end
     end
 
@@ -288,8 +288,8 @@ RSpec.describe Falqon::Queue do
     end
   end
 
-  describe "#stats" do
-    it "returns statistics" do
+  describe "#metadata" do
+    it "returns metadata" do
       Timecop.freeze do
         time = Time.now.to_i
 
@@ -302,11 +302,11 @@ RSpec.describe Falqon::Queue do
 
         queue.pop
 
-        expect(queue.stats.processed).to eq 3
-        expect(queue.stats.failed).to eq 1
-        expect(queue.stats.retried).to eq 1
-        expect(queue.stats.created_at).to eq time
-        expect(queue.stats.updated_at).to eq(time + 60)
+        expect(queue.metadata.processed).to eq 3
+        expect(queue.metadata.failed).to eq 1
+        expect(queue.metadata.retried).to eq 1
+        expect(queue.metadata.created_at).to eq time
+        expect(queue.metadata.updated_at).to eq(time + 60)
       end
     end
   end

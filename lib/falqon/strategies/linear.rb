@@ -13,7 +13,7 @@ module Falqon
         # FIXME: use Redis connection of caller
         queue.redis.with do |r|
           # Increment retry count
-          retries = r.hincrby("#{queue.name}:stats:#{entry.id}", :retries, 1)
+          retries = r.hincrby("#{queue.name}:metadata:#{entry.id}", :retries, 1)
 
           r.multi do |_t|
             if retries < queue.max_retries || queue.max_retries == -1

@@ -42,8 +42,8 @@ module Falqon
         r.sadd [Falqon.configuration.prefix, "queues"].compact.join(":"), id
 
         # Set creation and update timestamp (if not set)
-        r.hsetnx("#{name}:stats", :created_at, Time.now.to_i)
-        r.hsetnx("#{name}:stats", :updated_at, Time.now.to_i)
+        r.hsetnx("#{name}:metadata", :created_at, Time.now.to_i)
+        r.hsetnx("#{name}:metadata", :updated_at, Time.now.to_i)
       end
 
       run_hook :initialize
@@ -56,7 +56,7 @@ module Falqon
       run_hook :push, :before
 
       # Set update timestamp
-      redis.with { |r| r.hset("#{name}:stats", :updated_at, Time.now.to_i) }
+      redis.with { |r| r.hset("#{name}:metadata", :updated_at, Time.now.to_i) }
 
       ids = messages.map do |message|
         entry = Entry
@@ -87,14 +87,14 @@ module Falqon
         id = r.blmove(name, processing.name, :left, :right).to_i
 
         # Set update timestamp
-        r.hset("#{name}:stats", :updated_at, Time.now.to_i)
-        r.hset("#{name}:stats:#{id}", :updated_at, Time.now.to_i)
+        r.hset("#{name}:metadata", :updated_at, Time.now.to_i)
+        r.hset("#{name}:metadata:#{id}", :updated_at, Time.now.to_i)
 
         # Increment processing counter
-        r.hincrby("#{name}:stats", :processed, 1)
+        r.hincrby("#{name}:metadata", :processed, 1)
 
         # Increment retry counter if message is retried
-        r.hincrby("#{name}:stats", :retried, 1) if r.hget("#{name}:stats:#{id}", :retries).to_i.positive?
+        r.hincrby("#{name}:metadata", :retried, 1) if r.hget("#{name}:metadata:#{id}", :retries).to_i.positive?
 
         Entry.new(self, id:)
       end
@@ -116,7 +116,7 @@ module Falqon
       logger.debug "Error processing message #{entry.id}: #{e.message}"
 
       # Increment failure counter
-      redis.with { |r| r.hincrby("#{name}:stats", :failed, 1) }
+      redis.with { |r| r.hincrby("#{name}:metadata", :failed, 1) }
 
       # Retry message according to configured strategy
       retry_strategy.retry(entry)
@@ -151,11 +151,11 @@ module Falqon
       ids = pending.clear + processing.clear + dead.clear
 
       redis.with do |r|
-        # Clear stats
-        r.hdel("#{name}:stats", :processed, :failed, :retried)
+        # Clear metadata
+        r.hdel("#{name}:metadata", :processed, :failed, :retried)
 
         # Set update timestamp
-        r.hset("#{name}:stats", :updated_at, Time.now.to_i)
+        r.hset("#{name}:metadata", :updated_at, Time.now.to_i)
       end
 
       run_hook :clear, :after
@@ -175,8 +175,8 @@ module Falqon
         .each(&:clear)
 
       redis.with do |r|
-        # Delete stats
-        r.del("#{name}:stats")
+        # Delete metadata
+        r.del("#{name}:metadata")
 
         # Deregister the queue
         r.srem [Falqon.configuration.prefix, "queues"].compact.join(":"), id
@@ -195,12 +195,12 @@ module Falqon
       size.zero?
     end
 
-    sig { returns Statistics }
-    def stats
+    sig { returns Metadata }
+    def metadata
       redis.with do |r|
-        Statistics
+        Metadata
           .new r
-          .hgetall("#{name}:stats")
+          .hgetall("#{name}:metadata")
           .transform_keys(&:to_sym)
           .transform_values(&:to_i)
       end
@@ -232,9 +232,9 @@ module Falqon
     end
 
     ##
-    # Queue statistics
+    # Queue metadata
     #
-    class Statistics < T::Struct
+    class Metadata < T::Struct
       # Total number of messages processed
       prop :processed, Integer, default: 0
 

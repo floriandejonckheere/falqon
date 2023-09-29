@@ -146,7 +146,7 @@ This method does not block.
 
 Use `Falqon::Queue#clear` to clear the queue.
 This deletes the queue and all its messages.
-It also resets the stats (except for creation/update timestamp), but does not deregister the queue.
+It also resets the metadata (except for creation/update timestamp), but does not deregister the queue.
 
 ```ruby
 Falqon::Queue#clear
@@ -160,7 +160,7 @@ Returns:
 
 Use `Falqon::Queue#delete` to delete the queue.
 This deletes the queue and all its messages.
-It also resets the stats and deregisters the queue.
+It also resets the metadata and deregisters the queue.
 
 ```ruby
 Falqon::Queue#delete
@@ -190,17 +190,17 @@ Returns:
 
 - `Boolean`: `true` if the queue is empty, `false` otherwise
 
-### Get the queue stats
+### Get the queue metadata
 
-Use `Falqon::Queue#stats` to get the queue stats.
+Use `Falqon::Queue#metadata` to get the queue metadata.
 
 ```ruby
-Falqon::Queue#stats
+Falqon::Queue#metadata
 ```
 
 Returns:
 
-- `Falqon::Queue::Statistics`: queue statistics. Supported attributes:
+- `Falqon::Queue::Metadata`: queue metadata. Supported attributes:
     - `processed`: total number of processing attempts
     - `failed`: total number of processing failures
     - `retried`: total number of processing retries
@@ -228,7 +228,7 @@ An entry describes an item in a queue.
 - `queue`: queue the entry belongs to
 - `id`: the entry identifier
 - `message`: the entry message
-- `stats`: the entry stats
+- `metadata`: the entry metadata
 
 ### Create an entry
 
