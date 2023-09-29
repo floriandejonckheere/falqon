@@ -53,6 +53,10 @@ RSpec/NestedGroups:
 RSpec/PendingWithoutReason:
   Enabled: false
 
+RSpec/SpecFilePathFormat:
+  Exclude:
+    - spec/falqon/concerns/**/*.rb
+
 Style/Documentation:
   Enabled: false
 
