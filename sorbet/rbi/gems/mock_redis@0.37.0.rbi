@@ -12,76 +12,76 @@ class MockRedis
 
   # @return [MockRedis] a new instance of MockRedis
   #
-  # source://mock_redis//lib/mock_redis.rb#34
+  # source://mock_redis//lib/mock_redis.rb#33
   def initialize(*args); end
 
-  # source://mock_redis//lib/mock_redis.rb#53
+  # source://mock_redis//lib/mock_redis.rb#52
   def call(command, &_block); end
 
-  # source://mock_redis//lib/mock_redis.rb#77
+  # source://mock_redis//lib/mock_redis.rb#76
   def client; end
 
-  # source://mock_redis//lib/mock_redis.rb#81
+  # source://mock_redis//lib/mock_redis.rb#80
   def connect; end
 
-  # source://mock_redis//lib/mock_redis.rb#65
+  # source://mock_redis//lib/mock_redis.rb#64
   def db; end
 
-  # source://mock_redis//lib/mock_redis.rb#57
+  # source://mock_redis//lib/mock_redis.rb#56
   def host; end
 
-  # source://mock_redis//lib/mock_redis.rb#48
+  # source://mock_redis//lib/mock_redis.rb#47
   def id; end
 
-  # source://mock_redis//lib/mock_redis.rb#48
+  # source://mock_redis//lib/mock_redis.rb#47
   def location; end
 
-  # source://mock_redis//lib/mock_redis.rb#69
+  # source://mock_redis//lib/mock_redis.rb#68
   def logger; end
 
-  # source://mock_redis//lib/mock_redis.rb#97
+  # source://mock_redis//lib/mock_redis.rb#96
   def method_missing(method, *args, **_arg2, &block); end
 
   # Returns the value of attribute options.
   #
-  # source://mock_redis//lib/mock_redis.rb#16
+  # source://mock_redis//lib/mock_redis.rb#15
   def options; end
 
-  # source://mock_redis//lib/mock_redis.rb#61
+  # source://mock_redis//lib/mock_redis.rb#60
   def port; end
 
-  # source://mock_redis//lib/mock_redis.rb#85
+  # source://mock_redis//lib/mock_redis.rb#84
   def reconnect; end
 
   # @return [Boolean]
   #
-  # source://mock_redis//lib/mock_redis.rb#93
+  # source://mock_redis//lib/mock_redis.rb#92
   def respond_to?(method, include_private = T.unsafe(nil)); end
 
-  # source://mock_redis//lib/mock_redis.rb#73
+  # source://mock_redis//lib/mock_redis.rb#72
   def time_at(timestamp); end
 
   # @yield [_self]
   # @yieldparam _self [MockRedis] the object that the method was called on
   #
-  # source://mock_redis//lib/mock_redis.rb#89
+  # source://mock_redis//lib/mock_redis.rb#88
   def with; end
 
   protected
 
-  # source://mock_redis//lib/mock_redis.rb#110
+  # source://mock_redis//lib/mock_redis.rb#109
   def _parse_options(options); end
 
-  # source://mock_redis//lib/mock_redis.rb#154
+  # source://mock_redis//lib/mock_redis.rb#153
   def logging(commands); end
 
   private
 
-  # source://mock_redis//lib/mock_redis.rb#103
+  # source://mock_redis//lib/mock_redis.rb#102
   def initialize_copy(source); end
 
   class << self
-    # source://mock_redis//lib/mock_redis.rb#30
+    # source://mock_redis//lib/mock_redis.rb#29
     def connect(*args); end
   end
 end
@@ -100,7 +100,7 @@ module MockRedis::ConnectionMethod
   def connection; end
 end
 
-# source://mock_redis//lib/mock_redis.rb#18
+# source://mock_redis//lib/mock_redis.rb#17
 MockRedis::DEFAULTS = T.let(T.unsafe(nil), Hash)
 
 # source://mock_redis//lib/mock_redis/database.rb#17
@@ -604,57 +604,57 @@ module MockRedis::ListMethods
   def lmove(source, destination, wherefrom, whereto); end
 
   # source://mock_redis//lib/mock_redis/list_methods.rb#111
-  def lpop(key); end
+  def lpop(key, count = T.unsafe(nil)); end
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#115
+  # source://mock_redis//lib/mock_redis/list_methods.rb#120
   def lpush(key, values); end
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#122
+  # source://mock_redis//lib/mock_redis/list_methods.rb#127
   def lpushx(key, value); end
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#132
+  # source://mock_redis//lib/mock_redis/list_methods.rb#137
   def lrange(key, start, stop); end
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#137
+  # source://mock_redis//lib/mock_redis/list_methods.rb#142
   def lrem(key, count, value); end
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#161
+  # source://mock_redis//lib/mock_redis/list_methods.rb#166
   def lset(key, index, value); end
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#177
+  # source://mock_redis//lib/mock_redis/list_methods.rb#182
   def ltrim(key, start, stop); end
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#184
+  # source://mock_redis//lib/mock_redis/list_methods.rb#189
   def rpop(key); end
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#188
+  # source://mock_redis//lib/mock_redis/list_methods.rb#193
   def rpoplpush(source, destination); end
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#194
+  # source://mock_redis//lib/mock_redis/list_methods.rb#199
   def rpush(key, values); end
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#201
+  # source://mock_redis//lib/mock_redis/list_methods.rb#206
   def rpushx(key, value); end
 
   private
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#225
+  # source://mock_redis//lib/mock_redis/list_methods.rb#230
   def assert_listy(key); end
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#233
+  # source://mock_redis//lib/mock_redis/list_methods.rb#238
   def first_nonempty_list(keys); end
 
   # @return [Boolean]
   #
-  # source://mock_redis//lib/mock_redis/list_methods.rb#213
+  # source://mock_redis//lib/mock_redis/list_methods.rb#218
   def list_at?(key); end
 
   # @return [Boolean]
   #
-  # source://mock_redis//lib/mock_redis/list_methods.rb#221
+  # source://mock_redis//lib/mock_redis/list_methods.rb#226
   def listy?(key); end
 
-  # source://mock_redis//lib/mock_redis/list_methods.rb#217
+  # source://mock_redis//lib/mock_redis/list_methods.rb#222
   def with_list_at(key, &blk); end
 end
 
@@ -722,7 +722,7 @@ class MockRedis::PipelinedWrapper
 
   # @return [Boolean]
   #
-  # source://mock_redis//lib/mock_redis/pipelined_wrapper.rb#67
+  # source://mock_redis//lib/mock_redis/pipelined_wrapper.rb#65
   def in_pipeline?; end
 
   # source://mock_redis//lib/mock_redis/pipelined_wrapper.rb#15
@@ -737,68 +737,73 @@ module MockRedis::SetMethods
   # source://mock_redis//lib/mock_redis/set_methods.rb#9
   def sadd(key, members); end
 
+  # @return [Boolean]
+  #
   # source://mock_redis//lib/mock_redis/set_methods.rb#30
+  def sadd?(key, members); end
+
+  # source://mock_redis//lib/mock_redis/set_methods.rb#35
   def scard(key); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#34
+  # source://mock_redis//lib/mock_redis/set_methods.rb#39
   def sdiff(*keys); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#39
+  # source://mock_redis//lib/mock_redis/set_methods.rb#44
   def sdiffstore(destination, *keys); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#47
+  # source://mock_redis//lib/mock_redis/set_methods.rb#52
   def sinter(*keys); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#55
+  # source://mock_redis//lib/mock_redis/set_methods.rb#60
   def sinterstore(destination, *keys); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#63
+  # source://mock_redis//lib/mock_redis/set_methods.rb#68
   def sismember(key, member); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#73
+  # source://mock_redis//lib/mock_redis/set_methods.rb#78
   def smembers(key); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#67
+  # source://mock_redis//lib/mock_redis/set_methods.rb#72
   def smismember(key, *members); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#77
+  # source://mock_redis//lib/mock_redis/set_methods.rb#82
   def smove(src, dest, member); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#90
+  # source://mock_redis//lib/mock_redis/set_methods.rb#95
   def spop(key, count = T.unsafe(nil)); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#109
+  # source://mock_redis//lib/mock_redis/set_methods.rb#114
   def srandmember(key, count = T.unsafe(nil)); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#122
+  # source://mock_redis//lib/mock_redis/set_methods.rb#127
   def srem(key, members); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#135
+  # source://mock_redis//lib/mock_redis/set_methods.rb#140
   def sscan(key, cursor, opts = T.unsafe(nil)); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#139
+  # source://mock_redis//lib/mock_redis/set_methods.rb#144
   def sscan_each(key, opts = T.unsafe(nil), &block); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#149
+  # source://mock_redis//lib/mock_redis/set_methods.rb#154
   def sunion(*keys); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#154
+  # source://mock_redis//lib/mock_redis/set_methods.rb#159
   def sunionstore(destination, *keys); end
 
   private
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#185
+  # source://mock_redis//lib/mock_redis/set_methods.rb#190
   def assert_sety(key); end
 
   # @return [Boolean]
   #
-  # source://mock_redis//lib/mock_redis/set_methods.rb#181
+  # source://mock_redis//lib/mock_redis/set_methods.rb#186
   def sety?(key); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#164
+  # source://mock_redis//lib/mock_redis/set_methods.rb#169
   def with_set_at(key, &blk); end
 
-  # source://mock_redis//lib/mock_redis/set_methods.rb#168
+  # source://mock_redis//lib/mock_redis/set_methods.rb#173
   def with_sets_at(*keys, &blk); end
 end
 
@@ -844,7 +849,7 @@ class MockRedis::Stream
   def add(id, values); end
 
   # source://mock_redis//lib/mock_redis/stream.rb#74
-  def each; end
+  def each(&block); end
 
   # source://forwardable/1.3.3/forwardable.rb#231
   def empty?(*args, **_arg1, &block); end
@@ -1089,25 +1094,25 @@ class MockRedis::TransactionWrapper
 
   # @return [Boolean]
   #
-  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#73
+  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#71
   def in_multi?; end
 
   # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#18
   def method_missing(method, *args, **_arg2, &block); end
 
-  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#85
+  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#83
   def multi; end
 
   # @yield [_self]
   # @yieldparam _self [MockRedis::TransactionWrapper] the object that the method was called on
   #
-  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#103
+  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#101
   def pipelined; end
 
-  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#81
+  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#79
   def pop_multi; end
 
-  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#77
+  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#75
   def push_multi; end
 
   # @return [Boolean]
@@ -1115,10 +1120,10 @@ class MockRedis::TransactionWrapper
   # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#7
   def respond_to?(method, include_private = T.unsafe(nil)); end
 
-  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#107
+  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#105
   def unwatch; end
 
-  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#111
+  # source://mock_redis//lib/mock_redis/transaction_wrapper.rb#109
   def watch(*_); end
 
   private
@@ -1147,7 +1152,7 @@ module MockRedis::UtilityMethods
   # source://mock_redis//lib/mock_redis/utility_methods.rb#26
   def common_scan(values, cursor, opts = T.unsafe(nil)); end
 
-  # source://mock_redis//lib/mock_redis/utility_methods.rb#70
+  # source://mock_redis//lib/mock_redis/utility_methods.rb#72
   def left_pad(str, size); end
 
   # @return [Boolean]
@@ -1155,10 +1160,10 @@ module MockRedis::UtilityMethods
   # source://mock_redis//lib/mock_redis/utility_methods.rb#16
   def primitive?(value); end
 
-  # source://mock_redis//lib/mock_redis/utility_methods.rb#59
+  # source://mock_redis//lib/mock_redis/utility_methods.rb#61
   def twos_complement_decode(array); end
 
-  # source://mock_redis//lib/mock_redis/utility_methods.rb#45
+  # source://mock_redis//lib/mock_redis/utility_methods.rb#47
   def twos_complement_encode(n, size); end
 
   # source://mock_redis//lib/mock_redis/utility_methods.rb#5
@@ -1176,29 +1181,29 @@ class MockRedis::Zset
   # @return [Zset] a new instance of Zset
   #
   # source://mock_redis//lib/mock_redis/zset.rb#13
-  def initialize; end
+  def initialize(enum = T.unsafe(nil)); end
 
-  # source://mock_redis//lib/mock_redis/zset.rb#24
+  # source://mock_redis//lib/mock_redis/zset.rb#26
   def add(score, member); end
 
   # @return [Boolean]
   #
-  # source://mock_redis//lib/mock_redis/zset.rb#30
+  # source://mock_redis//lib/mock_redis/zset.rb#32
   def delete?(member); end
 
-  # source://mock_redis//lib/mock_redis/zset.rb#35
+  # source://mock_redis//lib/mock_redis/zset.rb#37
   def each; end
 
   # source://forwardable/1.3.3/forwardable.rb#231
   def empty?(*args, **_arg1, &block); end
 
-  # source://mock_redis//lib/mock_redis/zset.rb#39
+  # source://mock_redis//lib/mock_redis/zset.rb#41
   def in_range(min, max); end
 
   # source://forwardable/1.3.3/forwardable.rb#231
   def include?(*args, **_arg1, &block); end
 
-  # source://mock_redis//lib/mock_redis/zset.rb#69
+  # source://mock_redis//lib/mock_redis/zset.rb#71
   def intersection(other); end
 
   # Returns the value of attribute members.
@@ -1206,7 +1211,7 @@ class MockRedis::Zset
   # source://mock_redis//lib/mock_redis/zset.rb#9
   def members; end
 
-  # source://mock_redis//lib/mock_redis/zset.rb#80
+  # source://mock_redis//lib/mock_redis/zset.rb#82
   def score(member); end
 
   # Returns the value of attribute scores.
@@ -1217,18 +1222,18 @@ class MockRedis::Zset
   # source://forwardable/1.3.3/forwardable.rb#231
   def size(*args, **_arg1, &block); end
 
-  # source://mock_redis//lib/mock_redis/zset.rb#84
+  # source://mock_redis//lib/mock_redis/zset.rb#86
   def sorted; end
 
-  # source://mock_redis//lib/mock_redis/zset.rb#90
+  # source://mock_redis//lib/mock_redis/zset.rb#92
   def sorted_members; end
 
-  # source://mock_redis//lib/mock_redis/zset.rb#94
+  # source://mock_redis//lib/mock_redis/zset.rb#96
   def union(other); end
 
   private
 
-  # source://mock_redis//lib/mock_redis/zset.rb#18
+  # source://mock_redis//lib/mock_redis/zset.rb#20
   def initialize_copy(source); end
 end
 

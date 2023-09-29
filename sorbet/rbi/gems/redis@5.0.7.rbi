@@ -95,13 +95,13 @@ class Redis
 
   private
 
-  # source://redis//lib/redis.rb#177
+  # source://redis//lib/redis.rb#179
   def _subscription(method, timeout, channels, block); end
 
   # source://redis//lib/redis.rb#134
   def initialize_client(options); end
 
-  # source://redis//lib/redis.rb#171
+  # source://redis//lib/redis.rb#173
   def send_blocking_command(command, timeout, &block); end
 
   # source://redis//lib/redis.rb#165
@@ -160,60 +160,50 @@ class Redis::CannotConnectError < ::Redis::BaseConnectionError; end
 
 # source://redis//lib/redis/client.rb#6
 class Redis::Client < ::RedisClient
-  # source://redis//lib/redis/client.rb#78
+  # source://redis//lib/redis/client.rb#95
   def blocking_call_v(timeout, command, &block); end
 
-  # source://redis//lib/redis/client.rb#72
+  # source://redis//lib/redis/client.rb#89
   def call_v(command, &block); end
 
-  # source://redis//lib/redis/client.rb#43
+  # source://redis//lib/redis/client.rb#60
   def db; end
 
-  # source://redis//lib/redis/client.rb#103
+  # source://redis//lib/redis/client.rb#120
   def disable_reconnection(&block); end
 
-  # source://redis//lib/redis/client.rb#47
+  # source://redis//lib/redis/client.rb#64
   def host; end
 
-  # source://redis//lib/redis/client.rb#31
+  # source://redis//lib/redis/client.rb#48
   def id; end
 
-  # source://redis//lib/redis/client.rb#107
+  # source://redis//lib/redis/client.rb#124
   def inherit_socket!; end
 
-  # source://redis//lib/redis/client.rb#97
+  # source://redis//lib/redis/client.rb#114
   def multi; end
 
-  # source://redis//lib/redis/client.rb#63
+  # source://redis//lib/redis/client.rb#80
   def password; end
 
-  # source://redis//lib/redis/client.rb#55
+  # source://redis//lib/redis/client.rb#72
   def path; end
 
-  # source://redis//lib/redis/client.rb#91
+  # source://redis//lib/redis/client.rb#108
   def pipelined; end
 
-  # source://redis//lib/redis/client.rb#51
+  # source://redis//lib/redis/client.rb#68
   def port; end
 
-  # source://redis//lib/redis/client.rb#35
+  # source://redis//lib/redis/client.rb#52
   def server_url; end
 
-  # source://redis//lib/redis/client.rb#39
+  # source://redis//lib/redis/client.rb#56
   def timeout; end
 
-  # source://redis//lib/redis/client.rb#59
+  # source://redis//lib/redis/client.rb#76
   def username; end
-
-  private
-
-  # @raise [redis_error]
-  #
-  # source://redis//lib/redis/client.rb#113
-  def translate_error!(error); end
-
-  # source://redis//lib/redis/client.rb#118
-  def translate_error_class(error_class); end
 
   class << self
     # source://redis//lib/redis/client.rb#22
@@ -221,6 +211,16 @@ class Redis::Client < ::RedisClient
 
     # source://redis//lib/redis/client.rb#26
     def sentinel(**kwargs); end
+
+    # @raise [redis_error]
+    #
+    # source://redis//lib/redis/client.rb#30
+    def translate_error!(error); end
+
+    private
+
+    # source://redis//lib/redis/client.rb#37
+    def translate_error_class(error_class); end
   end
 end
 
@@ -1109,6 +1109,21 @@ module Redis::Commands::Lists
   # source://redis//lib/redis/commands/lists.rb#55
   def blmove(source, destination, where_source, where_destination, timeout: T.unsafe(nil)); end
 
+  # Pops one or more elements from the first non-empty list key from the list
+  # of provided key names. If lists are empty, blocks until timeout has passed.
+  #
+  # @example Popping a element
+  #   redis.blmpop(1.0, 'list')
+  #   #=> ['list', ['a']]
+  # @example With count option
+  #   redis.blmpop(1.0, 'list', count: 2)
+  #   #=> ['list', ['a', 'b']]
+  # @raise [ArgumentError]
+  # @return [Array<String, Array<String, Float>>] list of popped elements or nil
+  #
+  # source://redis//lib/redis/commands/lists.rb#205
+  def blmpop(timeout, *keys, modifier: T.unsafe(nil), count: T.unsafe(nil)); end
+
   # Remove and get the first element in a list, or block until one is available.
   #
   # @example With timeout
@@ -1160,7 +1175,7 @@ module Redis::Commands::Lists
   # @param index [Integer]
   # @return [String]
   #
-  # source://redis//lib/redis/commands/lists.rb#191
+  # source://redis//lib/redis/commands/lists.rb#245
   def lindex(key, index); end
 
   # Insert an element before or after another element in a list.
@@ -1172,7 +1187,7 @@ module Redis::Commands::Lists
   # @return [Integer] length of the list after the insert operation, or `-1`
   #   when the element `pivot` was not found
   #
-  # source://redis//lib/redis/commands/lists.rb#203
+  # source://redis//lib/redis/commands/lists.rb#257
   def linsert(key, where, pivot, value); end
 
   # Get the length of a list.
@@ -1197,6 +1212,21 @@ module Redis::Commands::Lists
   #
   # source://redis//lib/redis/commands/lists.rb#27
   def lmove(source, destination, where_source, where_destination); end
+
+  # Pops one or more elements from the first non-empty list key from the list
+  # of provided key names.
+  #
+  # @example Popping a element
+  #   redis.lmpop('list')
+  #   #=> ['list', ['a']]
+  # @example With count option
+  #   redis.lmpop('list', count: 2)
+  #   #=> ['list', ['a', 'b']]
+  # @raise [ArgumentError]
+  # @return [Array<String, Array<String, Float>>] list of popped elements or nil
+  #
+  # source://redis//lib/redis/commands/lists.rb#231
+  def lmpop(*keys, modifier: T.unsafe(nil), count: T.unsafe(nil)); end
 
   # Remove and get the first elements in a list.
   #
@@ -1232,7 +1262,7 @@ module Redis::Commands::Lists
   # @param stop [Integer] stop index
   # @return [Array<String>]
   #
-  # source://redis//lib/redis/commands/lists.rb#213
+  # source://redis//lib/redis/commands/lists.rb#267
   def lrange(key, start, stop); end
 
   # Remove elements from a list.
@@ -1245,7 +1275,7 @@ module Redis::Commands::Lists
   # @param value [String]
   # @return [Integer] the number of removed elements
   #
-  # source://redis//lib/redis/commands/lists.rb#226
+  # source://redis//lib/redis/commands/lists.rb#280
   def lrem(key, count, value); end
 
   # Set the value of an element in a list by its index.
@@ -1255,7 +1285,7 @@ module Redis::Commands::Lists
   # @param value [String]
   # @return [String] `OK`
   #
-  # source://redis//lib/redis/commands/lists.rb#236
+  # source://redis//lib/redis/commands/lists.rb#290
   def lset(key, index, value); end
 
   # Trim a list to the specified range.
@@ -1265,7 +1295,7 @@ module Redis::Commands::Lists
   # @param stop [Integer] stop index
   # @return [String] `OK`
   #
-  # source://redis//lib/redis/commands/lists.rb#246
+  # source://redis//lib/redis/commands/lists.rb#300
   def ltrim(key, start, stop); end
 
   # Remove and get the last elements in a list.
@@ -1306,10 +1336,10 @@ module Redis::Commands::Lists
 
   private
 
-  # source://redis//lib/redis/commands/lists.rb#252
+  # source://redis//lib/redis/commands/lists.rb#306
   def _bpop(cmd, args, &blk); end
 
-  # source://redis//lib/redis/commands/lists.rb#269
+  # source://redis//lib/redis/commands/lists.rb#323
   def _normalize_move_wheres(where_source, where_destination); end
 end
 
@@ -1752,6 +1782,20 @@ end
 
 # source://redis//lib/redis/commands/sorted_sets.rb#5
 module Redis::Commands::SortedSets
+  # Removes and returns up to count members with scores in the sorted set stored at key.
+  #
+  # @example Popping a member
+  #   redis.bzmpop('zset')
+  #   #=> ['zset', ['a', 1.0]]
+  # @example With count option
+  #   redis.bzmpop('zset', count: 2)
+  #   #=> ['zset', [['a', 1.0], ['b', 2.0]]
+  # @raise [ArgumentError]
+  # @return [Array<String, Array<String, Float>>] list of popped elements and scores
+  #
+  # source://redis//lib/redis/commands/sorted_sets.rb#188
+  def bzmpop(timeout, *keys, modifier: T.unsafe(nil), count: T.unsafe(nil)); end
+
   # Removes and returns up to count members with the highest scores in the sorted set stored at keys,
   #   or block until one is available.
   #
@@ -1764,7 +1808,7 @@ module Redis::Commands::SortedSets
   # @return [Array<String, String, Float>] a touple of key, member and score
   # @return [nil] when no element could be popped and the timeout expired
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#185
+  # source://redis//lib/redis/commands/sorted_sets.rb#251
   def bzpopmax(*args); end
 
   # Removes and returns up to count members with the lowest scores in the sorted set stored at keys,
@@ -1779,7 +1823,7 @@ module Redis::Commands::SortedSets
   # @return [Array<String, String, Float>] a touple of key, member and score
   # @return [nil] when no element could be popped and the timeout expired
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#206
+  # source://redis//lib/redis/commands/sorted_sets.rb#272
   def bzpopmin(*args); end
 
   # Add one or more members to a sorted set, or update the score for members
@@ -1842,7 +1886,7 @@ module Redis::Commands::SortedSets
   #   - exclusive maximum score is specified by prefixing `(`
   # @return [Integer] number of members in within the specified range
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#612
+  # source://redis//lib/redis/commands/sorted_sets.rb#678
   def zcount(key, min, max); end
 
   # Return the difference between the first and all successive input sorted sets
@@ -1862,7 +1906,7 @@ module Redis::Commands::SortedSets
   # @return [Array<String>, Array<[String, Float]>] - when `:with_scores` is not specified, an array of members
   #   - when `:with_scores` is specified, an array with `[member, score]` pairs
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#721
+  # source://redis//lib/redis/commands/sorted_sets.rb#787
   def zdiff(*keys, with_scores: T.unsafe(nil)); end
 
   # Compute the difference between the first and all successive input sorted sets
@@ -1877,7 +1921,7 @@ module Redis::Commands::SortedSets
   # @param keys [Array<String>] source keys
   # @return [Integer] number of elements in the resulting sorted set
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#737
+  # source://redis//lib/redis/commands/sorted_sets.rb#803
   def zdiffstore(*args, **_arg1); end
 
   # Increment the score of a member in a sorted set.
@@ -1909,7 +1953,7 @@ module Redis::Commands::SortedSets
   # @return [Array<String>, Array<[String, Float]>] - when `:with_scores` is not specified, an array of members
   #   - when `:with_scores` is specified, an array with `[member, score]` pairs
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#635
+  # source://redis//lib/redis/commands/sorted_sets.rb#701
   def zinter(*args, **_arg1); end
 
   # Intersect multiple sorted sets and store the resulting sorted set in a new
@@ -1925,7 +1969,7 @@ module Redis::Commands::SortedSets
   #   - `:aggregate => String`: aggregate function to use (sum, min, max)
   # @return [Integer] number of elements in the resulting sorted set
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#654
+  # source://redis//lib/redis/commands/sorted_sets.rb#720
   def zinterstore(*args, **_arg1); end
 
   # Count the members, with the same score in a sorted set, within the given lexicographical range.
@@ -1943,8 +1987,22 @@ module Redis::Commands::SortedSets
   #   - exclusive maximum is specified by prefixing `[`
   # @return [Integer] number of members within the specified lexicographical range
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#443
+  # source://redis//lib/redis/commands/sorted_sets.rb#509
   def zlexcount(key, min, max); end
+
+  # Removes and returns up to count members with scores in the sorted set stored at key.
+  #
+  # @example Popping a member
+  #   redis.zmpop('zset')
+  #   #=> ['zset', ['a', 1.0]]
+  # @example With count option
+  #   redis.zmpop('zset', count: 2)
+  #   #=> ['zset', [['a', 1.0], ['b', 2.0]]
+  # @raise [ArgumentError]
+  # @return [Array<String, Array<String, Float>>] list of popped elements and scores
+  #
+  # source://redis//lib/redis/commands/sorted_sets.rb#220
+  def zmpop(*keys, modifier: T.unsafe(nil), count: T.unsafe(nil)); end
 
   # Get the scores associated with the given members in a sorted set.
   #
@@ -1955,7 +2013,7 @@ module Redis::Commands::SortedSets
   # @param members [String, Array<String>]
   # @return [Array<Float>] scores of the members
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#234
+  # source://redis//lib/redis/commands/sorted_sets.rb#300
   def zmscore(key, *members); end
 
   # Removes and returns up to count members with the highest scores in the sorted set stored at key.
@@ -2005,7 +2063,7 @@ module Redis::Commands::SortedSets
   #   - when `count` is specified and `:with_scores` is not specified, an array of members
   #   - when `:with_scores` is specified, an array with `[member, score]` pairs
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#262
+  # source://redis//lib/redis/commands/sorted_sets.rb#328
   def zrandmember(key, count = T.unsafe(nil), withscores: T.unsafe(nil), with_scores: T.unsafe(nil)); end
 
   # Return a range of members in a sorted set, by index, score or lexicographical ordering.
@@ -2028,7 +2086,7 @@ module Redis::Commands::SortedSets
   # @return [Array<String>, Array<[String, Float]>] - when `:with_scores` is not specified, an array of members
   #   - when `:with_scores` is specified, an array with `[member, score]` pairs
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#301
+  # source://redis//lib/redis/commands/sorted_sets.rb#367
   def zrange(key, start, stop, byscore: T.unsafe(nil), by_score: T.unsafe(nil), bylex: T.unsafe(nil), by_lex: T.unsafe(nil), rev: T.unsafe(nil), limit: T.unsafe(nil), withscores: T.unsafe(nil), with_scores: T.unsafe(nil)); end
 
   # Return a range of members with the same score in a sorted set, by lexicographical ordering
@@ -2048,7 +2106,7 @@ module Redis::Commands::SortedSets
   #   `count` members
   # @return [Array<String>, Array<[String, Float]>]
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#468
+  # source://redis//lib/redis/commands/sorted_sets.rb#534
   def zrangebylex(key, min, max, limit: T.unsafe(nil)); end
 
   # Return a range of members in a sorted set, by score.
@@ -2073,7 +2131,7 @@ module Redis::Commands::SortedSets
   # @return [Array<String>, Array<[String, Float]>] - when `:with_scores` is not specified, an array of members
   #   - when `:with_scores` is specified, an array with `[member, score]` pairs
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#528
+  # source://redis//lib/redis/commands/sorted_sets.rb#594
   def zrangebyscore(key, min, max, withscores: T.unsafe(nil), with_scores: T.unsafe(nil), limit: T.unsafe(nil)); end
 
   # Select a range of members in a sorted set, by index, score or lexicographical ordering
@@ -2088,7 +2146,7 @@ module Redis::Commands::SortedSets
   # @return [Integer] the number of elements in the resulting sorted set
   # @see #zrange
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#343
+  # source://redis//lib/redis/commands/sorted_sets.rb#409
   def zrangestore(dest_key, src_key, start, stop, byscore: T.unsafe(nil), by_score: T.unsafe(nil), bylex: T.unsafe(nil), by_lex: T.unsafe(nil), rev: T.unsafe(nil), limit: T.unsafe(nil)); end
 
   # Determine the index of a member in a sorted set.
@@ -2097,7 +2155,7 @@ module Redis::Commands::SortedSets
   # @param member [String]
   # @return [Integer]
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#394
+  # source://redis//lib/redis/commands/sorted_sets.rb#460
   def zrank(key, member); end
 
   # Remove one or more members from a sorted set.
@@ -2130,7 +2188,7 @@ module Redis::Commands::SortedSets
   # @param stop [Integer] stop index
   # @return [Integer] number of members that were removed
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#421
+  # source://redis//lib/redis/commands/sorted_sets.rb#487
   def zremrangebyrank(key, start, stop); end
 
   # Remove all members in a sorted set within the given scores.
@@ -2148,7 +2206,7 @@ module Redis::Commands::SortedSets
   #   - exclusive maximum score is specified by prefixing `(`
   # @return [Integer] number of members that were removed
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#591
+  # source://redis//lib/redis/commands/sorted_sets.rb#657
   def zremrangebyscore(key, min, max); end
 
   # Return a range of members in a sorted set, by index, with scores ordered
@@ -2162,7 +2220,7 @@ module Redis::Commands::SortedSets
   #   # => [["b", 64.0], ["a", 32.0]]
   # @see #zrange
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#378
+  # source://redis//lib/redis/commands/sorted_sets.rb#444
   def zrevrange(key, start, stop, withscores: T.unsafe(nil), with_scores: T.unsafe(nil)); end
 
   # Return a range of members with the same score in a sorted set, by reversed lexicographical ordering.
@@ -2176,7 +2234,7 @@ module Redis::Commands::SortedSets
   #   # => ["abbygail", "abby"]
   # @see #zrangebylex
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#490
+  # source://redis//lib/redis/commands/sorted_sets.rb#556
   def zrevrangebylex(key, max, min, limit: T.unsafe(nil)); end
 
   # Return a range of members in a sorted set, by score, with scores ordered
@@ -2193,7 +2251,7 @@ module Redis::Commands::SortedSets
   #   # => [["b", 64.0], ["a", 32.0]]
   # @see #zrangebyscore
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#558
+  # source://redis//lib/redis/commands/sorted_sets.rb#624
   def zrevrangebyscore(key, max, min, withscores: T.unsafe(nil), with_scores: T.unsafe(nil), limit: T.unsafe(nil)); end
 
   # Determine the index of a member in a sorted set, with scores ordered from
@@ -2203,7 +2261,7 @@ module Redis::Commands::SortedSets
   # @param member [String]
   # @return [Integer]
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#404
+  # source://redis//lib/redis/commands/sorted_sets.rb#470
   def zrevrank(key, member); end
 
   # Scan a sorted set
@@ -2216,7 +2274,7 @@ module Redis::Commands::SortedSets
   # @return [String, Array<[String, Float]>] the next cursor and all found
   #   members and scores
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#754
+  # source://redis//lib/redis/commands/sorted_sets.rb#820
   def zscan(key, cursor, **options); end
 
   # Scan a sorted set
@@ -2228,7 +2286,7 @@ module Redis::Commands::SortedSets
   #   - `:count => Integer`: return count keys at most per iteration
   # @return [Enumerator] an enumerator for all found scores and members
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#771
+  # source://redis//lib/redis/commands/sorted_sets.rb#837
   def zscan_each(key, **options, &block); end
 
   # Get the score associated with the given member in a sorted set.
@@ -2240,7 +2298,7 @@ module Redis::Commands::SortedSets
   # @param member [String]
   # @return [Float] score of the member
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#221
+  # source://redis//lib/redis/commands/sorted_sets.rb#287
   def zscore(key, member); end
 
   # Return the union of multiple sorted sets
@@ -2259,7 +2317,7 @@ module Redis::Commands::SortedSets
   # @return [Array<String>, Array<[String, Float]>] - when `:with_scores` is not specified, an array of members
   #   - when `:with_scores` is specified, an array with `[member, score]` pairs
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#678
+  # source://redis//lib/redis/commands/sorted_sets.rb#744
   def zunion(*args, **_arg1); end
 
   # Add multiple sorted sets and store the resulting sorted set in a new key.
@@ -2274,15 +2332,15 @@ module Redis::Commands::SortedSets
   #   - `:aggregate => String`: aggregate function to use (sum, min, max, ...)
   # @return [Integer] number of elements in the resulting sorted set
   #
-  # source://redis//lib/redis/commands/sorted_sets.rb#696
+  # source://redis//lib/redis/commands/sorted_sets.rb#762
   def zunionstore(*args, **_arg1); end
 
   private
 
-  # source://redis//lib/redis/commands/sorted_sets.rb#784
+  # source://redis//lib/redis/commands/sorted_sets.rb#850
   def _zsets_operation(cmd, *keys, weights: T.unsafe(nil), aggregate: T.unsafe(nil), with_scores: T.unsafe(nil)); end
 
-  # source://redis//lib/redis/commands/sorted_sets.rb#803
+  # source://redis//lib/redis/commands/sorted_sets.rb#869
   def _zsets_operation_store(cmd, destination, keys, weights: T.unsafe(nil), aggregate: T.unsafe(nil)); end
 end
 

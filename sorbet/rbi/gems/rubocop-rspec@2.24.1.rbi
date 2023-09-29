@@ -11,10 +11,10 @@ class RuboCop::AST::Node < ::Parser::AST::Node
   include ::RuboCop::RSpec::Node
 end
 
-# source://rubocop-rspec//lib/rubocop/cop/rspec/mixin/final_end_location.rb#4
+# source://rubocop-rspec//lib/rubocop/cop/rspec/mixin/file_help.rb#4
 module RuboCop::Cop; end
 
-# source://rubocop-rspec//lib/rubocop/cop/rspec/mixin/final_end_location.rb#5
+# source://rubocop-rspec//lib/rubocop/cop/rspec/mixin/file_help.rb#5
 module RuboCop::Cop::RSpec; end
 
 # Checks that left braces for adjacent single line lets are aligned.
@@ -1392,7 +1392,7 @@ class RuboCop::Cop::RSpec::DuplicatedMetadata < ::RuboCop::Cop::RSpec::Base
   extend ::RuboCop::Cop::AutoCorrector
 
   # source://rubocop-rspec//lib/rubocop/cop/rspec/duplicated_metadata.rb#22
-  def on_metadata(symbols, _pairs); end
+  def on_metadata(symbols, _hash); end
 
   private
 
@@ -1517,27 +1517,27 @@ class RuboCop::Cop::RSpec::EmptyExampleGroup < ::RuboCop::Cop::RSpec::Base
   # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_example_group.rb#97
   def examples_inside_block?(param0 = T.unsafe(nil)); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_example_group.rb#137
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_example_group.rb#138
   def on_block(node); end
 
   private
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_example_group.rb#163
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_example_group.rb#164
   def conditionals_with_examples?(body); end
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_example_group.rb#171
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_example_group.rb#172
   def examples_in_branches?(condition_node); end
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_example_group.rb#152
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_example_group.rb#153
   def offensive?(body); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_example_group.rb#175
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_example_group.rb#178
   def removed_range(node); end
 end
 
@@ -1838,6 +1838,65 @@ module RuboCop::Cop::RSpec::EmptyLineSeparation
   def offending_loc(last_line); end
 end
 
+# Avoid empty metadata hash.
+#
+# @example EnforcedStyle: symbol (default)
+#   # bad
+#   describe 'Something', {}
+#
+#   # good
+#   describe 'Something'
+#
+# source://rubocop-rspec//lib/rubocop/cop/rspec/empty_metadata.rb#14
+class RuboCop::Cop::RSpec::EmptyMetadata < ::RuboCop::Cop::RSpec::Base
+  include ::RuboCop::Cop::RSpec::Metadata
+  include ::RuboCop::Cop::RangeHelp
+  extend ::RuboCop::Cop::AutoCorrector
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_metadata.rb#22
+  def on_metadata(_symbols, hash); end
+
+  private
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/empty_metadata.rb#32
+  def remove_empty_metadata(corrector, node); end
+end
+
+# source://rubocop-rspec//lib/rubocop/cop/rspec/empty_metadata.rb#20
+RuboCop::Cop::RSpec::EmptyMetadata::MSG = T.let(T.unsafe(nil), String)
+
+# Use `eq` instead of `be ==` to compare objects.
+#
+# @example
+#   # bad
+#   expect(foo).to be == 42
+#
+#   # good
+#   expect(foo).to eq 42
+#
+# source://rubocop-rspec//lib/rubocop/cop/rspec/eq.rb#15
+class RuboCop::Cop::RSpec::Eq < ::RuboCop::Cop::RSpec::Base
+  include ::RuboCop::Cop::RangeHelp
+  extend ::RuboCop::Cop::AutoCorrector
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/eq.rb#23
+  def be_equals(param0 = T.unsafe(nil)); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/eq.rb#27
+  def on_send(node); end
+
+  private
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/eq.rb#38
+  def offense_range(matcher); end
+end
+
+# source://rubocop-rspec//lib/rubocop/cop/rspec/eq.rb#19
+RuboCop::Cop::RSpec::Eq::MSG = T.let(T.unsafe(nil), String)
+
+# source://rubocop-rspec//lib/rubocop/cop/rspec/eq.rb#20
+RuboCop::Cop::RSpec::Eq::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Array)
+
 # Checks for long examples.
 #
 # A long example is usually more difficult to understand. Consider
@@ -2100,10 +2159,10 @@ class RuboCop::Cop::RSpec::ExcessiveDocstringSpacing < ::RuboCop::Cop::RSpec::Ba
   # @param node [RuboCop::AST::Node]
   # @param text [String]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/excessive_docstring_spacing.rb#67
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/excessive_docstring_spacing.rb#76
   def add_whitespace_offense(node, text); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/excessive_docstring_spacing.rb#76
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/excessive_docstring_spacing.rb#85
   def docstring(node); end
 
   # @param text [String]
@@ -2114,13 +2173,13 @@ class RuboCop::Cop::RSpec::ExcessiveDocstringSpacing < ::RuboCop::Cop::RSpec::Ba
 
   # @param text [String]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/excessive_docstring_spacing.rb#61
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/excessive_docstring_spacing.rb#68
   def strip_excessive_whitespace(text); end
 
   # Recursive processing is required to process nested dstr nodes
   # that is the case for \-separated multiline strings with interpolation.
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/excessive_docstring_spacing.rb#88
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/excessive_docstring_spacing.rb#97
   def text(node); end
 end
 
@@ -2162,7 +2221,7 @@ class RuboCop::Cop::RSpec::ExpectActual < ::RuboCop::Cop::RSpec::Base
   # source://rubocop-rspec//lib/rubocop/cop/rspec/expect_actual.rb#90
   def complex_literal?(node); end
 
-  # This is not implement using a NodePattern because it seems
+  # This is not implemented using a NodePattern because it seems
   # to not be able to match against an explicit (nil) sexp
   #
   # @return [Boolean]
@@ -2533,7 +2592,21 @@ RuboCop::Cop::RSpec::FactoryBot::FactoryNameStyle = RuboCop::Cop::FactoryBot::Fa
 # source://rubocop-rspec//lib/rubocop/cop/rspec/factory_bot/syntax_methods.rb#51
 RuboCop::Cop::RSpec::FactoryBot::SyntaxMethods = RuboCop::Cop::FactoryBot::SyntaxMethods
 
+# Help methods for file.
+#
+# source://rubocop-rspec//lib/rubocop/cop/rspec/mixin/file_help.rb#7
+module RuboCop::Cop::RSpec::FileHelp
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/mixin/file_help.rb#8
+  def expanded_file_path; end
+end
+
 # Checks that spec file paths are consistent and well-formed.
+#
+# This cop is deprecated.
+# We plan to remove it in the next major version update to 3.0.
+# The migration targets are `RSpec/SpecFilePathSuffix`
+# and `RSpec/SpecFilePathFormat`.
+# If you are using this cop, please plan for migration.
 #
 # By default, this checks that spec file paths are consistent with the
 # test subject and enforces that it reflects the described
@@ -2584,78 +2657,78 @@ RuboCop::Cop::RSpec::FactoryBot::SyntaxMethods = RuboCop::Cop::FactoryBot::Synta
 #   # good
 #   my_class_spec.rb         # describe MyClass, '#method'
 #
-# source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#59
+# source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#65
 class RuboCop::Cop::RSpec::FilePath < ::RuboCop::Cop::RSpec::Base
   include ::RuboCop::Cop::RSpec::TopLevelGroup
   include ::RuboCop::Cop::RSpec::Namespace
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#66
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#72
   def example_group(param0 = T.unsafe(nil)); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#75
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#81
   def on_top_level_example_group(node); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#73
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#79
   def routing_metadata?(param0); end
 
   private
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#136
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#142
   def camel_to_snake_case(string); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#143
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#149
   def custom_transform; end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#85
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#91
   def ensure_correct_file_path(send_node, example_group, arguments); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#167
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#173
   def expanded_file_path; end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#126
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#132
   def expected_path(constant); end
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#151
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#157
   def filename_ends_with?(pattern); end
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#147
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#153
   def ignore_methods?; end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#119
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#125
   def name_pattern(method_name); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#101
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#107
   def pattern_for(example_group, arguments); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#115
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#121
   def pattern_for_spec_suffix_only; end
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#155
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#161
   def relevant_rubocop_rspec_file?(_file); end
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#97
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#103
   def routing_spec?(args); end
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#163
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#169
   def routing_spec_path?; end
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#159
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#165
   def spec_suffix_only?; end
 end
 
-# source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#63
+# source://rubocop-rspec//lib/rubocop/cop/rspec/file_path.rb#69
 RuboCop::Cop::RSpec::FilePath::MSG = T.let(T.unsafe(nil), String)
 
 # Helps find the true end location of nodes which might contain heredocs.
@@ -2697,41 +2770,53 @@ end
 #   # good
 #   describe 'test' do; end
 #
+#   # bad
+#   shared_examples 'test', focus: true do; end
+#
+#   # good
+#   shared_examples 'test' do; end
+#
+#   # bad
+#   shared_context 'test', focus: true do; end
+#
+#   # good
+#   shared_context 'test' do; end
+#
 #   # bad (does not support autocorrection)
 #   focus 'test' do; end
 #
-# source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#40
+# source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#52
 class RuboCop::Cop::RSpec::Focus < ::RuboCop::Cop::RSpec::Base
   include ::RuboCop::Cop::RangeHelp
   extend ::RuboCop::Cop::AutoCorrector
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#47
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#59
   def focusable_selector?(param0 = T.unsafe(nil)); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#64
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#77
   def focused_block?(param0 = T.unsafe(nil)); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#58
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#71
   def metadata(param0 = T.unsafe(nil)); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#68
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#81
   def on_send(node); end
 
   private
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#95
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#110
   def correct_send(corrector, focus); end
 
   # @yield [node]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#82
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#97
   def focus_metadata(node, &block); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#88
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#103
   def with_surrounding(focus); end
 end
 
-# source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#44
+# source://rubocop-rspec//lib/rubocop/cop/rspec/focus.rb#56
 RuboCop::Cop::RSpec::Focus::MSG = T.let(T.unsafe(nil), String)
 
 # Checks the arguments passed to `before`, `around`, and `after`.
@@ -3140,6 +3225,9 @@ RuboCop::Cop::RSpec::ImplicitSubject::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Ar
 # It makes reading the test harder because it's not clear what exactly
 # is tested by this particular example.
 #
+# The configurable options `AllowedIdentifiers` and `AllowedPatterns`
+# will also read those set in `Naming/VariableNumber`.
+#
 # @example `Max: 1 (default)`
 #   # bad
 #   let(:item_1) { create(:item) }
@@ -3161,36 +3249,53 @@ RuboCop::Cop::RSpec::ImplicitSubject::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Ar
 #   # good
 #   let(:item_1) { create(:item) }
 #   let(:item_2) { create(:item) }
+# @example `AllowedIdentifiers: ['item_1', 'item_2']`
+#   # good
+#   let(:item_1) { create(:item) }
+#   let(:item_2) { create(:item) }
+# @example `AllowedPatterns: ['item']`
+#   # good
+#   let(:item_1) { create(:item) }
+#   let(:item_2) { create(:item) }
 #
-# source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#34
+# source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#47
 class RuboCop::Cop::RSpec::IndexedLet < ::RuboCop::Cop::RSpec::Base
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#39
+  include ::RuboCop::Cop::AllowedIdentifiers
+  include ::RuboCop::Cop::AllowedPattern
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#55
   def let_name(param0 = T.unsafe(nil)); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#46
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#62
   def on_block(node); end
 
   private
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#62
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#104
+  def allowed_identifiers; end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#98
+  def cop_config_patterns_values; end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#78
   def filter_indexed_lets(candidates); end
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#71
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#87
   def indexed_let?(node); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#75
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#94
   def let_name_stripped_index(node); end
 end
 
-# source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#60
+# source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#76
 RuboCop::Cop::RSpec::IndexedLet::INDEX_REGEX = T.let(T.unsafe(nil), Regexp)
 
-# source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#35
+# source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#51
 RuboCop::Cop::RSpec::IndexedLet::MSG = T.let(T.unsafe(nil), String)
 
-# source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#59
+# source://rubocop-rspec//lib/rubocop/cop/rspec/indexed_let.rb#75
 RuboCop::Cop::RSpec::IndexedLet::SUFFIX_INDEX_REGEX = T.let(T.unsafe(nil), Regexp)
 
 # A helper for `inflected` style
@@ -3609,7 +3714,7 @@ RuboCop::Cop::RSpec::LeadingSubject::MSG = T.let(T.unsafe(nil), String)
 #   stub_const('SomeModule::SomeClass', foo_class)
 #   end
 #   end
-# @see https://relishapp.com/rspec/rspec-mocks/docs/mutating-constants
+# @see https://rspec.info/features/3-12/rspec-mocks/mutating-constants
 #
 # source://rubocop-rspec//lib/rubocop/cop/rspec/leaky_constant_declaration.rb#96
 class RuboCop::Cop::RSpec::LeakyConstantDeclaration < ::RuboCop::Cop::RSpec::Base
@@ -3677,29 +3782,34 @@ class RuboCop::Cop::RSpec::LetBeforeExamples < ::RuboCop::Cop::RSpec::Base
   # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#47
   def include_examples?(param0 = T.unsafe(nil)); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#54
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#58
   def on_block(node); end
 
   private
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#89
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#93
   def autocorrect(corrector, node, first_example); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#70
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#74
   def check_let_declarations(node); end
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#62
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#66
   def example_group_with_include_examples?(body); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#85
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#89
   def find_first_example(node); end
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#66
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#70
   def multiline_block?(block); end
+
+  class << self
+    # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#54
+    def autocorrect_incompatible_with; end
+  end
 end
 
 # source://rubocop-rspec//lib/rubocop/cop/rspec/let_before_examples.rb#36
@@ -3993,7 +4103,7 @@ module RuboCop::Cop::RSpec::Metadata
   # @raise [::NotImplementedError]
   #
   # source://rubocop-rspec//lib/rubocop/cop/rspec/mixin/metadata.rb#43
-  def on_metadata(_symbols, _pairs); end
+  def on_metadata(_symbols, _hash); end
 
   # source://rubocop-rspec//lib/rubocop/cop/rspec/mixin/metadata.rb#30
   def on_numblock(node); end
@@ -4003,6 +4113,107 @@ module RuboCop::Cop::RSpec::Metadata
 
   # source://rubocop-rspec//lib/rubocop/cop/rspec/mixin/metadata.rb#13
   def rspec_metadata(param0 = T.unsafe(nil)); end
+
+  private
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/mixin/metadata.rb#49
+  def on_matadata_arguments(metadata_arguments); end
+end
+
+# Use consistent metadata style.
+#
+# This cop does not support autocorrection in the case of
+# `EnforcedStyle: hash` where the trailing metadata type is ambiguous.
+# (e.g. `describe 'Something', :a, b`)
+#
+# @example EnforcedStyle: symbol (default)
+#   # bad
+#   describe 'Something', a: true
+#
+#   # good
+#   describe 'Something', :a
+# @example EnforcedStyle: hash
+#   # bad
+#   describe 'Something', :a
+#
+#   # good
+#   describe 'Something', a: true
+#
+# source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#25
+class RuboCop::Cop::RSpec::MetadataStyle < ::RuboCop::Cop::RSpec::Base
+  include ::RuboCop::Cop::ConfigurableEnforcedStyle
+  include ::RuboCop::Cop::RSpec::Metadata
+  include ::RuboCop::Cop::RangeHelp
+  extend ::RuboCop::Cop::AutoCorrector
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#33
+  def extract_metadata_hash(param0 = T.unsafe(nil)); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#43
+  def match_ambiguous_trailing_metadata?(param0 = T.unsafe(nil)); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#38
+  def match_boolean_metadata_pair?(param0 = T.unsafe(nil)); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#47
+  def on_metadata(symbols, hash); end
+
+  private
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#61
+  def autocorrect_pair(corrector, node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#66
+  def autocorrect_symbol(corrector, node); end
+
+  # @return [Boolean]
+  #
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#73
+  def bad_metadata_pair?(node); end
+
+  # @return [Boolean]
+  #
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#77
+  def bad_metadata_symbol?(_node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#81
+  def format_symbol_to_pair_source(node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#85
+  def insert_pair(corrector, node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#96
+  def insert_pair_as_last_argument(corrector, node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#105
+  def insert_pair_to_empty_hash_metadata(corrector, node, hash_node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#112
+  def insert_pair_to_non_empty_hash_metadata(corrector, node, hash_node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#119
+  def insert_symbol(corrector, node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#126
+  def message_for_style; end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#133
+  def on_metadata_pair(node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#141
+  def on_metadata_symbol(node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#149
+  def remove_pair(corrector, node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#159
+  def remove_pair_following(corrector, node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#171
+  def remove_pair_preceding(corrector, node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/metadata_style.rb#183
+  def remove_symbol(corrector, node); end
 end
 
 # Checks that the first argument to an example group is not empty.
@@ -4829,21 +5040,29 @@ RuboCop::Cop::RSpec::OverwritingSetup::MSG = T.let(T.unsafe(nil), String)
 class RuboCop::Cop::RSpec::Pending < ::RuboCop::Cop::RSpec::Base
   include ::RuboCop::Cop::RSpec::SkipOrPending
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/pending.rb#56
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/pending.rb#61
   def on_send(node); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/pending.rb#49
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/pending.rb#54
   def pending_block?(param0 = T.unsafe(nil)); end
 
   # source://rubocop-rspec//lib/rubocop/cop/rspec/pending.rb#41
   def skippable?(param0 = T.unsafe(nil)); end
 
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/pending.rb#49
+  def skippable_example?(param0 = T.unsafe(nil)); end
+
   private
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/pending.rb#64
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/pending.rb#69
   def skipped?(node); end
+
+  # @return [Boolean]
+  #
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/pending.rb#74
+  def skipped_regular_example_without_body?(node); end
 end
 
 # source://rubocop-rspec//lib/rubocop/cop/rspec/pending.rb#38
@@ -5221,6 +5440,67 @@ RuboCop::Cop::RSpec::Rails::MinitestAssertions::MSG = T.let(T.unsafe(nil), Strin
 # source://rubocop-rspec//lib/rubocop/cop/rspec/rails/minitest_assertions.rb#24
 RuboCop::Cop::RSpec::Rails::MinitestAssertions::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Array)
 
+# Enforces use of `be_invalid` or `not_to` for negated be_valid.
+#
+# @example EnforcedStyle: not_to (default)
+#   # bad
+#   expect(foo).to be_invalid
+#
+#   # good
+#   expect(foo).not_to be_valid
+#
+#   # good (with method chain)
+#   expect(foo).to be_invalid.and be_odd
+# @example EnforcedStyle: be_invalid
+#   # bad
+#   expect(foo).not_to be_valid
+#
+#   # good
+#   expect(foo).to be_invalid
+#
+#   # good (with method chain)
+#   expect(foo).to be_invalid.or be_even
+#
+# source://rubocop-rspec//lib/rubocop/cop/rspec/rails/negation_be_valid.rb#33
+class RuboCop::Cop::RSpec::Rails::NegationBeValid < ::RuboCop::Cop::RSpec::Base
+  include ::RuboCop::Cop::ConfigurableEnforcedStyle
+  extend ::RuboCop::Cop::AutoCorrector
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/rails/negation_be_valid.rb#46
+  def be_invalid?(param0 = T.unsafe(nil)); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/rails/negation_be_valid.rb#41
+  def not_to?(param0 = T.unsafe(nil)); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/rails/negation_be_valid.rb#50
+  def on_send(node); end
+
+  private
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/rails/negation_be_valid.rb#75
+  def message(_matcher); end
+
+  # @return [Boolean]
+  #
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/rails/negation_be_valid.rb#62
+  def offense?(node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/rails/negation_be_valid.rb#71
+  def offense_range(node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/rails/negation_be_valid.rb#90
+  def replaced_matcher; end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/rails/negation_be_valid.rb#81
+  def replaced_runner; end
+end
+
+# source://rubocop-rspec//lib/rubocop/cop/rspec/rails/negation_be_valid.rb#37
+RuboCop::Cop::RSpec::Rails::NegationBeValid::MSG = T.let(T.unsafe(nil), String)
+
+# source://rubocop-rspec//lib/rubocop/cop/rspec/rails/negation_be_valid.rb#38
+RuboCop::Cop::RSpec::Rails::NegationBeValid::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Array)
+
 # Prefer to travel in `before` rather than `around`.
 #
 # @example
@@ -5320,6 +5600,95 @@ RuboCop::Cop::RSpec::ReceiveCounts::MSG = T.let(T.unsafe(nil), String)
 
 # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_counts.rb#30
 RuboCop::Cop::RSpec::ReceiveCounts::RESTRICT_ON_SEND = T.let(T.unsafe(nil), Array)
+
+# Checks for multiple messages stubbed on the same object.
+#
+# @example
+#   # bad
+#   before do
+#   allow(Service).to receive(:foo).and_return(bar)
+#   allow(Service).to receive(:baz).and_return(qux)
+#   end
+#
+#   # good
+#   before do
+#   allow(Service).to receive_messages(foo: bar, baz: qux)
+#   end
+#
+#   # good - ignore same message
+#   before do
+#   allow(Service).to receive(:foo).and_return(bar)
+#   allow(Service).to receive(:foo).and_return(qux)
+#   end
+#
+# source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#31
+class RuboCop::Cop::RSpec::ReceiveMessages < ::RuboCop::Cop::RSpec::Base
+  include ::RuboCop::Cop::RangeHelp
+  extend ::RuboCop::Cop::AutoCorrector
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#44
+  def allow_argument(param0 = T.unsafe(nil)); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#39
+  def allow_receive_message?(param0 = T.unsafe(nil)); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#63
+  def on_begin(node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#59
+  def receive_and_return_argument(param0 = T.unsafe(nil)); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#54
+  def receive_arg(param0); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#49
+  def receive_node(param0); end
+
+  private
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#83
+  def add_repeated_lines_and_arguments(items); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#100
+  def arguments(items); end
+
+  # @return [Boolean]
+  #
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#150
+  def heredoc_or_splat?(node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#146
+  def item_range_by_whole_lines(item); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#135
+  def message(repeated_lines); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#109
+  def normalize_receive_arg(receive_arg); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#117
+  def normalize_return_arg(return_arg); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#125
+  def register_offense(item, repeated_lines, args); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#73
+  def repeated_receive_message(node); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#139
+  def replace_to_receive_messages(corrector, item, args); end
+
+  # @return [Boolean]
+  #
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#155
+  def requires_quotes?(value); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#91
+  def uniq_items(items); end
+end
+
+# source://rubocop-rspec//lib/rubocop/cop/rspec/receive_messages.rb#35
+RuboCop::Cop::RSpec::ReceiveMessages::MSG = T.let(T.unsafe(nil), String)
 
 # Prefer `not_to receive(...)` over `receive(...).never`.
 #
@@ -6227,30 +6596,150 @@ class RuboCop::Cop::RSpec::SortMetadata < ::RuboCop::Cop::RSpec::Base
   extend ::RuboCop::Cop::AutoCorrector
 
   # source://rubocop-rspec//lib/rubocop/cop/rspec/sort_metadata.rb#26
-  def on_metadata(symbols, pairs); end
+  def on_metadata(symbols, hash); end
 
   private
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/sort_metadata.rb#37
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/sort_metadata.rb#38
   def crime_scene(symbols, pairs); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/sort_metadata.rb#46
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/sort_metadata.rb#47
   def replacement(symbols, pairs); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/sort_metadata.rb#54
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/sort_metadata.rb#55
   def sort_pairs(pairs); end
 
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/sort_metadata.rb#58
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/sort_metadata.rb#59
   def sort_symbols(symbols); end
 
   # @return [Boolean]
   #
-  # source://rubocop-rspec//lib/rubocop/cop/rspec/sort_metadata.rb#50
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/sort_metadata.rb#51
   def sorted?(symbols, pairs); end
 end
 
 # source://rubocop-rspec//lib/rubocop/cop/rspec/sort_metadata.rb#24
 RuboCop::Cop::RSpec::SortMetadata::MSG = T.let(T.unsafe(nil), String)
+
+# Checks that spec file paths are consistent and well-formed.
+#
+# @example
+#   # bad
+#   whatever_spec.rb         # describe MyClass
+#   my_class_spec.rb         # describe MyClass, '#method'
+#
+#   # good
+#   my_class_spec.rb         # describe MyClass
+#   my_class_method_spec.rb  # describe MyClass, '#method'
+#   my_class/method_spec.rb  # describe MyClass, '#method'
+# @example `CustomTransform: {RuboCop=>rubocop, RSpec=>rspec}` (default)
+#   # good
+#   rubocop_spec.rb          # describe RuboCop
+#   rspec_spec.rb            # describe RSpec
+# @example `IgnoreMethods: false` (default)
+#   # bad
+#   my_class_spec.rb         # describe MyClass, '#method'
+# @example `IgnoreMethods: true`
+#   # good
+#   my_class_spec.rb         # describe MyClass, '#method'
+# @example `IgnoreMetadata: {type=>routing}` (default)
+#   # good
+#   whatever_spec.rb         # describe MyClass, type: :routing do; end
+#
+# source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#35
+class RuboCop::Cop::RSpec::SpecFilePathFormat < ::RuboCop::Cop::RSpec::Base
+  include ::RuboCop::Cop::RSpec::TopLevelGroup
+  include ::RuboCop::Cop::RSpec::Namespace
+  include ::RuboCop::Cop::RSpec::FileHelp
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#43
+  def example_group_arguments(param0 = T.unsafe(nil)); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#48
+  def metadata_key_value(param0); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#50
+  def on_top_level_example_group(node); end
+
+  private
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#108
+  def camel_to_snake_case(string); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#81
+  def correct_path_pattern(class_name, arguments); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#115
+  def custom_transform; end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#62
+  def ensure_correct_file_path(class_name, arguments); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#98
+  def expected_path(constant); end
+
+  # @return [Boolean]
+  #
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#127
+  def filename_ends_with?(pattern); end
+
+  # @return [Boolean]
+  #
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#94
+  def ignore?(method_name); end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#123
+  def ignore_metadata; end
+
+  # @return [Boolean]
+  #
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#73
+  def ignore_metadata?(arguments); end
+
+  # @return [Boolean]
+  #
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#119
+  def ignore_methods?; end
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#88
+  def name_pattern(method_name); end
+end
+
+# source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_format.rb#40
+RuboCop::Cop::RSpec::SpecFilePathFormat::MSG = T.let(T.unsafe(nil), String)
+
+# Checks that spec file paths suffix are consistent and well-formed.
+#
+# @example
+#   # bad
+#   my_class/foo_specorb.rb   # describe MyClass
+#   spec/models/user.rb       # describe User
+#   spec/models/user_specxrb  # describe User
+#
+#   # good
+#   my_class_spec.rb          # describe MyClass
+#
+#   # good - shared examples are allowed
+#   spec/models/user.rb       # shared_examples_for 'foo'
+#
+# source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_suffix.rb#20
+class RuboCop::Cop::RSpec::SpecFilePathSuffix < ::RuboCop::Cop::RSpec::Base
+  include ::RuboCop::Cop::RSpec::TopLevelGroup
+  include ::RuboCop::Cop::RSpec::FileHelp
+
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_suffix.rb#26
+  def on_top_level_example_group(node); end
+
+  private
+
+  # @return [Boolean]
+  #
+  # source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_suffix.rb#34
+  def correct_path?; end
+end
+
+# source://rubocop-rspec//lib/rubocop/cop/rspec/spec_file_path_suffix.rb#24
+RuboCop::Cop::RSpec::SpecFilePathSuffix::MSG = T.let(T.unsafe(nil), String)
 
 # Checks that message expectations do not have a configured response.
 #
@@ -6645,7 +7134,7 @@ class RuboCop::Cop::RSpec::VariableDefinition < ::RuboCop::Cop::RSpec::Base
   # @return [Boolean]
   #
   # source://rubocop-rspec//lib/rubocop/cop/rspec/variable_definition.rb#62
-  def style_violation?(variable); end
+  def style_offense?(variable); end
 
   # @return [Boolean]
   #
@@ -6742,7 +7231,7 @@ RuboCop::Cop::RSpec::VariableName::MSG = T.let(T.unsafe(nil), String)
 #   let(:foo) do
 #   instance_double(@klass, method_name: 'returned_value')
 #   end
-# @see https://relishapp.com/rspec/rspec-mocks/docs/verifying-doubles
+# @see https://rspec.info/features/3-12/rspec-mocks/verifying-doubles
 #
 # source://rubocop-rspec//lib/rubocop/cop/rspec/verified_double_reference.rb#43
 class RuboCop::Cop::RSpec::VerifiedDoubleReference < ::RuboCop::Cop::RSpec::Base
@@ -6758,7 +7247,7 @@ class RuboCop::Cop::RSpec::VerifiedDoubleReference < ::RuboCop::Cop::RSpec::Base
   private
 
   # source://rubocop-rspec//lib/rubocop/cop/rspec/verified_double_reference.rb#101
-  def correct_style(violation); end
+  def correct_style(offense); end
 
   # @return [Boolean]
   #
@@ -6792,7 +7281,7 @@ RuboCop::Cop::RSpec::VerifiedDoubleReference::RESTRICT_ON_SEND = T.let(T.unsafe(
 #   let(:foo) do
 #   instance_double("ClassName", method_name: 'returned value')
 #   end
-# @see https://relishapp.com/rspec/rspec-mocks/docs/verifying-doubles
+# @see https://rspec.info/features/3-12/rspec-mocks/verifying-doubles
 #
 # source://rubocop-rspec//lib/rubocop/cop/rspec/verified_doubles.rb#26
 class RuboCop::Cop::RSpec::VerifiedDoubles < ::RuboCop::Cop::RSpec::Base
@@ -6911,14 +7400,14 @@ class RuboCop::Cop::Style::TrailingCommaInArguments < ::RuboCop::Cop::Base
   include ::RuboCop::Cop::ConfigurableEnforcedStyle
   include ::RuboCop::Cop::RangeHelp
 
-  # source://rubocop/1.52.1/lib/rubocop/cop/style/trailing_comma_in_arguments.rb#95
+  # source://rubocop/1.56.4/lib/rubocop/cop/style/trailing_comma_in_arguments.rb#95
   def on_csend(node); end
 
-  # source://rubocop/1.52.1/lib/rubocop/cop/style/trailing_comma_in_arguments.rb#95
+  # source://rubocop/1.56.4/lib/rubocop/cop/style/trailing_comma_in_arguments.rb#95
   def on_send(node); end
 
   class << self
-    # source://rubocop-rspec//lib/rubocop-rspec.rb#59
+    # source://rubocop-rspec//lib/rubocop-rspec.rb#60
     def autocorrect_incompatible_with; end
   end
 end

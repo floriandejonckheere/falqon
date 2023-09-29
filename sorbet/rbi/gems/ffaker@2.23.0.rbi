@@ -6,22 +6,22 @@
 
 # sourse: https://www.soumu.go.jp/main_sosiki/joho_tsusin/top/tel_number/number_shitei.html#kotei-denwa
 #
-# source://ffaker//lib/ffaker.rb#3
+# source://ffaker//lib/ffaker/version.rb#3
 module FFaker
   extend ::FFaker::RandomUtils
   extend ::FFaker::ModuleUtils
 
   class << self
-    # source://ffaker//lib/ffaker.rb#27
+    # source://ffaker//lib/ffaker.rb#30
     def bothify(masks); end
 
-    # source://ffaker//lib/ffaker.rb#15
+    # source://ffaker//lib/ffaker.rb#18
     def hexify(*masks); end
 
-    # source://ffaker//lib/ffaker.rb#23
+    # source://ffaker//lib/ffaker.rb#26
     def letterify(*masks); end
 
-    # source://ffaker//lib/ffaker.rb#19
+    # source://ffaker//lib/ffaker.rb#22
     def numerify(*masks); end
   end
 end
@@ -415,16 +415,16 @@ module FFaker::AddressFR
   extend ::FFaker::Address
   extend ::FFaker::AddressFR
 
-  # source://ffaker//lib/ffaker/address_fr.rb#28
+  # source://ffaker//lib/ffaker/address_fr.rb#26
   def city; end
 
-  # source://ffaker//lib/ffaker/address_fr.rb#32
+  # source://ffaker//lib/ffaker/address_fr.rb#30
   def full_address; end
 
-  # source://ffaker//lib/ffaker/address_fr.rb#24
+  # source://ffaker//lib/ffaker/address_fr.rb#22
   def postal_code; end
 
-  # source://ffaker//lib/ffaker/address_fr.rb#36
+  # source://ffaker//lib/ffaker/address_fr.rb#34
   def region; end
 
   # source://ffaker//lib/ffaker/address_fr.rb#16
@@ -566,16 +566,16 @@ module FFaker::AddressIT
   extend ::FFaker::ModuleUtils
   extend ::FFaker::AddressIT
 
-  # source://ffaker//lib/ffaker/address_it.rb#24
+  # source://ffaker//lib/ffaker/address_it.rb#21
   def city; end
 
-  # source://ffaker//lib/ffaker/address_it.rb#28
+  # source://ffaker//lib/ffaker/address_it.rb#25
   def full_address; end
 
-  # source://ffaker//lib/ffaker/address_it.rb#20
+  # source://ffaker//lib/ffaker/address_it.rb#17
   def postal_code; end
 
-  # source://ffaker//lib/ffaker/address_it.rb#32
+  # source://ffaker//lib/ffaker/address_it.rb#29
   def region; end
 
   # source://ffaker//lib/ffaker/address_it.rb#13
@@ -1181,33 +1181,33 @@ module FFaker::Avatar
   extend ::FFaker::Avatar
 
   # source://ffaker//lib/ffaker/avatar.rb#10
-  def image(slug = T.unsafe(nil), size = T.unsafe(nil), format = T.unsafe(nil), bgset = T.unsafe(nil)); end
+  def image(*args, slug: T.unsafe(nil), size: T.unsafe(nil), format: T.unsafe(nil), bgset: T.unsafe(nil)); end
 
   private
 
-  # source://ffaker//lib/ffaker/avatar.rb#18
+  # source://ffaker//lib/ffaker/avatar.rb#26
   def check_passed_params(size, format, bgset); end
 
   # @raise [ArgumentError]
   #
-  # source://ffaker//lib/ffaker/avatar.rb#32
+  # source://ffaker//lib/ffaker/avatar.rb#40
   def invalid_background_number; end
 
   # @raise [ArgumentError]
   #
-  # source://ffaker//lib/ffaker/avatar.rb#28
+  # source://ffaker//lib/ffaker/avatar.rb#36
   def invalid_format_error; end
 
   # @raise [ArgumentError]
   #
-  # source://ffaker//lib/ffaker/avatar.rb#24
+  # source://ffaker//lib/ffaker/avatar.rb#32
   def invalid_size_error; end
 end
 
 # source://ffaker//lib/ffaker/avatar.rb#8
 FFaker::Avatar::SUPPORTED_FORMATS = T.let(T.unsafe(nil), Array)
 
-# source://ffaker//lib/ffaker.rb#9
+# source://ffaker//lib/ffaker.rb#12
 FFaker::BASE_LIB_PATH = T.let(T.unsafe(nil), String)
 
 # Thanks to http://baconipsum.com/
@@ -1259,6 +1259,24 @@ end
 # source://ffaker//lib/ffaker/bank.rb#8
 FFaker::Bank::COUNTRIES = T.let(T.unsafe(nil), Hash)
 
+# source://ffaker//lib/ffaker/bank_us.rb#4
+module FFaker::BankUS
+  extend ::FFaker::RandomUtils
+  extend ::FFaker::ModuleUtils
+  extend ::FFaker::BankUS
+
+  # source://ffaker//lib/ffaker/bank_us.rb#8
+  def account_number(min_digits: T.unsafe(nil), max_digits: T.unsafe(nil)); end
+
+  # source://ffaker//lib/ffaker/bank_us.rb#12
+  def routing_number; end
+
+  private
+
+  # source://ffaker//lib/ffaker/bank_us.rb#21
+  def generate_ninth_digit(num_string); end
+end
+
 # source://ffaker//lib/ffaker/book.rb#4
 module FFaker::Book
   extend ::FFaker::RandomUtils
@@ -1269,7 +1287,7 @@ module FFaker::Book
   def author; end
 
   # source://ffaker//lib/ffaker/book.rb#33
-  def cover(slug = T.unsafe(nil), size = T.unsafe(nil), format = T.unsafe(nil), bgset = T.unsafe(nil)); end
+  def cover(*args, slug: T.unsafe(nil), size: T.unsafe(nil), format: T.unsafe(nil), bgset: T.unsafe(nil)); end
 
   # source://ffaker//lib/ffaker/book.rb#29
   def description(sentence_count = T.unsafe(nil)); end
@@ -1280,7 +1298,7 @@ module FFaker::Book
   # source://ffaker//lib/ffaker/book.rb#25
   def isbn; end
 
-  # source://ffaker//lib/ffaker/book.rb#37
+  # source://ffaker//lib/ffaker/book.rb#45
   def orly_cover(name = T.unsafe(nil), book_author = T.unsafe(nil), top_text = T.unsafe(nil)); end
 
   # source://ffaker//lib/ffaker/book.rb#10
@@ -1288,10 +1306,10 @@ module FFaker::Book
 
   private
 
-  # source://ffaker//lib/ffaker/book.rb#48
+  # source://ffaker//lib/ffaker/book.rb#56
   def simple_title; end
 
-  # source://ffaker//lib/ffaker/book.rb#52
+  # source://ffaker//lib/ffaker/book.rb#60
   def title_with_prefix; end
 end
 
@@ -1612,6 +1630,16 @@ module FFaker::CoursesFR::Philosophie
   def lesson; end
 end
 
+# source://ffaker//lib/ffaker/crypto.rb#6
+module FFaker::Crypto
+  extend ::FFaker::RandomUtils
+  extend ::FFaker::ModuleUtils
+  extend ::FFaker::Crypto
+
+  # source://ffaker//lib/ffaker/crypto.rb#10
+  def sha256; end
+end
+
 # source://ffaker//lib/ffaker/currency.rb#4
 module FFaker::Currency
   extend ::FFaker::RandomUtils
@@ -1626,6 +1654,34 @@ module FFaker::Currency
 
   # source://ffaker//lib/ffaker/currency.rb#16
   def symbol; end
+end
+
+# source://ffaker//lib/ffaker/date.rb#6
+module FFaker::Date
+  extend ::FFaker::RandomUtils
+  extend ::FFaker::ModuleUtils
+  extend ::FFaker::Date
+
+  # Generates a random date up to `days` days in the past
+  #
+  # source://ffaker//lib/ffaker/date.rb#16
+  def backward(days = T.unsafe(nil)); end
+
+  # Generates a random date between 2 dates
+  #
+  # source://ffaker//lib/ffaker/date.rb#11
+  def between(from, to); end
+
+  # Random birthday date (maximum age between 18 and 65)
+  # Keyword arguments: min_age, max_age
+  #
+  # source://ffaker//lib/ffaker/date.rb#33
+  def birthday(min_age: T.unsafe(nil), max_age: T.unsafe(nil)); end
+
+  # Generates a random date up to `days` days in the future
+  #
+  # source://ffaker//lib/ffaker/date.rb#24
+  def forward(days = T.unsafe(nil)); end
 end
 
 # Thanks to Snoop Dogg
@@ -1728,7 +1784,7 @@ module FFaker::Filesystem
   def extension; end
 
   # source://ffaker//lib/ffaker/filesystem.rb#20
-  def file_name(dir = T.unsafe(nil), name = T.unsafe(nil), ext = T.unsafe(nil), directory_separator = T.unsafe(nil)); end
+  def file_name(*args, dir: T.unsafe(nil), name: T.unsafe(nil), ext: T.unsafe(nil), directory_separator: T.unsafe(nil)); end
 
   # source://ffaker//lib/ffaker/filesystem.rb#12
   def mime_type; end
@@ -2063,7 +2119,7 @@ module FFaker::Guid
   def guid; end
 end
 
-# source://ffaker//lib/ffaker.rb#13
+# source://ffaker//lib/ffaker.rb#16
 FFaker::HEX = T.let(T.unsafe(nil), Array)
 
 # Loosely based on http://html-ipsum.com/
@@ -2205,36 +2261,36 @@ module FFaker::IdentificationBR
   extend ::FFaker::ModuleUtils
   extend ::FFaker::IdentificationBR
 
-  # source://ffaker//lib/ffaker/identification_br.rb#27
+  # source://ffaker//lib/ffaker/identification_br.rb#23
   def cnpj; end
 
-  # source://ffaker//lib/ffaker/identification_br.rb#59
+  # source://ffaker//lib/ffaker/identification_br.rb#50
   def cnpj_verification_digits(cnpj); end
 
   # source://ffaker//lib/ffaker/identification_br.rb#12
   def cpf; end
 
-  # source://ffaker//lib/ffaker/identification_br.rb#55
+  # source://ffaker//lib/ffaker/identification_br.rb#46
   def cpf_verification_digits(cpf); end
 
-  # source://ffaker//lib/ffaker/identification_br.rb#51
+  # source://ffaker//lib/ffaker/identification_br.rb#42
   def gender; end
 
-  # source://ffaker//lib/ffaker/identification_br.rb#33
+  # source://ffaker//lib/ffaker/identification_br.rb#29
   def pretty_cnpj; end
 
   # source://ffaker//lib/ffaker/identification_br.rb#18
   def pretty_cpf; end
 
-  # source://ffaker//lib/ffaker/identification_br.rb#47
+  # source://ffaker//lib/ffaker/identification_br.rb#38
   def pretty_rg; end
 
-  # source://ffaker//lib/ffaker/identification_br.rb#43
+  # source://ffaker//lib/ffaker/identification_br.rb#34
   def rg; end
 
   private
 
-  # source://ffaker//lib/ffaker/identification_br.rb#65
+  # source://ffaker//lib/ffaker/identification_br.rb#56
   def document_verification_digits(verification_multipliers, document = T.unsafe(nil)); end
 end
 
@@ -2246,6 +2302,30 @@ FFaker::IdentificationBR::CPF_VERIFICATION_MULTIPLIERS = T.let(T.unsafe(nil), Ar
 
 # source://ffaker//lib/ffaker/identification_br.rb#8
 FFaker::IdentificationBR::GENDERS = T.let(T.unsafe(nil), Array)
+
+# source://ffaker//lib/ffaker/identification_ec.rb#4
+module FFaker::IdentificationEC
+  extend ::FFaker::RandomUtils
+  extend ::FFaker::ModuleUtils
+  extend ::FFaker::IdentificationEC
+
+  # https://medium.com/@bryansuarez/c%C3%B3mo-validar-c%C3%A9dula-y-ruc-en-ecuador-b62c5666186f
+  # Cedula de Identificacion
+  #
+  # source://ffaker//lib/ffaker/identification_ec.rb#10
+  def ci; end
+
+  private
+
+  # source://ffaker//lib/ffaker/identification_ec.rb#17
+  def ci_digits; end
+
+  # source://ffaker//lib/ffaker/identification_ec.rb#26
+  def digits_sum(digits); end
+
+  # source://ffaker//lib/ffaker/identification_ec.rb#21
+  def last_digit(digits); end
+end
 
 # source://ffaker//lib/ffaker/identification_es.rb#4
 module FFaker::IdentificationES
@@ -2353,10 +2433,10 @@ FFaker::IdentificationIT::ETHNICITIES = T.let(T.unsafe(nil), Array)
 FFaker::IdentificationIT::GENDERS = T.let(T.unsafe(nil), Array)
 
 # source://ffaker//lib/ffaker/identification_kr.rb#4
-module FFaker::IdentificationKr
+module FFaker::IdentificationKR
   extend ::FFaker::RandomUtils
   extend ::FFaker::ModuleUtils
-  extend ::FFaker::IdentificationKr
+  extend ::FFaker::IdentificationKR
 
   # Resident Registration Number
   # http://ko.wikipedia.org/wiki/%EC%A3%BC%EB%AF%BC%EB%93%B1%EB%A1%9D%EB%B2%88%ED%98%B8
@@ -2480,22 +2560,26 @@ module FFaker::Image
   extend ::FFaker::ModuleUtils
   extend ::FFaker::Image
 
-  # source://ffaker//lib/ffaker/image.rb#25
-  def file(size = T.unsafe(nil), format = T.unsafe(nil), bg_color = T.unsafe(nil), text_color = T.unsafe(nil), text = T.unsafe(nil)); end
+  # `*args` for old format support, it will be removed with deprecation
+  #
+  # source://ffaker//lib/ffaker/image.rb#39
+  def file(*args, size: T.unsafe(nil), format: T.unsafe(nil), bg_color: T.unsafe(nil), text_color: T.unsafe(nil), text: T.unsafe(nil)); end
 
-  # source://ffaker//lib/ffaker/image.rb#14
-  def url(size = T.unsafe(nil), format = T.unsafe(nil), bg_color = T.unsafe(nil), text_color = T.unsafe(nil), text = T.unsafe(nil)); end
+  # `*args` for old format support, it will be removed with deprecation
+  #
+  # source://ffaker//lib/ffaker/image.rb#16
+  def url(*args, size: T.unsafe(nil), format: T.unsafe(nil), bg_color: T.unsafe(nil), text_color: T.unsafe(nil), text: T.unsafe(nil)); end
 
   private
 
   # @raise [ArgumentError]
   #
-  # source://ffaker//lib/ffaker/image.rb#42
+  # source://ffaker//lib/ffaker/image.rb#66
   def check_format!(format); end
 
   # @raise [ArgumentError]
   #
-  # source://ffaker//lib/ffaker/image.rb#36
+  # source://ffaker//lib/ffaker/image.rb#60
   def check_size!(size); end
 end
 
@@ -2667,6 +2751,25 @@ FFaker::InternetSE::HOSTS = T.let(T.unsafe(nil), Array)
 # source://ffaker//lib/ffaker/internet_se.rb#16
 FFaker::InternetSE::SLUG_DELIMITERS = T.let(T.unsafe(nil), Array)
 
+# source://ffaker//lib/ffaker/jo_jo.rb#4
+module FFaker::JoJo
+  extend ::FFaker::RandomUtils
+  extend ::FFaker::ModuleUtils
+  extend ::FFaker::JoJo
+
+  # source://ffaker//lib/ffaker/jo_jo.rb#12
+  def first_name; end
+
+  # source://ffaker//lib/ffaker/jo_jo.rb#8
+  def full_name; end
+
+  # source://ffaker//lib/ffaker/jo_jo.rb#16
+  def last_name; end
+
+  # source://ffaker//lib/ffaker/jo_jo.rb#20
+  def stand; end
+end
+
 # source://ffaker//lib/ffaker/job.rb#4
 module FFaker::Job
   extend ::FFaker::RandomUtils
@@ -2750,7 +2853,7 @@ module FFaker::JobVN
   def title; end
 end
 
-# source://ffaker//lib/ffaker.rb#11
+# source://ffaker//lib/ffaker.rb#14
 FFaker::LETTERS = T.let(T.unsafe(nil), Array)
 
 # source://ffaker//lib/ffaker/locale.rb#4
@@ -4534,6 +4637,9 @@ module FFaker::Number
   extend ::FFaker::ModuleUtils
   extend ::FFaker::Number
 
+  # source://ffaker//lib/ffaker/number.rb#18
+  def between(from: T.unsafe(nil), to: T.unsafe(nil)); end
+
   # source://ffaker//lib/ffaker/number.rb#12
   def decimal(whole_digits: T.unsafe(nil), fractional_digits: T.unsafe(nil)); end
 
@@ -4544,7 +4650,7 @@ module FFaker::Number
 
   # @raise [ArgumentError]
   #
-  # source://ffaker//lib/ffaker/number.rb#20
+  # source://ffaker//lib/ffaker/number.rb#24
   def generate_pattern(digits); end
 end
 
@@ -5719,37 +5825,37 @@ FFaker::Product::VOWELS = T.let(T.unsafe(nil), Array)
 # Random Number Generator (RNG) used with ModuleUtils#fetch, #shuffle, #rand
 # in order to provide deterministic repeatability.
 #
-# source://ffaker//lib/ffaker.rb#222
+# source://ffaker//lib/ffaker.rb#94
 module FFaker::Random
   class << self
     # Returns a new Random object instantiated with #seed.
     #
-    # source://ffaker//lib/ffaker.rb#253
+    # source://ffaker//lib/ffaker.rb#125
     def new_rng; end
 
     # Returns a random number using an RNG with a known seed.
     #
-    # source://ffaker//lib/ffaker.rb#241
+    # source://ffaker//lib/ffaker.rb#113
     def rand(max = T.unsafe(nil)); end
 
     # Reset the RNG back to its initial state.
     #
-    # source://ffaker//lib/ffaker.rb#236
+    # source://ffaker//lib/ffaker.rb#108
     def reset!; end
 
     # Returns the current Random object.
     #
-    # source://ffaker//lib/ffaker.rb#248
+    # source://ffaker//lib/ffaker.rb#120
     def rng; end
 
     # Returns the current RNG seed.
     #
-    # source://ffaker//lib/ffaker.rb#224
+    # source://ffaker//lib/ffaker.rb#96
     def seed; end
 
     # Sets the RNG seed and creates a new internal RNG.
     #
-    # source://ffaker//lib/ffaker.rb#229
+    # source://ffaker//lib/ffaker.rb#101
     def seed=(new_seed); end
   end
 end
@@ -6132,38 +6238,44 @@ module FFaker::Tweet
   def tweet(args = T.unsafe(nil)); end
 end
 
-# source://ffaker//lib/ffaker/utils/unique_utils.rb#5
+# source://ffaker//lib/ffaker/utils/unique_utils.rb#6
 class FFaker::UniqueUtils
   # @return [UniqueUtils] a new instance of UniqueUtils
   #
-  # source://ffaker//lib/ffaker/utils/unique_utils.rb#6
+  # source://ffaker//lib/ffaker/utils/unique_utils.rb#24
   def initialize(generator, max_retries); end
 
-  # source://ffaker//lib/ffaker/utils/unique_utils.rb#22
+  # source://ffaker//lib/ffaker/utils/unique_utils.rb#29
   def clear; end
-
-  # source://ffaker//lib/ffaker/utils/unique_utils.rb#12
-  def method_missing(name, *arguments); end
 
   private
 
   # @raise [RetryLimitExceeded]
   #
-  # source://ffaker//lib/ffaker/utils/unique_utils.rb#32
-  def add_results_to_hash(name, *arguments); end
+  # source://ffaker//lib/ffaker/utils/unique_utils.rb#35
+  def method_missing(name, *args, **kwargs); end
+
+  # source://ffaker//lib/ffaker/utils/unique_utils.rb#52
+  def previous_results; end
 
   # @return [Boolean]
   #
-  # source://ffaker//lib/ffaker/utils/unique_utils.rb#16
-  def respond_to_missing?(method_name, include_private = T.unsafe(nil)); end
+  # source://ffaker//lib/ffaker/utils/unique_utils.rb#48
+  def respond_to_missing?(name, *args); end
 
   class << self
-    # source://ffaker//lib/ffaker/utils/unique_utils.rb#26
+    # source://ffaker//lib/ffaker/utils/unique_utils.rb#10
+    def add_instance(generator, max_retries); end
+
+    # source://ffaker//lib/ffaker/utils/unique_utils.rb#18
     def clear; end
+
+    # source://ffaker//lib/ffaker/utils/unique_utils.rb#14
+    def instances; end
   end
 end
 
-# source://ffaker//lib/ffaker/utils/unique_utils.rb#20
+# source://ffaker//lib/ffaker/utils/unique_utils.rb#7
 class FFaker::UniqueUtils::RetryLimitExceeded < ::StandardError; end
 
 # source://ffaker//lib/ffaker/unit.rb#4
@@ -6341,7 +6453,7 @@ FFaker::UnitMetric::MASS_UNITS = T.let(T.unsafe(nil), Array)
 # source://ffaker//lib/ffaker/unit_metric.rb#25
 FFaker::UnitMetric::VOLUME_UNITS = T.let(T.unsafe(nil), Array)
 
-# source://ffaker//lib/version.rb#4
+# source://ffaker//lib/ffaker/version.rb#4
 FFaker::VERSION = T.let(T.unsafe(nil), String)
 
 # source://ffaker//lib/ffaker/vehicle.rb#4
