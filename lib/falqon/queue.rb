@@ -66,6 +66,9 @@ module Falqon
         # Push identifier to queue
         pending.add(entry.id)
 
+        # Set entry status
+        redis.with { |r| r.hset("#{name}:metadata:#{entry.id}", :status, "pending") }
+
         # Return identifier(s)
         messages.size == 1 ? (return entry.id) : (next entry.id)
       end
@@ -85,6 +88,9 @@ module Falqon
       entry = redis.with do |r|
         # Move identifier from pending queue to processing queue
         id = r.blmove(name, processing.name, :left, :right).to_i
+
+        # Set entry status
+        r.hset("#{name}:metadata:#{id}", :status, "processing")
 
         # Set update timestamp
         r.hset("#{name}:metadata", :updated_at, Time.now.to_i)

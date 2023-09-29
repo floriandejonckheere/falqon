@@ -13,5 +13,15 @@ RSpec.describe Falqon::Strategies::None do
       expect(queue.processing).to be_empty
       expect(queue.dead).not_to be_empty
     end
+
+    it "sets the entry status to dead" do
+      id = queue.push("message1")
+
+      queue.pop { raise Falqon::Error }
+
+      entry = Falqon::Entry.new(queue, id:)
+
+      expect(entry.metadata.status).to eq "dead"
+    end
   end
 end

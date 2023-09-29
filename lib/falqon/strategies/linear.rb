@@ -15,15 +15,21 @@ module Falqon
           # Increment retry count
           retries = r.hincrby("#{queue.name}:metadata:#{entry.id}", :retries, 1)
 
-          r.multi do |_t|
+          r.multi do |t|
             if retries < queue.max_retries || queue.max_retries == -1
               queue.logger.debug "Requeuing message #{entry.id} on queue #{queue.name} (attempt #{retries})"
 
               # Add identifier back to pending queue
               queue.pending.add(entry.id)
+
+              # Set entry status
+              t.hset("#{queue.name}:metadata:#{entry.id}", :status, "pending")
             else
               # Kill message after max retries
               entry.kill
+
+              # Set entry status
+              t.hset("#{queue.name}:metadata:#{entry.id}", :status, "dead")
             end
 
             # Remove identifier from processing queue

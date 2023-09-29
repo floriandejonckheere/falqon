@@ -293,6 +293,7 @@ Falqon::Entry#metadata
 Returns:
 
 - `Falqon::Entry::Metadata`: entry metadata. Supported attributes:
+  - `status`: entry status (unknown, pending, processing, dead)
   - `retries`: total number of processing retries
   - `created_at`: timestamp of the entry creation
   - `updated_at`: timestamp of the entry update

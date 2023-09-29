@@ -103,6 +103,14 @@ RSpec.describe Falqon::Queue do
         expect(queue.metadata.updated_at).to be_within(1).of(time + 60)
       end
     end
+
+    it "sets the entry status to pending" do
+      id = queue.push("message1")
+
+      entry = Falqon::Entry.new(queue, id:)
+
+      expect(entry.metadata.status).to eq "pending"
+    end
   end
 
   describe "#pop" do
@@ -126,6 +134,16 @@ RSpec.describe Falqon::Queue do
         queue.pop
 
         expect(queue.metadata.updated_at).to be_within(1).of(time + 60)
+      end
+    end
+
+    it "sets the entry status to processing" do
+      id = queue.push("message1")
+
+      entry = Falqon::Entry.new(queue, id:)
+
+      queue.pop do
+        expect(entry.metadata.status).to eq "processing"
       end
     end
 

@@ -16,6 +16,16 @@ RSpec.describe Falqon::Strategies::Linear do
       end
     end
 
+    it "sets the entry status to pending" do
+      id = queue.push("message1")
+
+      queue.pop { raise Falqon::Error }
+
+      entry = Falqon::Entry.new(queue, id:)
+
+      expect(entry.metadata.status).to eq "pending"
+    end
+
     context "when processing fails too many times" do
       it "kills messages" do
         queue.push("message1")
@@ -39,6 +49,18 @@ RSpec.describe Falqon::Strategies::Linear do
         entry = Falqon::Entry.new(queue, id:)
 
         expect(entry.metadata.retries).to be_zero
+      end
+
+      it "sets the entry status to dead" do
+        id = queue.push("message1")
+
+        queue.pop { raise Falqon::Error }
+        queue.pop { raise Falqon::Error }
+        queue.pop { raise Falqon::Error }
+
+        entry = Falqon::Entry.new(queue, id:)
+
+        expect(entry.metadata.status).to eq "dead"
       end
     end
   end

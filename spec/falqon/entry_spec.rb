@@ -50,16 +50,18 @@ RSpec.describe Falqon::Entry do
       end
     end
 
-    it "sets the creation and update timestamps" do
+    it "sets the metadata" do
       Timecop.freeze do
         time = Time.now.to_i
 
-        described_class
+        entry = described_class
           .new(queue, id: 2, message: "message1")
           .create
 
-        expect(queue.metadata.created_at).to eq time
-        expect(queue.metadata.updated_at).to eq time
+        expect(entry.metadata.status).to eq "unknown"
+        expect(entry.metadata.retries).to eq 0
+        expect(entry.metadata.created_at).to eq time
+        expect(entry.metadata.updated_at).to eq time
       end
     end
   end
@@ -130,6 +132,7 @@ RSpec.describe Falqon::Entry do
 
         metadata = entry.metadata
 
+        expect(metadata.status).to eq "pending"
         expect(metadata.retries).to eq 0
         expect(metadata.created_at).to eq time
         expect(metadata.updated_at).to eq time
