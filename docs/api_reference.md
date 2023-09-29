@@ -205,6 +205,7 @@ Returns:
     - `failed`: total number of processing failures
     - `retried`: total number of processing retries
     - `created_at`: timestamp of the queue creation
+    - `updated_at`: timestamp of the queue update
 
 ### List all queues
 
@@ -267,7 +268,7 @@ None
 ### Delete an entry
 
 Use `Falqon::Entry#delete` to delete an entry.
-This will delete the entry and all its data from the queue.
+This will delete the entry and all its data (including metadata) from the queue.
 
 ```ruby
 entry.delete
@@ -280,3 +281,18 @@ None
 Returns:
 
 None
+
+### Get the entry metadata
+
+Use `Falqon::Entry#metadata` to get the entry metadata.
+
+```ruby
+Falqon::Entry#metadata
+```
+
+Returns:
+
+- `Falqon::Entry::Metadata`: entry metadata. Supported attributes:
+  - `retries`: total number of processing retries
+  - `created_at`: timestamp of the entry creation
+  - `updated_at`: timestamp of the entry update
