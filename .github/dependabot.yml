@@ -5,8 +5,23 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      dependencies:
+        update-types:
+          - "minor"
+          - "patch"
+        exclude-patterns:
+          - "rubocop*"
+      rubocop:
+        patterns:
+          - "rubocop*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      dependencies:
+        update-types:
+          - "minor"
+          - "patch"
