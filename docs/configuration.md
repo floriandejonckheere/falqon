@@ -8,6 +8,13 @@ nav_order: 2
 
 Falqon can be configured before use, by leveraging the `Falqon.configure` method.
 It's recommended to configure Falqon in an initializer file, such as `config/initializers/falqon.rb`.
+In a Rails application, the generator can be used to create the initializer file:
+
+```bash
+rails generate falqon:install
+```
+
+Otherwise, the file can be created manually:
 
 ```ruby
 Falqon.configure do |config|

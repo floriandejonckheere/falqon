@@ -29,6 +29,13 @@ module Falqon
       # Collapse concerns directory
       loader.collapse(root.join("lib/falqon/concerns"))
 
+      # Configure Rails generators (if applicable)
+      if const_defined?(:Rails)
+        loader.collapse(root.join("lib/generators"))
+      else
+        loader.ignore(root.join("lib/generators"))
+      end
+
       loader.setup
       loader.eager_load
     end
