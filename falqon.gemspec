@@ -17,9 +17,9 @@ Gem::Specification.new do |spec|
   spec.metadata["source_code_uri"] = "https://github.com/floriandejonckheere/falqon.git"
   spec.metadata["rubygems_mfa_required"] = "true"
 
-  spec.files         = Dir["README.md", "LICENSE.md", "CHANGELOG.md", "Gemfile", "lib/**/*.rb", "config/*.rb"]
+  spec.files         = Dir["README.md", "LICENSE.md", "CHANGELOG.md", "Gemfile", "bin/falqon", "lib/**/*.rb", "config/*.rb"]
   spec.bindir        = "bin"
-  spec.executables   = []
+  spec.executables   = ["falqon"]
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "connection_pool", "~> 2.4"
