@@ -6,7 +6,8 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 3.1
   Exclude:
-    - examples/**/*.rb
+    - examples/**/*
+    - vendor/**/*
 
 Layout/LineLength:
   Enabled: false
