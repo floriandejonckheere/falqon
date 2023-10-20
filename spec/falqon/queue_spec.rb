@@ -27,6 +27,20 @@ RSpec.describe Falqon::Queue do
         expect(queue.metadata.updated_at).to be_within(1).of time
       end
     end
+
+    it "sets the protocol version" do
+      queue
+
+      expect(queue.metadata.version).to eq Falqon::PROTOCOL
+    end
+
+    it "raises when the protocol version does not match" do
+      described_class.new("name")
+
+      stub_const("Falqon::PROTOCOL", -1)
+
+      expect { queue }.to raise_error(Falqon::VersionMismatchError)
+    end
   end
 
   describe "#name" do

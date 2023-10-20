@@ -23,11 +23,12 @@ nav_order: 4
 - `max_retries`: the maximum number of retries before a message is discarded (defaults to `Falqon.config.max_retries`)
 - `redis`: the Redis connection pool (defaults to `Falqon.config.redis`)
 - `logger`: the logger (defaults to `Falqon.config.logger`)
+- `version`: the queue protocol version (defaults to `Falqon::PROTOCOL`)
 
 ### Create a queue
 
 Use `Falqon::Queue.new` to create a new queue.
-This will not execute any Redis commands.
+This will register the queue and set the appropriate metadata (timestamps, etc.).
 
 ```ruby
 Falqon::Queue.new(name, max_retries:, redis:, logger:)
@@ -39,10 +40,17 @@ Arguments:
 - `max_retries` (optional): the maximum number of retries before a message is discarded (defaults to `Falqon.configuration.max_retries`)
 - `redis` (optional): the Redis connection pool to use (defaults to `Falqon.configuration.redis`)
 - `logger` (optional): the logger to use (defaults to `Falqon.configuration.logger`)
+- `version` (optional): the queue protocol version to use (defaults to `Falqon::PROTOCOL`)
 
 Returns:
 
 - `Falqon::Queue`: the queue instance
+
+Raises:
+
+- `Falqon::VersionMismatchError`: if the queue protocol version does not match the current version
+
+Note: currently queues are not compatible between different protocol versions. In the future, it will be possible to upgrade queues to a newer protocol version.
 
 The name of the queue will be automatically prefixed with `Falqon.config.prefix` and a slash if set.
 
@@ -206,6 +214,7 @@ Returns:
     - `retried`: total number of processing retries
     - `created_at`: timestamp of the queue creation
     - `updated_at`: timestamp of the queue update
+    - `version`: queue protocol version
 
 ### List all queues
 

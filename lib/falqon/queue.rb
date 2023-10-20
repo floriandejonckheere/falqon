@@ -28,22 +28,37 @@ module Falqon
     sig { returns(Logger) }
     attr_reader :logger
 
-    sig { params(id: String, retry_strategy: Symbol, max_retries: Integer, redis: ConnectionPool, logger: Logger).void }
-    def initialize(id, retry_strategy: Falqon.configuration.retry_strategy, max_retries: Falqon.configuration.max_retries, redis: Falqon.configuration.redis, logger: Falqon.configuration.logger)
+    sig { params(id: String, retry_strategy: Symbol, max_retries: Integer, redis: ConnectionPool, logger: Logger, version: Integer).void }
+    def initialize(
+      id,
+      retry_strategy: Falqon.configuration.retry_strategy,
+      max_retries: Falqon.configuration.max_retries,
+      redis: Falqon.configuration.redis,
+      logger: Falqon.configuration.logger,
+      version: Falqon::PROTOCOL
+    )
       @id = id
       @name = [Falqon.configuration.prefix, id].compact.join("/")
       @retry_strategy = Strategies.const_get(retry_strategy.to_s.capitalize).new(self)
       @max_retries = max_retries
       @redis = redis
       @logger = logger
+      @version = version
 
       redis.with do |r|
+        queue_version = r.hget("#{name}:metadata", :version)
+
+        raise Falqon::VersionMismatchError, "Queue #{name} is using protocol version #{queue_version}, but this client is using protocol version #{version}" if queue_version && queue_version.to_i != @version
+
         # Register the queue
         r.sadd [Falqon.configuration.prefix, "queues"].compact.join(":"), id
 
         # Set creation and update timestamp (if not set)
         r.hsetnx("#{name}:metadata", :created_at, Time.now.to_i)
         r.hsetnx("#{name}:metadata", :updated_at, Time.now.to_i)
+
+        # Set protocol version
+        r.hsetnx("#{name}:metadata", :version, @version)
       end
 
       run_hook :initialize
@@ -255,6 +270,9 @@ module Falqon
 
       # Timestamp of last update
       prop :updated_at, Integer
+
+      # Protocol version
+      prop :version, Integer
     end
   end
 end

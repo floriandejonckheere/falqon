@@ -3,4 +3,7 @@
 module Falqon
   class Error < StandardError
   end
+
+  class VersionMismatchError < Error
+  end
 end

@@ -13,4 +13,6 @@ module Falqon
   end
 
   VERSION = Version::STRING
+
+  PROTOCOL = 1
 end
