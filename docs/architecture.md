@@ -1,7 +1,7 @@
 ---
 layout: home
 title: Architecture
-nav_order: 5
+nav_order: 6
 ---
 
 # Architecture

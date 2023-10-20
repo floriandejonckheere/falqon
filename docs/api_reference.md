@@ -1,10 +1,10 @@
 ---
 layout: home
-title: API Reference
+title: API reference
 nav_order: 4
 ---
 
-# API
+# API reference
 {: .no_toc }
 
 ## Table of contents
