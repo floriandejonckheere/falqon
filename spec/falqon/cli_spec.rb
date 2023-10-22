@@ -3,11 +3,5 @@
 RSpec.describe Falqon::CLI do
   subject(:cli) { described_class.new }
 
-  describe "#version" do
-    it "prints the version" do
-      expect { cli.version }
-        .to output("Falqon #{Falqon::VERSION}\n")
-        .to_stdout
-    end
-  end
+  it { is_expected.to respond_to :version }
 end

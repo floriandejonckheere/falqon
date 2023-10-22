@@ -10,7 +10,9 @@ module Falqon
 
     desc "version", "Print version"
     def version
-      puts "Falqon #{Falqon::VERSION}"
+      Version
+        .new(options)
+        .call
     end
   end
 end
