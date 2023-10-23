@@ -14,6 +14,7 @@ After installing Falqon, run `falqon` to see the available commands.
 $ falqon
 Commands:
   falqon help [COMMAND]  # Describe available commands or one specific command
+  falqon status          # Print queue status
   falqon version         # Print version
 ```
 
@@ -34,4 +35,20 @@ FALQON_PREFIX=falqon
 
 # Configure Redis connection pool
 REDIS_URL=redis://localhost:6379/0
+```
+
+## Commands
+
+### Status
+
+The `status` command prints the status of a queue, or all queues if no queue name is specified.
+
+```bash
+# Print status of all queues
+$ falqon status
+falqon/jobs: 41 entries
+
+# Print status of a specific queue
+$ falqon status --queue jobs
+falqon/jobs: 41 entries
 ```
