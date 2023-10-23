@@ -14,5 +14,13 @@ module Falqon
         .new(options)
         .call
     end
+
+    desc "status", "Print queue status"
+    option :queue, aliases: "-q", type: :string, desc: "Queue name"
+    def status
+      Status
+        .new(options)
+        .call
+    end
   end
 end
