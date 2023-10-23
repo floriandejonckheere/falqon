@@ -36,6 +36,16 @@ RSpec.describe Falqon::CLI::Show do
           .to_stdout
       end
     end
+
+    context "when the --meta and --data options are both specified" do
+      let(:options) { { queue: "foo", meta: true, data: true } }
+
+      it "prints an error message" do
+        expect { command.call }
+          .to output(/--meta and --data are mutually exclusive/)
+          .to_stdout
+      end
+    end
   end
 
   describe "#execute" do
