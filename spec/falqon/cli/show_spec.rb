@@ -26,6 +26,16 @@ RSpec.describe Falqon::CLI::Show do
           .to_stdout
       end
     end
+
+    context "when the --pending, --processing, and --dead options are all specified" do
+      let(:options) { { queue: "foo", pending: true, processing: true, dead: true } }
+
+      it "prints an error message" do
+        expect { command.call }
+          .to output(/--pending, --processing, and --dead are mutually exclusive/)
+          .to_stdout
+      end
+    end
   end
 
   describe "#execute" do
