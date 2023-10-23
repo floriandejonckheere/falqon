@@ -14,7 +14,11 @@ module Falqon
         length = queues.map(&:name).max.to_s.length
 
         queues.each do |queue|
-          puts "#{queue.name.ljust length}: #{queue.size} entries"
+          if queue.empty?
+            puts "#{queue.name.ljust length}: empty"
+          else
+            puts "#{queue.name.ljust length}: #{queue.size} entries (#{queue.pending.size} pending, #{queue.processing.size} processing, #{queue.dead.size} dead)"
+          end
         end
       end
     end

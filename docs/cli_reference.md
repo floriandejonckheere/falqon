@@ -46,9 +46,10 @@ The `status` command prints the status of a queue, or all queues if no queue nam
 ```bash
 # Print status of all queues
 $ falqon status
-falqon/jobs: 41 entries
+falqon/jobs: 41 entries (34 pending, 2 processing, 5 dead)
+falqon/emails: empty
 
 # Print status of a specific queue
 $ falqon status --queue jobs
-falqon/jobs: 41 entries
+falqon/jobs: 41 entries (34 pending, 2 processing, 5 dead)
 ```
