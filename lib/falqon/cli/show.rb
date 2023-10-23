@@ -11,6 +11,9 @@ module Falqon
         queue.redis.with do |r|
           r.lrange(queue.name, 0, -1).each do |id|
             entry = Falqon::Entry.new(queue, id: id.to_i)
+
+            next puts entry.message if options[:data]
+
             puts "id = #{entry.id} " \
                  "retries = #{entry.metadata.retries} " \
                  "created_at = #{Time.at(entry.metadata.created_at)} " \

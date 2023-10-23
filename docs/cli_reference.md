@@ -69,3 +69,4 @@ id = 1 retries = 0 created_at = 1970-01-01 00:00:00 +0000 updated_at = 1970-01-0
 
 Options:
 - `-q`, `--queue=QUEUE`: Queue name (required)
+- `-d`, `--data`: Display raw data 

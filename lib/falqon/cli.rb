@@ -25,6 +25,7 @@ module Falqon
 
     desc "show", "Show queue contents"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
+    option :data, aliases: "-d", type: :boolean, desc: "Display raw data"
     def show
       Show
         .new(options)

@@ -31,4 +31,14 @@ RSpec.describe Falqon::CLI::Show do
       .to output(/id = 2 retries = 2 created_at = .* updated_at = .* message = 3 bytes/)
       .to_stdout
   end
+
+  context "when the --data option is specified" do
+    let(:options) { { queue: "foo", data: true } }
+
+    it "prints the raw data" do
+      expect { command.call }
+        .to output(/bar/)
+        .to_stdout
+    end
+  end
 end
