@@ -18,40 +18,21 @@ module Falqon
       def execute
         start, stop = range_options
 
-        queue.redis.with do |r|
-          if options[:id]
-            entry = Falqon::Entry.new(queue, id: options[:id])
+        # Collect entries to display
+        entries = if options[:id]
+                    [options[:id]]
+                  else
+                    queue.redis.with do |r|
+                      r.lrange(subqueue.name, start, stop)
+                    end
+                  end
 
-            return puts entry.message if options[:data]
+        # Serialize entries
+        entries.each do |id|
+          entry = Falqon::Entry.new(queue, id: id.to_i)
 
-            if options[:meta]
-              puts "id = #{entry.id} " \
-                   "retries = #{entry.metadata.retries} " \
-                   "created_at = #{Time.at(entry.metadata.created_at)} " \
-                   "updated_at = #{Time.at(entry.metadata.updated_at)} " \
-                   "message = #{entry.message.length} bytes"
-            else
-              puts "id = #{entry.id} message = #{entry.message.length} bytes"
-            end
-
-            next
-          end
-
-          r.lrange(subqueue.name, start, stop).each do |id|
-            entry = Falqon::Entry.new(queue, id: id.to_i)
-
-            next puts entry.message if options[:data]
-
-            if options[:meta]
-              puts "id = #{entry.id} " \
-                   "retries = #{entry.metadata.retries} " \
-                   "created_at = #{Time.at(entry.metadata.created_at)} " \
-                   "updated_at = #{Time.at(entry.metadata.updated_at)} " \
-                   "message = #{entry.message.length} bytes"
-            else
-              puts "id = #{entry.id} message = #{entry.message.length} bytes"
-            end
-          end
+          puts Serializer
+            .new(entry, meta: options[:meta], data: options[:data])
         end
       end
 
@@ -92,6 +73,30 @@ module Falqon
             0,
             options.fetch(:head, 0) - 1,
           ]
+        end
+      end
+
+      class Serializer
+        attr_reader :entry, :meta, :data
+
+        def initialize(entry, meta: false, data: false)
+          @entry = entry
+          @meta = meta
+          @data = data
+        end
+
+        def to_s
+          return entry.message if data
+
+          if meta
+            "id = #{entry.id} " \
+              "retries = #{entry.metadata.retries} " \
+              "created_at = #{Time.at(entry.metadata.created_at)} " \
+              "updated_at = #{Time.at(entry.metadata.updated_at)} " \
+              "message = #{entry.message.length} bytes"
+          else
+            "id = #{entry.id} message = #{entry.message.length} bytes"
+          end
         end
       end
     end
