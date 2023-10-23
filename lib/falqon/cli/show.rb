@@ -8,8 +8,16 @@ module Falqon
 
         queue = Falqon::Queue.new(options[:queue])
 
+        subqueue = if options[:processing]
+                     queue.processing
+                   elsif options[:dead]
+                     queue.dead
+                   else
+                     queue.pending
+                   end
+
         queue.redis.with do |r|
-          r.lrange(queue.name, 0, -1).each do |id|
+          r.lrange(subqueue.name, 0, -1).each do |id|
             entry = Falqon::Entry.new(queue, id: id.to_i)
 
             next puts entry.message if options[:data]

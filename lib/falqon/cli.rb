@@ -25,6 +25,11 @@ module Falqon
 
     desc "show", "Show queue contents"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
+
+    option :pending, type: :boolean, desc: "Display pending entries (default)"
+    option :processing, type: :boolean, desc: "Display processing entries"
+    option :dead, type: :boolean, desc: "Display dead entries"
+
     option :data, aliases: "-d", type: :boolean, desc: "Display raw data"
     def show
       Show

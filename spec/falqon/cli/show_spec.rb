@@ -41,4 +41,34 @@ RSpec.describe Falqon::CLI::Show do
         .to_stdout
     end
   end
+
+  context "when the --pending option is specified" do
+    let(:options) { { queue: "foo", pending: true } }
+
+    it "prints the contents of the pending subqueue" do
+      expect { command.call }
+        .to output(/id = 2 retries = 2 created_at = .* updated_at = .* message = 3 bytes/)
+        .to_stdout
+    end
+  end
+
+  context "when the --processing option is specified" do
+    let(:options) { { queue: "foo", processing: true } }
+
+    it "prints the contents of the processing subqueue" do
+      expect { command.call }
+        .not_to output
+        .to_stdout
+    end
+  end
+
+  context "when the --dead option is specified" do
+    let(:options) { { queue: "foo", dead: true } }
+
+    it "prints the contents of the dead subqueue" do
+      expect { command.call }
+        .to output(/id = 1 retries = 0 created_at = .* updated_at = .* message = 3 bytes/)
+        .to_stdout
+    end
+  end
 end
