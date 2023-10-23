@@ -8,11 +8,16 @@ module Falqon
 
         raise "--pending, --processing, and --dead are mutually exclusive" if [options[:pending], options[:processing], options[:dead]].count(true) > 1
         raise "--meta and --data are mutually exclusive" if [options[:meta], options[:data]].count(true) > 1
+
+        raise "--head, --tail, --index, and --range are mutually exclusive" if [options[:head], options[:tail], options[:index], options[:range]].count { |o| o } > 1
+        raise "--range must be specified as two integers" if options[:range] && options[:range].count != 2
       end
 
       def execute
+        start, stop = range_options
+
         queue.redis.with do |r|
-          r.lrange(subqueue.name, 0, -1).each do |id|
+          r.lrange(subqueue.name, start, stop).each do |id|
             entry = Falqon::Entry.new(queue, id: id.to_i)
 
             next puts entry.message if options[:data]
@@ -44,6 +49,30 @@ module Falqon
                       else
                         queue.pending
                       end
+      end
+
+      def range_options
+        if options[:tail]
+          [
+            -options[:tail],
+            -1,
+          ]
+        elsif options[:index]
+          [
+            options[:index],
+            options[:index],
+          ]
+        elsif options[:range]
+          [
+            options[:range].first,
+            options[:range].last,
+          ]
+        else # options[:head]
+          [
+            0,
+            options.fetch(:head, 0) - 1,
+          ]
+        end
       end
     end
   end

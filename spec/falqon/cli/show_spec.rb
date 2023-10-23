@@ -12,8 +12,12 @@ RSpec.describe Falqon::CLI::Show do
     # Add a few entries to the queue
     queue.push("foo")
     queue.push("bar")
+    queue.push("baz")
+    queue.push("bat")
+    queue.push("bak")
+    queue.push("baq")
 
-    5.times { queue.pop { raise Falqon::Error } }
+    13.times { queue.pop { raise Falqon::Error } }
   end
 
   describe "#validate" do
@@ -43,6 +47,26 @@ RSpec.describe Falqon::CLI::Show do
       it "prints an error message" do
         expect { command.call }
           .to output(/--meta and --data are mutually exclusive/)
+          .to_stdout
+      end
+    end
+
+    context "when the --head, --tail, --index, and --range options are all specified" do
+      let(:options) { { queue: "foo", head: 3, tail: 3, index: 3, range: [3, 5] } }
+
+      it "prints an error message" do
+        expect { command.call }
+          .to output(/--head, --tail, --index, and --range are mutually exclusive/)
+          .to_stdout
+      end
+    end
+
+    context "when the --range option is specified with an invalid number of arguments" do
+      let(:options) { { queue: "foo", range: [1] } }
+
+      it "prints an error message" do
+        expect { command.call }
+          .to output(/--range must be specified as two integers/)
           .to_stdout
       end
     end
@@ -102,6 +126,48 @@ RSpec.describe Falqon::CLI::Show do
         expect { command.call }
           .to output(/id = 1 message = 3 bytes/)
           .to_stdout
+      end
+    end
+
+    describe "pagination" do
+      context "when the --head option is specified" do
+        let(:options) { { queue: "foo", head: 3 } }
+
+        it "prints the first N entries" do
+          expect { command.call }
+            .to output(/id = 2.*\n.*id = 3.*\n.*id = 4/) # id = 1 is in the dead queue
+            .to_stdout
+        end
+      end
+
+      context "when the --tail option is specified" do
+        let(:options) { { queue: "foo", tail: 3 } }
+
+        it "prints the last N entries" do
+          expect { command.call }
+            .to output(/id = 4.*\n.*id = 5.*\n.*id = 6/)
+            .to_stdout
+        end
+      end
+
+      context "when the --index option is specified" do
+        let(:options) { { queue: "foo", index: 2 } }
+
+        it "prints the entry at the given index" do
+          expect { command.call }
+            .to output(/id = 4/) # id = 1 is in the dead queue
+            .to_stdout
+        end
+      end
+
+      context "when the --range option is specified" do
+        let(:options) { { queue: "foo", range: [2, 4] } }
+
+        it "prints the entries in the given range" do
+          expect { command.call }
+            .to output(/id = 4.*\n.*id = 5.*\n.*id = 6/) # id = 1 is in the dead queue
+            .to_stdout
+        end
       end
     end
   end
