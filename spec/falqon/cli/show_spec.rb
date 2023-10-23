@@ -70,6 +70,16 @@ RSpec.describe Falqon::CLI::Show do
           .to_stdout
       end
     end
+
+    context "when the --id option is specified with --head, --tail, --index, or --range" do
+      let(:options) { { queue: "foo", id: 1, head: 3 } }
+
+      it "prints an error message" do
+        expect { command.call }
+          .to output(/--id is mutually exclusive with --head, --tail, --index, and --range/)
+          .to_stdout
+      end
+    end
   end
 
   describe "#execute" do
@@ -166,6 +176,16 @@ RSpec.describe Falqon::CLI::Show do
         it "prints the entries in the given range" do
           expect { command.call }
             .to output(/id = 4.*\n.*id = 5.*\n.*id = 6/) # id = 1 is in the dead queue
+            .to_stdout
+        end
+      end
+
+      context "when the --id option is specified" do
+        let(:options) { { queue: "foo", id: 4 } }
+
+        it "prints the entry with the given ID" do
+          expect { command.call }
+            .to output(/id = 4/)
             .to_stdout
         end
       end

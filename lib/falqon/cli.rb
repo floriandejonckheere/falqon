@@ -37,6 +37,8 @@ module Falqon
     option :tail, type: :numeric, desc: "Display N entries from tail of queue"
     option :index, type: :numeric, desc: "Display entry at index N"
     option :range, type: :array, desc: "Display entries at index N to M", banner: "N M"
+
+    option :id, type: :numeric, desc: "Display entry with ID N"
     def show
       Show
         .new(options)

@@ -93,6 +93,10 @@ id = 5 message = 8742 bytes
 # Display entries from index 5 to 10
 $ falqon show --queue jobs --range 5 10
 ...
+
+# Display entry with ID 5
+$ falqon show --queue jobs --id 5
+id = 5 message = 8742 bytes
 ```
 
 Options:
@@ -106,3 +110,4 @@ Options:
 - `--tail N`: Display last N entries
 - `--index N`: Display entry at index N
 - `--range N M`: Display entries from index N to M
+- `--id N`: Display entry with ID N

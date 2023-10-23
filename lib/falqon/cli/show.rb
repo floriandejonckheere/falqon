@@ -11,12 +11,32 @@ module Falqon
 
         raise "--head, --tail, --index, and --range are mutually exclusive" if [options[:head], options[:tail], options[:index], options[:range]].count { |o| o } > 1
         raise "--range must be specified as two integers" if options[:range] && options[:range].count != 2
+
+        raise "--id is mutually exclusive with --head, --tail, --index, and --range" if options[:id] && [options[:head], options[:tail], options[:index], options[:range]].count { |o| o }.positive?
       end
 
       def execute
         start, stop = range_options
 
         queue.redis.with do |r|
+          if options[:id]
+            entry = Falqon::Entry.new(queue, id: options[:id])
+
+            return puts entry.message if options[:data]
+
+            if options[:meta]
+              puts "id = #{entry.id} " \
+                   "retries = #{entry.metadata.retries} " \
+                   "created_at = #{Time.at(entry.metadata.created_at)} " \
+                   "updated_at = #{Time.at(entry.metadata.updated_at)} " \
+                   "message = #{entry.message.length} bytes"
+            else
+              puts "id = #{entry.id} message = #{entry.message.length} bytes"
+            end
+
+            next
+          end
+
           r.lrange(subqueue.name, start, stop).each do |id|
             entry = Falqon::Entry.new(queue, id: id.to_i)
 
