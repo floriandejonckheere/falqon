@@ -54,6 +54,9 @@ $ falqon status --queue jobs
 falqon/jobs: 41 entries (34 pending, 2 processing, 5 dead)
 ```
 
+Options:
+- `-q`, `--queue=QUEUE`: Queue name
+
 ### Show
 
 The `show` command prints the contents of the queue.
@@ -63,3 +66,6 @@ The `show` command prints the contents of the queue.
 $ falqon show --queue jobs
 id = 1 retries = 0 created_at = 1970-01-01 00:00:00 +0000 updated_at = 1970-01-01 00:00:00 +0000 message = 8742 bytes
 ```
+
+Options:
+- `-q`, `--queue=QUEUE`: Queue name (required)
