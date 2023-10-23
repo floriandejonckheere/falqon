@@ -64,6 +64,14 @@ The `show` command prints the contents of the queue.
 ```bash
 # Print all entries in the queue
 $ falqon show --queue jobs
+id = 1 message = 8742 bytes
+
+# Display raw data
+$ falqon show --queue jobs --data
+{"id":1,"message":"Hello, world!"}
+
+# Display additional metadata
+$ falqon show --queue jobs --meta
 id = 1 retries = 0 created_at = 1970-01-01 00:00:00 +0000 updated_at = 1970-01-01 00:00:00 +0000 message = 8742 bytes
 ```
 
@@ -73,3 +81,4 @@ Options:
 - `--processing`: Display processing entries
 - `--dead`: Display dead entries
 - `-d`, `--data`: Display raw data 
+- `-m`, `--meta`: Display additional metadata

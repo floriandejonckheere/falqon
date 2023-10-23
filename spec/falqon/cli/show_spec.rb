@@ -41,7 +41,7 @@ RSpec.describe Falqon::CLI::Show do
   describe "#execute" do
     it "prints the contents of the queue" do
       expect { command.call }
-        .to output(/id = 2 retries = 2 created_at = .* updated_at = .* message = 3 bytes/)
+        .to output(/id = 2 message = 3 bytes/)
         .to_stdout
     end
 
@@ -55,12 +55,22 @@ RSpec.describe Falqon::CLI::Show do
       end
     end
 
+    context "when the --meta option is specified" do
+      let(:options) { { queue: "foo", meta: true } }
+
+      it "prints the metadata" do
+        expect { command.call }
+          .to output(/id = 2 retries = 2 created_at = .* updated_at = .* message = 3 bytes/)
+          .to_stdout
+      end
+    end
+
     context "when the --pending option is specified" do
       let(:options) { { queue: "foo", pending: true } }
 
       it "prints the contents of the pending subqueue" do
         expect { command.call }
-          .to output(/id = 2 retries = 2 created_at = .* updated_at = .* message = 3 bytes/)
+          .to output(/id = 2 message = 3 bytes/)
           .to_stdout
       end
     end
@@ -80,7 +90,7 @@ RSpec.describe Falqon::CLI::Show do
 
       it "prints the contents of the dead subqueue" do
         expect { command.call }
-          .to output(/id = 1 retries = 0 created_at = .* updated_at = .* message = 3 bytes/)
+          .to output(/id = 1 message = 3 bytes/)
           .to_stdout
       end
     end

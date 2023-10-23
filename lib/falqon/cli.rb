@@ -31,6 +31,7 @@ module Falqon
     option :dead, type: :boolean, desc: "Display dead entries"
 
     option :data, aliases: "-d", type: :boolean, desc: "Display raw data"
+    option :meta, aliases: "-m", type: :boolean, dec: "Display additional metadata"
     def show
       Show
         .new(options)

@@ -26,11 +26,15 @@ module Falqon
 
             next puts entry.message if options[:data]
 
-            puts "id = #{entry.id} " \
-                 "retries = #{entry.metadata.retries} " \
-                 "created_at = #{Time.at(entry.metadata.created_at)} " \
-                 "updated_at = #{Time.at(entry.metadata.updated_at)} " \
-                 "message = #{entry.message.length} bytes"
+            if options[:meta]
+              puts "id = #{entry.id} " \
+                   "retries = #{entry.metadata.retries} " \
+                   "created_at = #{Time.at(entry.metadata.created_at)} " \
+                   "updated_at = #{Time.at(entry.metadata.updated_at)} " \
+                   "message = #{entry.message.length} bytes"
+            else
+              puts "id = #{entry.id} message = #{entry.message.length} bytes"
+            end
           end
         end
       end
