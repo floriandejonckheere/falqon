@@ -22,5 +22,13 @@ module Falqon
         .new(options)
         .call
     end
+
+    desc "show", "Show queue contents"
+    option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
+    def show
+      Show
+        .new(options)
+        .call
+    end
   end
 end

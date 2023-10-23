@@ -5,4 +5,5 @@ RSpec.describe Falqon::CLI do
 
   it { is_expected.to respond_to :version }
   it { is_expected.to respond_to :status }
+  it { is_expected.to respond_to :show }
 end
