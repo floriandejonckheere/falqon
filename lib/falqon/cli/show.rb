@@ -11,16 +11,6 @@ module Falqon
       end
 
       def execute
-        queue = Falqon::Queue.new(options[:queue])
-
-        subqueue = if options[:processing]
-                     queue.processing
-                   elsif options[:dead]
-                     queue.dead
-                   else
-                     queue.pending
-                   end
-
         queue.redis.with do |r|
           r.lrange(subqueue.name, 0, -1).each do |id|
             entry = Falqon::Entry.new(queue, id: id.to_i)
@@ -38,6 +28,22 @@ module Falqon
             end
           end
         end
+      end
+
+      private
+
+      def queue
+        @queue ||= Falqon::Queue.new(options[:queue])
+      end
+
+      def subqueue
+        @subqueue ||= if options[:processing]
+                        queue.processing
+                      elsif options[:dead]
+                        queue.dead
+                      else
+                        queue.pending
+                      end
       end
     end
   end
