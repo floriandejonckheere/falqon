@@ -3,9 +3,11 @@
 module Falqon
   class CLI
     class Show < Base
-      def call
-        return puts "No queue registered with this name: #{options[:queue]}" unless Falqon::Queue.all.map(&:id).include?(options[:queue])
+      def validate
+        raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:id).include?(options[:queue])
+      end
 
+      def execute
         queue = Falqon::Queue.new(options[:queue])
 
         subqueue = if options[:processing]

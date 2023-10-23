@@ -10,6 +10,19 @@ module Falqon
       end
 
       def call
+        validate
+        execute
+      rescue StandardError => e
+        puts e.message
+      end
+
+      protected
+
+      def validate
+        raise NotImplementedError
+      end
+
+      def execute
         raise NotImplementedError
       end
     end

@@ -5,27 +5,39 @@ RSpec.describe Falqon::CLI::Status do
 
   let(:options) { {} }
 
-  context "when no queues are registered" do
-    it "prints an error message" do
-      expect { command.call }
-        .to output("No queues registered\n")
-        .to_stdout
+  before do
+    # Register queues
+    queue = Falqon::Queue.new("foo")
+    Falqon::Queue.new("bar")
+
+    # Add a few entries to the queue
+    queue.push("foo")
+    queue.push("bar")
+
+    5.times { queue.pop { raise Falqon::Error } }
+  end
+
+  describe "#validate" do
+    context "when the given queue does not exist" do
+      let(:options) { { queue: "baz" } }
+
+      it "raises an error" do
+        expect { command.validate }
+          .to raise_error(/No queue registered with this name: baz/)
+      end
+    end
+
+    context "when no queues are registered" do
+      before { Falqon::Queue.all.each(&:delete) }
+
+      it "raises an error" do
+        expect { command.validate }
+          .to raise_error(/No queues registered/)
+      end
     end
   end
 
-  context "when a queue is registered" do
-    before do
-      # Register queues
-      queue = Falqon::Queue.new("foo")
-      Falqon::Queue.new("bar")
-
-      # Add a few entries to the queue
-      queue.push("foo")
-      queue.push("bar")
-
-      5.times { queue.pop { raise Falqon::Error } }
-    end
-
+  describe "#execute" do
     it "prints the status of all queues" do
       expect { command.call }
         .to output(%r(falqon/foo: 1 entries \(1 pending, 0 processing, 1 dead\)))

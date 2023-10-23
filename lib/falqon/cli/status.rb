@@ -3,12 +3,14 @@
 module Falqon
   class CLI
     class Status < Base
-      def call
-        return puts "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:id).include?(options[:queue])
+      def validate
+        raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:id).include?(options[:queue])
 
+        raise "No queues registered" if Falqon::Queue.all.empty?
+      end
+
+      def execute
         queues = options[:queue] ? [Falqon::Queue.new(options[:queue])] : Falqon::Queue.all
-
-        return puts "No queues registered" if queues.empty?
 
         # Left pad queue names to the same length
         length = queues.map(&:name).max.to_s.length
