@@ -12,7 +12,7 @@ module Falqon
     end
 
     sig { params(event: Symbol, type: T.nilable(Symbol), block: T.nilable(T.proc.void)).void }
-    def run_hook(event, type = nil, &block) # rubocop:disable Metrics/CyclomaticComplexity
+    def run_hook(event, type = nil, &block)
       T.unsafe(self).class.hooks[event][:before].each { |hook| instance_eval(&hook) } if type.nil? || type == :before
 
       block&.call
