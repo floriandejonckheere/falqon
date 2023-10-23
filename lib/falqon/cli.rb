@@ -44,5 +44,17 @@ module Falqon
         .new(options)
         .call
     end
+
+    desc "clear", "Clear queue"
+    option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
+
+    option :pending, type: :boolean, desc: "Clear only pending entries"
+    option :processing, type: :boolean, desc: "Clear only processing entries"
+    option :dead, type: :boolean, desc: "Clear only dead entries"
+    def clear
+      Clear
+        .new(options)
+        .call
+    end
   end
 end

@@ -111,3 +111,34 @@ Options:
 - `--index N`: Display entry at index N
 - `--range N M`: Display entries from index N to M
 - `--id N`: Display entry with ID N
+
+### Clear
+
+The `clear` command clears the contents of the queue.
+
+```bash
+# Clear all entries in the queue
+$ falqon clear --queue jobs
+Cleared 3 entries from queue jobs
+
+# Clear only pending entries
+$ falqon clear --queue jobs --pending
+Cleared 3 entries from queue jobs
+
+# Clear only processing entries
+$ falqon clear --queue jobs --processing
+Cleared 3 entries from queue jobs
+
+# Clear only dead entries
+$ falqon clear --queue jobs --dead
+Cleared 3 entries from queue jobs
+```
+
+Options:
+
+- `-q`, `--queue=QUEUE`: Queue name (required)
+- `--pending`: Clear only pending entries
+- `--processing`: Clear only processing entries
+- `--dead`: Clear only dead entries
+
+If none of the `--pending`, `--processing`, or `--dead` options are specified, all entries are cleared.
