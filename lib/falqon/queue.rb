@@ -242,6 +242,11 @@ module Falqon
       @dead ||= SubQueue.new(self, "dead")
     end
 
+    sig { returns(String) }
+    def inspect
+      "#<#{self.class.name} id=#{id.inspect} pending=#{pending.size} processing=#{processing.size} dead=#{dead.size}>"
+    end
+
     class << self
       def all
         Falqon.configuration.redis.with do |r|
