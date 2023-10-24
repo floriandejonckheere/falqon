@@ -51,7 +51,7 @@ emails
 
 ### Status
 
-The `status` command prints the status of a queue, or all queues if no queue name is specified.
+The `status` command displays the status of a queue, or all queues if no queue name is specified.
 
 ```bash
 # Print status of all queues
@@ -69,7 +69,7 @@ Options:
 
 ### Show
 
-The `show` command prints the contents of the queue.
+The `show` command displays the contents of the queue.
 
 ```bash
 # Print all entries in the queue

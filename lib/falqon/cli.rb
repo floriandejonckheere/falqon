@@ -8,7 +8,7 @@ module Falqon
       true
     end
 
-    desc "version", "Print version"
+    desc "version", "Display version"
     def version
       Version
         .new(options)
@@ -22,7 +22,7 @@ module Falqon
         .call
     end
 
-    desc "status", "Print queue status"
+    desc "status", "Display queue status"
     option :queue, aliases: "-q", type: :string, desc: "Queue name"
     def status
       Status
@@ -30,7 +30,7 @@ module Falqon
         .call
     end
 
-    desc "show", "Show queue contents"
+    desc "show", "Display queue contents"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
 
     option :pending, type: :boolean, desc: "Display pending entries (default)"
