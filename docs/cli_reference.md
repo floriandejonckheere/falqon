@@ -39,6 +39,16 @@ REDIS_URL=redis://localhost:6379/0
 
 ## Commands
 
+### Queues
+
+The `queues` command lists all queues.
+
+```bash
+$ falqon queues
+jobs
+emails
+```
+
 ### Status
 
 The `status` command prints the status of a queue, or all queues if no queue name is specified.
