@@ -40,7 +40,7 @@ RSpec.describe Falqon::CLI::Status do
   describe "#execute" do
     it "prints the status of all queues" do
       expect { command.call }
-        .to output(%r(foo: 1 entries \(1 pending, 0 processing, 1 dead\)))
+        .to output(%r(foo: 1 pending, 0 processing, 1 dead))
         .to_stdout
 
       expect { command.call }
