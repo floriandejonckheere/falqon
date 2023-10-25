@@ -39,6 +39,59 @@ RSpec.describe Falqon::Entry do
     end
   end
 
+  describe "#unknown?" do
+    it "returns true if the status is unknown" do
+      entry = described_class
+        .new(queue, id: 2, message: "message1")
+        .create
+
+      expect(entry).to be_unknown
+    end
+  end
+
+  describe "#pending?" do
+    it "returns true if the status is pending" do
+      entry = described_class
+        .new(queue, id: 2, message: "message1")
+        .create
+
+      # FIXME: mock the status correctly
+      entry.queue.redis.with do |r|
+        r.hset("#{entry.name}:metadata:#{entry.id}", "status", "pending")
+      end
+
+      expect(entry).to be_pending
+    end
+  end
+
+  describe "#processing?" do
+    it "returns true if the status is processing" do
+      entry = described_class
+        .new(queue, id: 2, message: "message1")
+        .create
+
+      # FIXME: mock the status correctly
+      entry.queue.redis.with do |r|
+        r.hset("#{entry.name}:metadata:#{entry.id}", "status", "processing")
+      end
+
+      expect(entry).to be_processing
+    end
+  end
+
+  describe "#dead?" do
+    it "returns true if the status is dead" do
+      entry = described_class
+        .new(queue, id: 2, message: "message1")
+        .create
+
+      entry
+        .kill
+
+      expect(entry).to be_dead
+    end
+  end
+
   describe "#create" do
     it "stores the message" do
       described_class

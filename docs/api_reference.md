@@ -306,3 +306,9 @@ Returns:
   - `retries`: total number of processing retries
   - `created_at`: timestamp of the entry creation
   - `updated_at`: timestamp of the entry update
+
+The following convenience methods are also defined on `Entry`:
+- `unknown?`
+- `pending?`
+- `processing?`
+- `dead?`

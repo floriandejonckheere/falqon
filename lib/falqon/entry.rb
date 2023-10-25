@@ -32,6 +32,26 @@ module Falqon
       @message ||= redis.with { |r| r.get("#{name}:messages:#{id}") }
     end
 
+    sig { returns(T::Boolean) }
+    def unknown?
+      metadata.status == "unknown"
+    end
+
+    sig { returns(T::Boolean) }
+    def pending?
+      metadata.status == "pending"
+    end
+
+    sig { returns(T::Boolean) }
+    def processing?
+      metadata.status == "processing"
+    end
+
+    sig { returns(T::Boolean) }
+    def dead?
+      metadata.status == "dead"
+    end
+
     sig { returns(Entry) }
     def create
       # FIXME: use Redis connection of caller
