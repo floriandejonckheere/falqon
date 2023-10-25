@@ -80,7 +80,7 @@ RSpec.describe Falqon::Entry do
       expect(queue.dead).not_to be_empty
     end
 
-    it "resets the retry count" do
+    it "resets the retry count and sets the status to 'dead'" do
       entry = described_class
         .new(queue, id: 2, message: "message1")
         .create
@@ -89,6 +89,7 @@ RSpec.describe Falqon::Entry do
         .kill
 
       expect(entry.metadata.retries).to be_zero
+      expect(entry.metadata.status).to eq "dead"
     end
   end
 

@@ -57,8 +57,9 @@ module Falqon
         # Add identifier to dead queue
         queue.dead.add(id)
 
-        # Reset retry count
+        # Reset retry count and set status to dead
         r.hdel("#{name}:metadata:#{id}", :retries)
+        r.hset("#{name}:metadata:#{id}", :status, "dead")
 
         # Remove identifier from queues
         queue.pending.remove(id)
