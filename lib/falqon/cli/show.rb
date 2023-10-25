@@ -16,21 +16,32 @@ module Falqon
       end
 
       def execute
-        start, stop = range_options
-
-        # Collect entries to display
-        entries = if options[:id]
-                    [options[:id]]
-                  else
-                    queue.redis.with do |r|
-                      r.lrange(subqueue.name, start, stop)
+        # Collect identifiers
+        ids = if options[:id]
+                Array(options[:id])
+              else
+                queue.redis.with do |r|
+                  if options[:index]
+                    Array(options[:index]).map do |i|
+                      r.lindex(subqueue.name, i) || raise("No entry at index #{i}")
                     end
+                  else
+                    r.lrange(subqueue.name, *range_options)
                   end
+                end
+              end
 
-        # Serialize entries
-        entries.each do |id|
+        # Transform identifiers to entries
+        entries = ids.map do |id|
           entry = Falqon::Entry.new(queue, id: id.to_i)
 
+          raise "No entry with ID #{id}" unless entry.exists?
+
+          entry
+        end
+
+        # Serialize entries
+        entries.each do |entry|
           puts Serializer
             .new(entry, meta: options[:meta], data: options[:data])
         end
@@ -57,11 +68,6 @@ module Falqon
           [
             -options[:tail],
             -1,
-          ]
-        elsif options[:index]
-          [
-            options[:index],
-            options[:index],
           ]
         elsif options[:range]
           [

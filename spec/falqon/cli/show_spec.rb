@@ -168,6 +168,26 @@ RSpec.describe Falqon::CLI::Show do
             .to output(/id = 4/) # id = 1 is in the dead queue
             .to_stdout
         end
+
+        context "when the index does not exist" do
+          let(:options) { { queue: "foo", index: 100 } }
+
+          it "prints an error message" do
+            expect { command.call }
+              .to output(/No entry at index 100/)
+              .to_stdout
+          end
+        end
+      end
+
+      context "when the --index option is specified multiple times" do
+        let(:options) { { queue: "foo", index: [2, 4] } }
+
+        it "prints the entries at the given indices" do
+          expect { command.call }
+            .to output(/id = 4.*\n.*id = 6/) # id = 1 is in the dead queue
+            .to_stdout
+        end
       end
 
       context "when the --range option is specified" do
@@ -186,6 +206,26 @@ RSpec.describe Falqon::CLI::Show do
         it "prints the entry with the given ID" do
           expect { command.call }
             .to output(/id = 4/)
+            .to_stdout
+        end
+
+        context "when the ID does not exist" do
+          let(:options) { { queue: "foo", id: 100 } }
+
+          it "prints an error message" do
+            expect { command.call }
+              .to output(/No entry with ID 100/)
+              .to_stdout
+          end
+        end
+      end
+
+      context "when the --id option is specified multiple times" do
+        let(:options) { { queue: "foo", id: [4, 6] } }
+
+        it "prints the entries with the given IDs" do
+          expect { command.call }
+            .to output(/id = 4.*\n.*id = 6/)
             .to_stdout
         end
       end

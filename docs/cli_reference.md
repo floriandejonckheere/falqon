@@ -18,6 +18,8 @@ Commands:
   falqon version         # Print version
 ```
 
+To see the available options for a command, run `falqon help COMMAND`.
+
 ## Table of contents
 {: .no_toc .text-delta }
 
@@ -97,7 +99,8 @@ $ falqon show --queue jobs --tail 5
 ...
 
 # Display entry at index 5
-$ falqon show --queue jobs --index 5
+$ falqon show --queue jobs --index 3 --index 5
+id = 3 message = 8742 bytes
 id = 5 message = 8742 bytes
 
 # Display entries from index 5 to 10
@@ -105,8 +108,9 @@ $ falqon show --queue jobs --range 5 10
 ...
 
 # Display entry with ID 5
-$ falqon show --queue jobs --id 5
+$ falqon show --queue jobs --id 5 --id 1
 id = 5 message = 8742 bytes
+id = 1 message = 8742 bytes
 ```
 
 Options:
