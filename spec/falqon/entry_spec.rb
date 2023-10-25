@@ -92,6 +92,23 @@ RSpec.describe Falqon::Entry do
     end
   end
 
+  describe "#exists?" do
+    it "returns true if the entry exists" do
+      entry = described_class
+        .new(queue, id: 2, message: "message1")
+        .create
+
+      expect(entry).to exist
+    end
+
+    it "returns false if the entry does not exist" do
+      entry = described_class
+        .new(queue, id: 2, message: "message1")
+
+      expect(entry).not_to exist
+    end
+  end
+
   describe "#create" do
     it "stores the message" do
       described_class

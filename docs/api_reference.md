@@ -291,6 +291,22 @@ Returns:
 
 None
 
+### Check existance
+
+Use `Falqon::Entry#exists?` to check if an entry exists.
+
+```ruby
+entry.exists?
+```
+
+Arguments:
+
+None
+
+Returns:
+
+- `Boolean`: `true` if the entry exists, `false` otherwise
+
 ### Get the entry metadata
 
 Use `Falqon::Entry#metadata` to get the entry metadata.

@@ -52,6 +52,14 @@ module Falqon
       metadata.status == "dead"
     end
 
+    sig { returns(T::Boolean) }
+    def exists?
+      # FIXME: use Redis connection of caller
+      redis.with do |r|
+        r.exists("#{name}:messages:#{id}") == 1
+      end
+    end
+
     sig { returns(Entry) }
     def create
       # FIXME: use Redis connection of caller
