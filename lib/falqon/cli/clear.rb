@@ -9,8 +9,6 @@ module Falqon
       end
 
       def execute
-        queue = Falqon::Queue.new(options[:queue])
-
         if options[:pending]
           ids = queue.pending.clear
 
