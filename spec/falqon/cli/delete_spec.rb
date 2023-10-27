@@ -3,22 +3,9 @@
 RSpec.describe Falqon::CLI::Delete do
   subject(:command) { described_class.new(options) }
 
+  include_context "with a couple of queues"
+
   let(:options) { { queue: "foo" } }
-
-  before do
-    # Register queues
-    queue = Falqon::Queue.new("foo")
-
-    # Add a few entries to the queue
-    queue.push("foo")
-    queue.push("bar")
-    queue.push("baz")
-    queue.push("bat")
-    queue.push("bak")
-    queue.push("baq")
-
-    13.times { queue.pop { raise Falqon::Error } }
-  end
 
   describe "#validate" do
     context "when the given queue does not exist" do

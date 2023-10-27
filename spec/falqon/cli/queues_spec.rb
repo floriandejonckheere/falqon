@@ -3,11 +3,7 @@
 RSpec.describe Falqon::CLI::Queues do
   subject(:command) { described_class.new }
 
-  before do
-    # Register queues
-    Falqon::Queue.new("foo")
-    Falqon::Queue.new("bar")
-  end
+  include_context "with a couple of queues"
 
   describe "#execute" do
     it "displays all queues" do

@@ -3,18 +3,9 @@
 RSpec.describe Falqon::CLI::Clear do
   subject(:command) { described_class.new(options) }
 
+  include_context "with a couple of queues"
+
   let(:options) { { queue: "foo" } }
-
-  before do
-    # Register queues
-    queue = Falqon::Queue.new("foo")
-
-    # Add a few entries to the queue
-    queue.push("foo")
-    queue.push("bar")
-
-    5.times { queue.pop { raise Falqon::Error } }
-  end
 
   describe "#validate" do
     context "when the given queue does not exist" do
@@ -41,7 +32,7 @@ RSpec.describe Falqon::CLI::Clear do
   describe "#execute" do
     it "clears the queue" do
       expect { command.call }
-        .to output(/Cleared 2 entries from queue foo/)
+        .to output(/Cleared 6 entries from queue foo/)
         .to_stdout
     end
 
@@ -50,7 +41,7 @@ RSpec.describe Falqon::CLI::Clear do
 
       it "clears the pending entries" do
         expect { command.call }
-          .to output(/Cleared 1 pending entry from queue foo/)
+          .to output(/Cleared 5 pending entries from queue foo/)
           .to_stdout
       end
     end
