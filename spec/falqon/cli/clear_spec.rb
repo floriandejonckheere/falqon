@@ -50,7 +50,7 @@ RSpec.describe Falqon::CLI::Clear do
 
       it "clears the pending entries" do
         expect { command.call }
-          .to output(/Cleared 1 pending entries from queue foo/)
+          .to output(/Cleared 1 pending entry from queue foo/)
           .to_stdout
       end
     end
@@ -70,7 +70,7 @@ RSpec.describe Falqon::CLI::Clear do
 
       it "clears the dead entries" do
         expect { command.call }
-          .to output(/Cleared 1 dead entries from queue foo/)
+          .to output(/Cleared 1 dead entry from queue foo/)
           .to_stdout
       end
     end

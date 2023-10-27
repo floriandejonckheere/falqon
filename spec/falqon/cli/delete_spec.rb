@@ -104,7 +104,7 @@ RSpec.describe Falqon::CLI::Delete do
 
       it "clears the dead entries" do
         expect { command.call }
-          .to output(/Deleted 1 dead entries from queue foo/)
+          .to output(/Deleted 1 dead entry from queue foo/)
           .to_stdout
       end
     end
@@ -135,7 +135,7 @@ RSpec.describe Falqon::CLI::Delete do
 
         it "deletes the entry at the given index" do
           expect { command.call }
-            .to output(/Deleted 1 entries from queue foo/) # id = 1 is in the dead queue
+            .to output(/Deleted 1 entry from queue foo/) # id = 1 is in the dead queue
             .to_stdout
         end
 
@@ -175,7 +175,7 @@ RSpec.describe Falqon::CLI::Delete do
 
         it "deletes the entry with the given ID" do
           expect { command.call }
-            .to output(/Deleted 1 entries from queue foo/)
+            .to output(/Deleted 1 entry from queue foo/)
             .to_stdout
         end
 

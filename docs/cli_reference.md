@@ -153,7 +153,7 @@ Deleted 10 pending entries from queue jobs
 
 # Delete only processing entries
 $ falqon delete --queue jobs --processing
-Deleted 1 processing entries from queue jobs
+Deleted 1 processing entry from queue jobs
 
 # Delete only dead entries
 $ falqon delete --queue jobs --dead
@@ -169,7 +169,7 @@ Deleted 5 entries from queue jobs
 
 # Delete entry at index 5
 $ falqon delete --queue jobs --index 3 --index 5
-Deleted 1 entries from queue jobs
+Deleted 1 entry from queue jobs
 
 # Delete entries from index 5 to 10
 $ falqon delete --queue jobs --range 5 10

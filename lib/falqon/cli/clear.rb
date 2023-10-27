@@ -12,19 +12,19 @@ module Falqon
         if options[:pending]
           ids = queue.pending.clear
 
-          puts "Cleared #{ids.count} pending entries from queue #{queue.id}"
+          puts "Cleared #{pluralize(ids.count, 'pending entry', 'pending entries')} from queue #{queue.id}"
         elsif options[:processing]
           ids = queue.processing.clear
 
-          puts "Cleared #{ids.count} processing entries from queue #{queue.id}"
+          puts "Cleared #{pluralize(ids.count, 'processing entry', 'processing entries')} from queue #{queue.id}"
         elsif options[:dead]
           ids = queue.dead.clear
 
-          puts "Cleared #{ids.count} dead entries from queue #{queue.id}"
+          puts "Cleared #{pluralize(ids.count, 'dead entry', 'dead entries')} from queue #{queue.id}"
         else
           ids = queue.clear
 
-          puts "Cleared #{ids.count} entries from queue #{queue.id}"
+          puts "Cleared #{pluralize(ids.count, 'entry', 'entries')} from queue #{queue.id}"
         end
       end
 

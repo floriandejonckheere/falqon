@@ -43,13 +43,13 @@ module Falqon
         entries.each(&:delete)
 
         if options[:pending]
-          puts "Deleted #{entries.count} pending entries from queue #{queue.id}"
+          puts "Deleted #{pluralize(entries.count, 'pending entry', 'pending entries')} from queue #{queue.id}"
         elsif options[:processing]
-          puts "Deleted #{entries.count} processing entries from queue #{queue.id}"
+          puts "Deleted #{pluralize(entries.count, 'processing entry', 'processing entries')} from queue #{queue.id}"
         elsif options[:dead]
-          puts "Deleted #{entries.count} dead entries from queue #{queue.id}"
+          puts "Deleted #{pluralize(entries.count, 'dead entry', 'dead entries')} from queue #{queue.id}"
         else
-          puts "Deleted #{entries.count} entries from queue #{queue.id}"
+          puts "Deleted #{pluralize(entries.count, 'entry', 'entries')} from queue #{queue.id}"
         end
       end
 

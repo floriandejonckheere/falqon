@@ -25,6 +25,10 @@ module Falqon
       def execute
         raise NotImplementedError
       end
+
+      def pluralize(count, singular, plural)
+        "#{count} #{count == 1 ? singular : plural}"
+      end
     end
   end
 end
