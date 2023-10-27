@@ -9,21 +9,16 @@ module Falqon
       end
 
       def execute
-        if options[:pending]
-          ids = queue.pending.clear
+        # Clear entries
+        ids = subqueue.clear
 
+        if options[:pending]
           puts "Cleared #{pluralize(ids.count, 'pending entry', 'pending entries')} from queue #{queue.id}"
         elsif options[:processing]
-          ids = queue.processing.clear
-
           puts "Cleared #{pluralize(ids.count, 'processing entry', 'processing entries')} from queue #{queue.id}"
         elsif options[:dead]
-          ids = queue.dead.clear
-
           puts "Cleared #{pluralize(ids.count, 'dead entry', 'dead entries')} from queue #{queue.id}"
         else
-          ids = queue.clear
-
           puts "Cleared #{pluralize(ids.count, 'entry', 'entries')} from queue #{queue.id}"
         end
       end
@@ -32,6 +27,18 @@ module Falqon
 
       def queue
         @queue ||= Falqon::Queue.new(options[:queue])
+      end
+
+      def subqueue
+        @subqueue ||= if options[:pending]
+                        queue.pending
+                      elsif options[:processing]
+                        queue.processing
+                      elsif options[:dead]
+                        queue.dead
+                      else
+                        queue
+                      end
       end
     end
   end
