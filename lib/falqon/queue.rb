@@ -244,7 +244,7 @@ module Falqon
 
     sig { returns(String) }
     def inspect
-      "#<#{self.class.name} id=#{id.inspect} pending=#{pending.size} processing=#{processing.size} dead=#{dead.size}>"
+      "#<#{self.class} id=#{id.inspect} pending=#{pending.size} processing=#{processing.size} dead=#{dead.size}>"
     end
 
     class << self
