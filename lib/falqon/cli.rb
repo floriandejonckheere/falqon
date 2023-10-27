@@ -55,9 +55,9 @@ module Falqon
     desc "delete", "Delete queue contents"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
 
-    option :pending, type: :boolean, desc: "Clear only pending entries"
-    option :processing, type: :boolean, desc: "Clear only processing entries"
-    option :dead, type: :boolean, desc: "Clear only dead entries"
+    option :pending, type: :boolean, desc: "Delete only pending entries"
+    option :processing, type: :boolean, desc: "Delete only processing entries"
+    option :dead, type: :boolean, desc: "Delete only dead entries"
 
     option :head, type: :numeric, desc: "Display N entries from head of queue"
     option :tail, type: :numeric, desc: "Display N entries from tail of queue"
