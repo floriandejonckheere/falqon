@@ -74,9 +74,21 @@ Options:
 The `show` command displays the contents of the queue.
 
 ```bash
-# Print all entries in the queue
+# Print all entries in the queue (by default only pending entries are displayed)
 $ falqon show --queue jobs
 id = 1 message = 8742 bytes
+
+# Display only pending entries
+$ falqon show --queue jobs --pending
+...
+
+# Display only processing entries
+$ falqon show --queue jobs --processing
+...
+
+# Display only dead entries
+$ falqon show --queue jobs --dead
+...
 
 # Display raw data
 $ falqon show --queue jobs --data
@@ -118,13 +130,66 @@ Options:
 - `--pending`: Display pending entries (default)
 - `--processing`: Display processing entries
 - `--dead`: Display dead entries
-- `-d`, `--data`: Display raw data 
+- `-d`, `--data`: Display raw data
 - `-m`, `--meta`: Display additional metadata
 - `--head N`: Display first N entries
 - `--tail N`: Display last N entries
 - `--index N`: Display entry at index N
 - `--range N M`: Display entries from index N to M
 - `--id N`: Display entry with ID N
+
+### Delete
+
+The `delete` command deletes (part of) the contents of the queue.
+
+```bash
+# Delete all entries in the queue (by default only pending entries are deleted)
+$ falqon delete --queue jobs
+Deleted 10 entries from queue jobs
+
+# Delete only pending entries
+$ falqon delete --queue jobs --pending
+Deleted 10 pending entries from queue jobs
+
+# Delete only processing entries
+$ falqon delete --queue jobs --processing
+Deleted 1 processing entries from queue jobs
+
+# Delete only dead entries
+$ falqon delete --queue jobs --dead
+Deleted 5 dead entries from queue jobs
+
+# Delete first 5 entries
+$ falqon delete --queue jobs --head 5
+Deleted 5 entries from queue jobs
+
+# Delete last 5 entries
+$ falqon delete --queue jobs --tail 5
+Deleted 5 entries from queue jobs
+
+# Delete entry at index 5
+$ falqon delete --queue jobs --index 3 --index 5
+Deleted 1 entries from queue jobs
+
+# Delete entries from index 5 to 10
+$ falqon delete --queue jobs --range 5 10
+Deleted 6 entries from queue jobs
+
+# Delete entry with ID 5
+$ falqon delete --queue jobs --id 5 --id 1
+Deleted 2 entries from queue jobs
+```
+
+Options:
+- `-q`, `--queue=QUEUE`: Queue name (required)
+- `--pending`: Delete only pending entries
+- `--processing`: Delete only processing entries
+- `--dead`: Delete only dead entries
+- `--head N`: Delete first N entries
+- `--tail N`: Delete last N entries
+- `--index N`: Delete entry at index N
+- `--range N M`: Delete entries from index N to M
+- `--id N`: Delete entry with ID N
 
 ### Clear
 
