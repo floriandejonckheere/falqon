@@ -16,7 +16,7 @@ group :development, :test do
   gem "mock_redis", "0.37.0", require: false
 
   # Task runner
-  gem "rake", "13.0.6", require: false
+  gem "rake", "13.1.0", require: false
 
   # Behavior-driven test framework
   gem "rspec", "3.12.0", require: false
