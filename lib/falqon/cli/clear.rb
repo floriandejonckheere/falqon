@@ -9,17 +9,17 @@ module Falqon
       end
 
       def execute
-        # Clear entries
+        # Clear messages
         ids = subqueue.clear
 
         if options[:pending]
-          puts "Cleared #{pluralize(ids.count, 'pending entry', 'pending entries')} from queue #{queue.id}"
+          puts "Cleared #{pluralize(ids.count, 'pending message', 'pending messages')} from queue #{queue.id}"
         elsif options[:processing]
-          puts "Cleared #{pluralize(ids.count, 'processing entry', 'processing entries')} from queue #{queue.id}"
+          puts "Cleared #{pluralize(ids.count, 'processing message', 'processing messages')} from queue #{queue.id}"
         elsif options[:dead]
-          puts "Cleared #{pluralize(ids.count, 'dead entry', 'dead entries')} from queue #{queue.id}"
+          puts "Cleared #{pluralize(ids.count, 'dead message', 'dead messages')} from queue #{queue.id}"
         else
-          puts "Cleared #{pluralize(ids.count, 'entry', 'entries')} from queue #{queue.id}"
+          puts "Cleared #{pluralize(ids.count, 'message', 'messages')} from queue #{queue.id}"
         end
       end
 

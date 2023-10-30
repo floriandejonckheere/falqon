@@ -74,18 +74,18 @@ module Falqon
       redis.with { |r| r.hset("#{name}:metadata", :updated_at, Time.now.to_i) }
 
       ids = data.map do |d|
-        entry = Entry
+        message = Message
           .new(self, data: d)
           .create
 
         # Push identifier to queue
-        pending.add(entry.id)
+        pending.add(message.id)
 
-        # Set entry status
-        redis.with { |r| r.hset("#{name}:metadata:#{entry.id}", :status, "pending") }
+        # Set message status
+        redis.with { |r| r.hset("#{name}:metadata:#{message.id}", :status, "pending") }
 
         # Return identifier(s)
-        data.size == 1 ? (return entry.id) : (next entry.id)
+        data.size == 1 ? (return message.id) : (next message.id)
       end
 
       run_hook :push, :after
@@ -100,11 +100,11 @@ module Falqon
 
       run_hook :pop, :before
 
-      entry = redis.with do |r|
+      message = redis.with do |r|
         # Move identifier from pending queue to processing queue
         id = r.blmove(name, processing.name, :left, :right).to_i
 
-        # Set entry status
+        # Set message status
         r.hset("#{name}:metadata:#{id}", :status, "processing")
 
         # Set update timestamp
@@ -117,30 +117,30 @@ module Falqon
         # Increment retry counter if message is retried
         r.hincrby("#{name}:metadata", :retried, 1) if r.hget("#{name}:metadata:#{id}", :retries).to_i.positive?
 
-        Entry.new(self, id:)
+        Message.new(self, id:)
       end
 
-      data = entry.data
+      data = message.data
 
       yield data if block
 
       run_hook :pop, :after
 
       # Remove identifier from processing queue
-      processing.remove(entry.id)
+      processing.remove(message.id)
 
       # Delete message
-      entry.delete
+      message.delete
 
       data
     rescue Error => e
-      logger.debug "Error processing message #{entry.id}: #{e.message}"
+      logger.debug "Error processing message #{message.id}: #{e.message}"
 
       # Increment failure counter
       redis.with { |r| r.hincrby("#{name}:metadata", :failed, 1) }
 
       # Retry message according to configured strategy
-      retry_strategy.retry(entry)
+      retry_strategy.retry(message)
 
       nil
     end
@@ -159,7 +159,7 @@ module Falqon
       run_hook :peek, :after
 
       # Retrieve data
-      Entry.new(self, id:).data
+      Message.new(self, id:).data
     end
 
     sig { returns(T::Array[Identifier]) }

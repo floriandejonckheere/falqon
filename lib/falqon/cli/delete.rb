@@ -22,7 +22,7 @@ module Falqon
                 queue.redis.with do |r|
                   if options[:index]
                     Array(options[:index]).map do |i|
-                      r.lindex(subqueue.name, i) || raise("No entry at index #{i}")
+                      r.lindex(subqueue.name, i) || raise("No message at index #{i}")
                     end
                   else
                     r.lrange(subqueue.name, *range_options)
@@ -30,26 +30,26 @@ module Falqon
                 end
               end
 
-        # Transform identifiers to entries
-        entries = ids.map do |id|
-          entry = Falqon::Entry.new(queue, id: id.to_i)
+        # Transform identifiers to messages
+        messages = ids.map do |id|
+          message = Falqon::Message.new(queue, id: id.to_i)
 
-          raise "No entry with ID #{id}" unless entry.exists?
+          raise "No message with ID #{id}" unless message.exists?
 
-          entry
+          message
         end
 
-        # Delete entries
-        entries.each(&:delete)
+        # Delete messages
+        messages.each(&:delete)
 
         if options[:pending]
-          puts "Deleted #{pluralize(entries.count, 'pending entry', 'pending entries')} from queue #{queue.id}"
+          puts "Deleted #{pluralize(messages.count, 'pending message', 'pending messages')} from queue #{queue.id}"
         elsif options[:processing]
-          puts "Deleted #{pluralize(entries.count, 'processing entry', 'processing entries')} from queue #{queue.id}"
+          puts "Deleted #{pluralize(messages.count, 'processing message', 'processing messages')} from queue #{queue.id}"
         elsif options[:dead]
-          puts "Deleted #{pluralize(entries.count, 'dead entry', 'dead entries')} from queue #{queue.id}"
+          puts "Deleted #{pluralize(messages.count, 'dead message', 'dead messages')} from queue #{queue.id}"
         else
-          puts "Deleted #{pluralize(entries.count, 'entry', 'entries')} from queue #{queue.id}"
+          puts "Deleted #{pluralize(messages.count, 'message', 'messages')} from queue #{queue.id}"
         end
       end
 

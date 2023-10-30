@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-RSpec.describe Falqon::Entry do
-  subject(:entry) { described_class.new(queue, data: "message") }
+RSpec.describe Falqon::Message do
+  subject(:message) { described_class.new(queue, data: "message") }
 
   let(:queue) { Falqon::Queue.new("name") }
 
   describe "#id" do
     it "returns an identifier" do
-      entry = described_class.new(queue, id: 2)
+      message = described_class.new(queue, id: 2)
 
-      expect(entry.id).to eq 2
+      expect(message.id).to eq 2
     end
 
     it "increments the identifier counter" do
-      entry.id
+      message.id
 
       queue.redis.with do |r|
         expect(r.get("falqon/name:id")).to eq "1"
@@ -23,9 +23,9 @@ RSpec.describe Falqon::Entry do
 
   describe "#data" do
     it "returns a message" do
-      entry = described_class.new(queue, data: "message1")
+      message = described_class.new(queue, data: "message1")
 
-      expect(entry.data).to eq "message1"
+      expect(message.data).to eq "message1"
     end
 
     it "retrieves the message" do
@@ -33,79 +33,79 @@ RSpec.describe Falqon::Entry do
         .new(queue, id: 2, data: "message1")
         .create
 
-      entry = described_class.new(queue, id: 2)
+      message = described_class.new(queue, id: 2)
 
-      expect(entry.data).to eq "message1"
+      expect(message.data).to eq "message1"
     end
   end
 
   describe "#unknown?" do
     it "returns true if the status is unknown" do
-      entry = described_class
+      message = described_class
         .new(queue, id: 2, data: "message1")
         .create
 
-      expect(entry).to be_unknown
+      expect(message).to be_unknown
     end
   end
 
   describe "#pending?" do
     it "returns true if the status is pending" do
-      entry = described_class
+      message = described_class
         .new(queue, id: 2, data: "message1")
         .create
 
       # FIXME: mock the status correctly
-      entry.queue.redis.with do |r|
-        r.hset("#{entry.name}:metadata:#{entry.id}", "status", "pending")
+      message.queue.redis.with do |r|
+        r.hset("#{message.name}:metadata:#{message.id}", "status", "pending")
       end
 
-      expect(entry).to be_pending
+      expect(message).to be_pending
     end
   end
 
   describe "#processing?" do
     it "returns true if the status is processing" do
-      entry = described_class
+      message = described_class
         .new(queue, id: 2, data: "message1")
         .create
 
       # FIXME: mock the status correctly
-      entry.queue.redis.with do |r|
-        r.hset("#{entry.name}:metadata:#{entry.id}", "status", "processing")
+      message.queue.redis.with do |r|
+        r.hset("#{message.name}:metadata:#{message.id}", "status", "processing")
       end
 
-      expect(entry).to be_processing
+      expect(message).to be_processing
     end
   end
 
   describe "#dead?" do
     it "returns true if the status is dead" do
-      entry = described_class
+      message = described_class
         .new(queue, id: 2, data: "message1")
         .create
 
-      entry
+      message
         .kill
 
-      expect(entry).to be_dead
+      expect(message).to be_dead
     end
   end
 
   describe "#exists?" do
-    it "returns true if the entry exists" do
-      entry = described_class
+    it "returns true if the message exists" do
+      message = described_class
         .new(queue, id: 2, data: "message1")
         .create
 
-      expect(entry).to exist
+      expect(message).to exist
     end
 
-    it "returns false if the entry does not exist" do
-      entry = described_class
+    it "returns false if the message does not exist" do
+      message = described_class
         .new(queue, id: 2, data: "message1")
 
-      expect(entry).not_to exist
+      expect(message).not_to exist
     end
   end
 
@@ -124,25 +124,25 @@ RSpec.describe Falqon::Entry do
       Timecop.freeze do
         time = Time.now.to_i
 
-        entry = described_class
+        message = described_class
           .new(queue, id: 2, data: "message1")
           .create
 
-        expect(entry.metadata.status).to eq "unknown"
-        expect(entry.metadata.retries).to eq 0
-        expect(entry.metadata.created_at).to eq time
-        expect(entry.metadata.updated_at).to eq time
+        expect(message.metadata.status).to eq "unknown"
+        expect(message.metadata.retries).to eq 0
+        expect(message.metadata.created_at).to eq time
+        expect(message.metadata.updated_at).to eq time
       end
     end
   end
 
   describe "#kill" do
     it "moves the message to the dead queue" do
-      entry = described_class
+      message = described_class
         .new(queue, id: 2, data: "message1")
         .create
 
-      entry
+      message
         .kill
 
       expect(queue.pending).to be_empty
@@ -151,25 +151,25 @@ RSpec.describe Falqon::Entry do
     end
 
     it "resets the retry count and sets the status to 'dead'" do
-      entry = described_class
+      message = described_class
         .new(queue, id: 2, data: "message1")
         .create
 
-      entry
+      message
         .kill
 
-      expect(entry.metadata.retries).to be_zero
-      expect(entry.metadata.status).to eq "dead"
+      expect(message.metadata.retries).to be_zero
+      expect(message.metadata.status).to eq "dead"
     end
   end
 
   describe "#delete" do
     it "removes the message from the queues" do
-      entry = described_class
+      message = described_class
         .new(queue, id: 2, data: "message1")
         .create
 
-      entry
+      message
         .delete
 
       expect(queue.pending).to be_empty
@@ -178,11 +178,11 @@ RSpec.describe Falqon::Entry do
     end
 
     it "deletes the message and metadata" do
-      entry = described_class
+      message = described_class
         .new(queue, id: 2, data: "message1")
         .create
 
-      entry
+      message
         .delete
 
       queue.redis.with do |r|
@@ -199,9 +199,9 @@ RSpec.describe Falqon::Entry do
 
         id = queue.push("message2")
 
-        entry = described_class.new(queue, id:)
+        message = described_class.new(queue, id:)
 
-        metadata = entry.metadata
+        metadata = message.metadata
 
         expect(metadata.status).to eq "pending"
         expect(metadata.retries).to eq 0

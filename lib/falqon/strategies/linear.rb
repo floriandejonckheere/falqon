@@ -8,32 +8,32 @@ module Falqon
     # Retry strategy that retries a fixed number of times
     #
     class Linear < Strategy
-      sig { params(entry: Entry).void }
-      def retry(entry)
+      sig { params(message: Message).void }
+      def retry(message)
         # FIXME: use Redis connection of caller
         queue.redis.with do |r|
           # Increment retry count
-          retries = r.hincrby("#{queue.name}:metadata:#{entry.id}", :retries, 1)
+          retries = r.hincrby("#{queue.name}:metadata:#{message.id}", :retries, 1)
 
           r.multi do |t|
             if retries < queue.max_retries || queue.max_retries == -1
-              queue.logger.debug "Requeuing message #{entry.id} on queue #{queue.name} (attempt #{retries})"
+              queue.logger.debug "Requeuing message #{message.id} on queue #{queue.name} (attempt #{retries})"
 
               # Add identifier back to pending queue
-              queue.pending.add(entry.id)
+              queue.pending.add(message.id)
 
-              # Set entry status
-              t.hset("#{queue.name}:metadata:#{entry.id}", :status, "pending")
+              # Set message status
+              t.hset("#{queue.name}:metadata:#{message.id}", :status, "pending")
             else
               # Kill message after max retries
-              entry.kill
+              message.kill
 
-              # Set entry status
-              t.hset("#{queue.name}:metadata:#{entry.id}", :status, "dead")
+              # Set message status
+              t.hset("#{queue.name}:metadata:#{message.id}", :status, "dead")
             end
 
             # Remove identifier from processing queue
-            queue.processing.remove(entry.id)
+            queue.processing.remove(message.id)
           end
         end
       end

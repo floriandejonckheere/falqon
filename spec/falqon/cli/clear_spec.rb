@@ -32,16 +32,16 @@ RSpec.describe Falqon::CLI::Clear do
   describe "#execute" do
     it "clears the queue" do
       expect { command.call }
-        .to output(/Cleared 6 entries from queue foo/)
+        .to output(/Cleared 6 messages from queue foo/)
         .to_stdout
     end
 
     context "when the --pending option is specified" do
       let(:options) { { queue: "foo", pending: true } }
 
-      it "clears the pending entries" do
+      it "clears the pending messages" do
         expect { command.call }
-          .to output(/Cleared 5 pending entries from queue foo/)
+          .to output(/Cleared 5 pending messages from queue foo/)
           .to_stdout
       end
     end
@@ -49,9 +49,9 @@ RSpec.describe Falqon::CLI::Clear do
     context "when the --processing option is specified" do
       let(:options) { { queue: "foo", processing: true } }
 
-      it "clears the processing entries" do
+      it "clears the processing messages" do
         expect { command.call }
-          .to output(/Cleared 0 processing entries from queue foo/)
+          .to output(/Cleared 0 processing messages from queue foo/)
           .to_stdout
       end
     end
@@ -59,9 +59,9 @@ RSpec.describe Falqon::CLI::Clear do
     context "when the --dead option is specified" do
       let(:options) { { queue: "foo", dead: true } }
 
-      it "clears the dead entries" do
+      it "clears the dead messages" do
         expect { command.call }
-          .to output(/Cleared 1 dead entry from queue foo/)
+          .to output(/Cleared 1 dead message from queue foo/)
           .to_stdout
       end
     end

@@ -229,24 +229,24 @@ Returns:
 
 - `Array[Falqon::Queue]`: active (registered) queues
 
-## Entry
+## Message
 
-An entry describes an item in a queue.
+An message describes an item in a queue.
 
 ### Attributes
 
-- `queue`: queue the entry belongs to
-- `id`: the entry identifier
-- `message`: the entry message
-- `metadata`: the entry metadata
+- `queue`: queue the message belongs to
+- `id`: the message identifier
+- `message`: the message message
+- `metadata`: the message metadata
 
-### Create an entry
+### Create an message
 
-Use `Falqon::Entry.new` and `Falqon::Entry#save` to create a new entry.
+Use `Falqon::Message.new` and `Falqon::Message#save` to create a new message.
 The `id` attribute will be automatically generated and set.
 
 ```ruby
-entry.create
+message.create
 ```
 
 Arguments:
@@ -255,15 +255,15 @@ None
 
 Returns:
 
-- `Falqon::Entry`: the entry instance
+- `Falqon::Message`: the message instance
 
-### Kill an entry
+### Kill an message
 
-Use `Falqon::Entry#kill` to kill an entry.
-This will move the entry to the dead queue and reset the retry count.
+Use `Falqon::Message#kill` to kill an message.
+This will move the message to the dead queue and reset the retry count.
 
 ```ruby
-entry.kill
+message.kill
 ```
 
 Arguments:
@@ -274,13 +274,13 @@ Returns:
 
 None
 
-### Delete an entry
+### Delete an message
 
-Use `Falqon::Entry#delete` to delete an entry.
-This will delete the entry and all its data (including metadata) from the queue.
+Use `Falqon::Message#delete` to delete an message.
+This will delete the message and all its data (including metadata) from the queue.
 
 ```ruby
-entry.delete
+message.delete
 ```
 
 Arguments:
@@ -293,10 +293,10 @@ None
 
 ### Check existance
 
-Use `Falqon::Entry#exists?` to check if an entry exists.
+Use `Falqon::Message#exists?` to check if an message exists.
 
 ```ruby
-entry.exists?
+message.exists?
 ```
 
 Arguments:
@@ -305,25 +305,25 @@ None
 
 Returns:
 
-- `Boolean`: `true` if the entry exists, `false` otherwise
+- `Boolean`: `true` if the message exists, `false` otherwise
 
-### Get the entry metadata
+### Get the message metadata
 
-Use `Falqon::Entry#metadata` to get the entry metadata.
+Use `Falqon::Message#metadata` to get the message metadata.
 
 ```ruby
-Falqon::Entry#metadata
+Falqon::Message#metadata
 ```
 
 Returns:
 
-- `Falqon::Entry::Metadata`: entry metadata. Supported attributes:
-  - `status`: entry status (unknown, pending, processing, dead)
+- `Falqon::Message::Metadata`: message metadata. Supported attributes:
+  - `status`: message status (unknown, pending, processing, dead)
   - `retries`: total number of processing retries
-  - `created_at`: timestamp of the entry creation
-  - `updated_at`: timestamp of the entry update
+  - `created_at`: timestamp of the message creation
+  - `updated_at`: timestamp of the message update
 
-The following convenience methods are also defined on `Entry`:
+The following convenience methods are also defined on `Message`:
 - `unknown?`
 - `pending?`
 - `processing?`

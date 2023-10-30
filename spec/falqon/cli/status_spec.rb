@@ -10,7 +10,7 @@ RSpec.describe Falqon::CLI::Status do
     queue = Falqon::Queue.new("foo")
     Falqon::Queue.new("bar")
 
-    # Add a few entries to the queue
+    # Add a few messages to the queue
     queue.push("foo")
     queue.push("bar")
 

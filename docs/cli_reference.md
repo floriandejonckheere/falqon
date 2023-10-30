@@ -58,12 +58,12 @@ The `status` command displays the status of a queue, or all queues if no queue n
 ```bash
 # Print status of all queues
 $ falqon status
-jobs: 41 entries (34 pending, 2 processing, 5 dead)
+jobs: 41 messages (34 pending, 2 processing, 5 dead)
 emails: empty
 
 # Print status of a specific queue
 $ falqon status --queue jobs
-jobs: 41 entries (34 pending, 2 processing, 5 dead)
+jobs: 41 messages (34 pending, 2 processing, 5 dead)
 ```
 
 Options:
@@ -74,19 +74,19 @@ Options:
 The `show` command displays the contents of the queue.
 
 ```bash
-# Print all entries in the queue (by default only pending entries are displayed)
+# Print all messages in the queue (by default only pending messages are displayed)
 $ falqon show --queue jobs
 id = 1 data = 8742 bytes
 
-# Display only pending entries
+# Display only pending messages
 $ falqon show --queue jobs --pending
 ...
 
-# Display only processing entries
+# Display only processing messages
 $ falqon show --queue jobs --processing
 ...
 
-# Display only dead entries
+# Display only dead messages
 $ falqon show --queue jobs --dead
 ...
 
@@ -98,7 +98,7 @@ $ falqon show --queue jobs --data
 $ falqon show --queue jobs --meta
 id = 1 retries = 0 created_at = 1970-01-01 00:00:00 +0000 updated_at = 1970-01-01 00:00:00 +0000 data = 8742 bytes
 
-# Display first 5 entries
+# Display first 5 messages
 $ falqon show --queue jobs --head 5
 id = 1 data = 8742 bytes
 id = 2 data = 8742 bytes
@@ -106,20 +106,20 @@ id = 3 data = 8742 bytes
 id = 4 data = 8742 bytes
 id = 5 data = 8742 bytes
 
-# Display last 5 entries
+# Display last 5 messages
 $ falqon show --queue jobs --tail 5
 ...
 
-# Display entry at index 5
+# Display message at index 5
 $ falqon show --queue jobs --index 3 --index 5
 id = 3 data = 8742 bytes
 id = 5 data = 8742 bytes
 
-# Display entries from index 5 to 10
+# Display messages from index 5 to 10
 $ falqon show --queue jobs --range 5 10
 ...
 
-# Display entry with ID 5
+# Display message with ID 5
 $ falqon show --queue jobs --id 5 --id 1
 id = 5 data = 8742 bytes
 id = 1 data = 8742 bytes
@@ -127,97 +127,97 @@ id = 1 data = 8742 bytes
 
 Options:
 - `-q`, `--queue=QUEUE`: Queue name (required)
-- `--pending`: Display pending entries (default)
-- `--processing`: Display processing entries
-- `--dead`: Display dead entries
+- `--pending`: Display pending messages (default)
+- `--processing`: Display processing messages
+- `--dead`: Display dead messages
 - `-d`, `--data`: Display raw data
 - `-m`, `--meta`: Display additional metadata
-- `--head N`: Display first N entries
-- `--tail N`: Display last N entries
-- `--index N`: Display entry at index N
-- `--range N M`: Display entries from index N to M
-- `--id N`: Display entry with ID N
+- `--head N`: Display first N messages
+- `--tail N`: Display last N messages
+- `--index N`: Display message at index N
+- `--range N M`: Display messages from index N to M
+- `--id N`: Display message with ID N
 
 ### Delete
 
 The `delete` command deletes (part of) the contents of the queue.
 
 ```bash
-# Delete all entries in the queue (by default only pending entries are deleted)
+# Delete all messages in the queue (by default only pending messages are deleted)
 $ falqon delete --queue jobs
-Deleted 10 entries from queue jobs
+Deleted 10 messages from queue jobs
 
-# Delete only pending entries
+# Delete only pending messages
 $ falqon delete --queue jobs --pending
-Deleted 10 pending entries from queue jobs
+Deleted 10 pending messages from queue jobs
 
-# Delete only processing entries
+# Delete only processing messages
 $ falqon delete --queue jobs --processing
-Deleted 1 processing entry from queue jobs
+Deleted 1 processing message from queue jobs
 
-# Delete only dead entries
+# Delete only dead messages
 $ falqon delete --queue jobs --dead
-Deleted 5 dead entries from queue jobs
+Deleted 5 dead messages from queue jobs
 
-# Delete first 5 entries
+# Delete first 5 messages
 $ falqon delete --queue jobs --head 5
-Deleted 5 entries from queue jobs
+Deleted 5 messages from queue jobs
 
-# Delete last 5 entries
+# Delete last 5 messages
 $ falqon delete --queue jobs --tail 5
-Deleted 5 entries from queue jobs
+Deleted 5 messages from queue jobs
 
-# Delete entry at index 5
+# Delete message at index 5
 $ falqon delete --queue jobs --index 3 --index 5
-Deleted 1 entry from queue jobs
+Deleted 1 message from queue jobs
 
-# Delete entries from index 5 to 10
+# Delete messages from index 5 to 10
 $ falqon delete --queue jobs --range 5 10
-Deleted 6 entries from queue jobs
+Deleted 6 messages from queue jobs
 
-# Delete entry with ID 5
+# Delete message with ID 5
 $ falqon delete --queue jobs --id 5 --id 1
-Deleted 2 entries from queue jobs
+Deleted 2 messages from queue jobs
 ```
 
 Options:
 - `-q`, `--queue=QUEUE`: Queue name (required)
-- `--pending`: Delete only pending entries
-- `--processing`: Delete only processing entries
-- `--dead`: Delete only dead entries
-- `--head N`: Delete first N entries
-- `--tail N`: Delete last N entries
-- `--index N`: Delete entry at index N
-- `--range N M`: Delete entries from index N to M
-- `--id N`: Delete entry with ID N
+- `--pending`: Delete only pending messages
+- `--processing`: Delete only processing messages
+- `--dead`: Delete only dead messages
+- `--head N`: Delete first N messages
+- `--tail N`: Delete last N messages
+- `--index N`: Delete message at index N
+- `--range N M`: Delete messages from index N to M
+- `--id N`: Delete message with ID N
 
 ### Clear
 
 The `clear` command clears the contents of the queue.
 
 ```bash
-# Clear all entries in the queue
+# Clear all messages in the queue
 $ falqon clear --queue jobs
-Cleared 3 entries from queue jobs
+Cleared 3 messages from queue jobs
 
-# Clear only pending entries
+# Clear only pending messages
 $ falqon clear --queue jobs --pending
-Cleared 3 entries from queue jobs
+Cleared 3 messages from queue jobs
 
-# Clear only processing entries
+# Clear only processing messages
 $ falqon clear --queue jobs --processing
-Cleared 3 entries from queue jobs
+Cleared 3 messages from queue jobs
 
-# Clear only dead entries
+# Clear only dead messages
 $ falqon clear --queue jobs --dead
-Cleared 3 entries from queue jobs
+Cleared 3 messages from queue jobs
 ```
 
 Options:
 
 - `-q`, `--queue=QUEUE`: Queue name (required)
-- `--pending`: Clear only pending entries
-- `--processing`: Clear only processing entries
-- `--dead`: Clear only dead entries
+- `--pending`: Clear only pending messages
+- `--processing`: Clear only processing messages
+- `--dead`: Clear only dead messages
 
-If none of the `--pending`, `--processing`, or `--dead` options are specified, all entries are cleared.
+If none of the `--pending`, `--processing`, or `--dead` options are specified, all messages are cleared.

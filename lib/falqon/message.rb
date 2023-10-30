@@ -4,9 +4,9 @@
 
 module Falqon
   ##
-  # An entry in a queue
+  # A message in a queue
   #
-  class Entry
+  class Message
     extend Forwardable
     extend T::Sig
 
@@ -60,7 +60,7 @@ module Falqon
       end
     end
 
-    sig { returns(Entry) }
+    sig { returns(Message) }
     def create
       # FIXME: use Redis connection of caller
       redis.with do |r|
@@ -122,7 +122,7 @@ module Falqon
     def_delegator :queue, :name
 
     ##
-    # Metadata for an entry
+    # Metadata for an message
     #
     class Metadata < T::Struct
       # Status (unknown, pending, processing, dead)

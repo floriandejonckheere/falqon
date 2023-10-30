@@ -130,7 +130,7 @@ RSpec.describe Falqon::CLI::Show do
       context "when the --head option is specified" do
         let(:options) { { queue: "foo", head: 3 } }
 
-        it "prints the first N entries" do
+        it "prints the first N messages" do
           expect { command.call }
             .to output(/id = 2.*\n.*id = 3.*\n.*id = 4/) # id = 1 is in the dead queue
             .to_stdout
@@ -140,7 +140,7 @@ RSpec.describe Falqon::CLI::Show do
       context "when the --tail option is specified" do
         let(:options) { { queue: "foo", tail: 3 } }
 
-        it "prints the last N entries" do
+        it "prints the last N messages" do
           expect { command.call }
             .to output(/id = 4.*\n.*id = 5.*\n.*id = 6/)
             .to_stdout
@@ -150,7 +150,7 @@ RSpec.describe Falqon::CLI::Show do
       context "when the --index option is specified" do
         let(:options) { { queue: "foo", index: 2 } }
 
-        it "prints the entry at the given index" do
+        it "prints the message at the given index" do
           expect { command.call }
             .to output(/id = 4/) # id = 1 is in the dead queue
             .to_stdout
@@ -161,7 +161,7 @@ RSpec.describe Falqon::CLI::Show do
 
           it "prints an error message" do
             expect { command.call }
-              .to output(/No entry at index 100/)
+              .to output(/No message at index 100/)
               .to_stdout
           end
         end
@@ -170,7 +170,7 @@ RSpec.describe Falqon::CLI::Show do
       context "when the --index option is specified multiple times" do
         let(:options) { { queue: "foo", index: [2, 4] } }
 
-        it "prints the entries at the given indices" do
+        it "prints the messages at the given indices" do
           expect { command.call }
             .to output(/id = 4.*\n.*id = 6/) # id = 1 is in the dead queue
             .to_stdout
@@ -180,7 +180,7 @@ RSpec.describe Falqon::CLI::Show do
       context "when the --range option is specified" do
         let(:options) { { queue: "foo", range: [2, 4] } }
 
-        it "prints the entries in the given range" do
+        it "prints the messages in the given range" do
           expect { command.call }
             .to output(/id = 4.*\n.*id = 5.*\n.*id = 6/) # id = 1 is in the dead queue
             .to_stdout
@@ -190,7 +190,7 @@ RSpec.describe Falqon::CLI::Show do
       context "when the --id option is specified" do
         let(:options) { { queue: "foo", id: 4 } }
 
-        it "prints the entry with the given ID" do
+        it "prints the message with the given ID" do
           expect { command.call }
             .to output(/id = 4/)
             .to_stdout
@@ -201,7 +201,7 @@ RSpec.describe Falqon::CLI::Show do
 
           it "prints an error message" do
             expect { command.call }
-              .to output(/No entry with ID 100/)
+              .to output(/No message with ID 100/)
               .to_stdout
           end
         end
@@ -210,7 +210,7 @@ RSpec.describe Falqon::CLI::Show do
       context "when the --id option is specified multiple times" do
         let(:options) { { queue: "foo", id: [4, 6] } }
 
-        it "prints the entries with the given IDs" do
+        it "prints the messages with the given IDs" do
           expect { command.call }
             .to output(/id = 4.*\n.*id = 6/)
             .to_stdout

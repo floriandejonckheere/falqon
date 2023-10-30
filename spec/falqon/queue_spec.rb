@@ -118,12 +118,12 @@ RSpec.describe Falqon::Queue do
       end
     end
 
-    it "sets the entry status to pending" do
+    it "sets the message status to pending" do
       id = queue.push("message1")
 
-      entry = Falqon::Entry.new(queue, id:)
+      message = Falqon::Message.new(queue, id:)
 
-      expect(entry.metadata.status).to eq "pending"
+      expect(message.metadata.status).to eq "pending"
     end
   end
 
@@ -151,13 +151,13 @@ RSpec.describe Falqon::Queue do
       end
     end
 
-    it "sets the entry status to processing" do
+    it "sets the message status to processing" do
       id = queue.push("message1")
 
-      entry = Falqon::Entry.new(queue, id:)
+      message = Falqon::Message.new(queue, id:)
 
       queue.pop do
-        expect(entry.metadata.status).to eq "processing"
+        expect(message.metadata.status).to eq "processing"
       end
     end
 

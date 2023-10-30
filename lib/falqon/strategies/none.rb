@@ -8,19 +8,19 @@ module Falqon
     # Retry strategy that does not retry
     #
     class None < Strategy
-      sig { params(entry: Entry).void }
-      def retry(entry)
+      sig { params(message: Message).void }
+      def retry(message)
         # FIXME: use Redis connection of caller
         queue.redis.with do |r|
           r.multi do |t|
             # Kill message immediately
-            entry.kill
+            message.kill
 
             # Remove identifier from processing queue
-            queue.processing.remove(entry.id)
+            queue.processing.remove(message.id)
 
-            # Set entry status
-            t.hset("#{queue.name}:metadata:#{entry.id}", :status, "dead")
+            # Set message status
+            t.hset("#{queue.name}:metadata:#{message.id}", :status, "dead")
           end
         end
       end

@@ -16,14 +16,14 @@ RSpec.describe Falqon::Strategies::Linear do
       end
     end
 
-    it "sets the entry status to pending" do
+    it "sets the message status to pending" do
       id = queue.push("message1")
 
       queue.pop { raise Falqon::Error }
 
-      entry = Falqon::Entry.new(queue, id:)
+      message = Falqon::Message.new(queue, id:)
 
-      expect(entry.metadata.status).to eq "pending"
+      expect(message.metadata.status).to eq "pending"
     end
 
     context "when processing fails too many times" do
@@ -46,21 +46,21 @@ RSpec.describe Falqon::Strategies::Linear do
         queue.pop { raise Falqon::Error }
         queue.pop { raise Falqon::Error }
 
-        entry = Falqon::Entry.new(queue, id:)
+        message = Falqon::Message.new(queue, id:)
 
-        expect(entry.metadata.retries).to be_zero
+        expect(message.metadata.retries).to be_zero
       end
 
-      it "sets the entry status to dead" do
+      it "sets the message status to dead" do
         id = queue.push("message1")
 
         queue.pop { raise Falqon::Error }
         queue.pop { raise Falqon::Error }
         queue.pop { raise Falqon::Error }
 
-        entry = Falqon::Entry.new(queue, id:)
+        message = Falqon::Message.new(queue, id:)
 
-        expect(entry.metadata.status).to eq "dead"
+        expect(message.metadata.status).to eq "dead"
       end
     end
   end

@@ -23,7 +23,7 @@ module Falqon
                 queue.redis.with do |r|
                   if options[:index]
                     Array(options[:index]).map do |i|
-                      r.lindex(subqueue.name, i) || raise("No entry at index #{i}")
+                      r.lindex(subqueue.name, i) || raise("No message at index #{i}")
                     end
                   else
                     r.lrange(subqueue.name, *range_options)
@@ -31,19 +31,19 @@ module Falqon
                 end
               end
 
-        # Transform identifiers to entries
-        entries = ids.map do |id|
-          entry = Falqon::Entry.new(queue, id: id.to_i)
+        # Transform identifiers to messages
+        messages = ids.map do |id|
+          message = Falqon::Message.new(queue, id: id.to_i)
 
-          raise "No entry with ID #{id}" unless entry.exists?
+          raise "No message with ID #{id}" unless message.exists?
 
-          entry
+          message
         end
 
-        # Serialize entries
-        entries.each do |entry|
+        # Serialize messages
+        messages.each do |message|
           puts Serializer
-            .new(entry, meta: options[:meta], data: options[:data])
+            .new(message, meta: options[:meta], data: options[:data])
         end
       end
 
@@ -83,25 +83,25 @@ module Falqon
       end
 
       class Serializer
-        attr_reader :entry, :meta, :data
+        attr_reader :message, :meta, :data
 
-        def initialize(entry, meta: false, data: false)
-          @entry = entry
+        def initialize(message, meta: false, data: false)
+          @message = message
           @meta = meta
           @data = data
         end
 
         def to_s
-          return entry.data if data
+          return message.data if data
 
           if meta
-            "id = #{entry.id} " \
-              "retries = #{entry.metadata.retries} " \
-              "created_at = #{Time.at(entry.metadata.created_at)} " \
-              "updated_at = #{Time.at(entry.metadata.updated_at)} " \
-              "data = #{entry.data.length} bytes"
+            "id = #{message.id} " \
+              "retries = #{message.metadata.retries} " \
+              "created_at = #{Time.at(message.metadata.created_at)} " \
+              "updated_at = #{Time.at(message.metadata.updated_at)} " \
+              "data = #{message.data.length} bytes"
           else
-            "id = #{entry.id} data = #{entry.data.length} bytes"
+            "id = #{message.id} data = #{message.data.length} bytes"
           end
         end
       end

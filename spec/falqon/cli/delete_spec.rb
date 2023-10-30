@@ -62,16 +62,16 @@ RSpec.describe Falqon::CLI::Delete do
   describe "#execute" do
     it "deletes the contents of the queue" do
       expect { command.call }
-        .to output(/Deleted 5 entries from queue foo/)
+        .to output(/Deleted 5 messages from queue foo/)
         .to_stdout
     end
 
     context "when the --pending option is specified" do
       let(:options) { { queue: "foo", pending: true } }
 
-      it "clears the pending entries" do
+      it "clears the pending messages" do
         expect { command.call }
-          .to output(/Deleted 5 pending entries from queue foo/)
+          .to output(/Deleted 5 pending messages from queue foo/)
           .to_stdout
       end
     end
@@ -79,9 +79,9 @@ RSpec.describe Falqon::CLI::Delete do
     context "when the --processing option is specified" do
       let(:options) { { queue: "foo", processing: true } }
 
-      it "clears the processing entries" do
+      it "clears the processing messages" do
         expect { command.call }
-          .to output(/Deleted 0 processing entries from queue foo/)
+          .to output(/Deleted 0 processing messages from queue foo/)
           .to_stdout
       end
     end
@@ -89,9 +89,9 @@ RSpec.describe Falqon::CLI::Delete do
     context "when the --dead option is specified" do
       let(:options) { { queue: "foo", dead: true } }
 
-      it "clears the dead entries" do
+      it "clears the dead messages" do
         expect { command.call }
-          .to output(/Deleted 1 dead entry from queue foo/)
+          .to output(/Deleted 1 dead message from queue foo/)
           .to_stdout
       end
     end
@@ -100,9 +100,9 @@ RSpec.describe Falqon::CLI::Delete do
       context "when the --head option is specified" do
         let(:options) { { queue: "foo", head: 3 } }
 
-        it "deletes the first N entries" do
+        it "deletes the first N messages" do
           expect { command.call }
-            .to output(/Deleted 3 entries from queue foo/) # id = 1 is in the dead queue
+            .to output(/Deleted 3 messages from queue foo/) # id = 1 is in the dead queue
             .to_stdout
         end
       end
@@ -110,9 +110,9 @@ RSpec.describe Falqon::CLI::Delete do
       context "when the --tail option is specified" do
         let(:options) { { queue: "foo", tail: 3 } }
 
-        it "deletes the last N entries" do
+        it "deletes the last N messages" do
           expect { command.call }
-            .to output(/Deleted 3 entries from queue foo/)
+            .to output(/Deleted 3 messages from queue foo/)
             .to_stdout
         end
       end
@@ -120,9 +120,9 @@ RSpec.describe Falqon::CLI::Delete do
       context "when the --index option is specified" do
         let(:options) { { queue: "foo", index: 2 } }
 
-        it "deletes the entry at the given index" do
+        it "deletes the message at the given index" do
           expect { command.call }
-            .to output(/Deleted 1 entry from queue foo/) # id = 1 is in the dead queue
+            .to output(/Deleted 1 message from queue foo/) # id = 1 is in the dead queue
             .to_stdout
         end
 
@@ -131,7 +131,7 @@ RSpec.describe Falqon::CLI::Delete do
 
           it "prints an error message" do
             expect { command.call }
-              .to output(/No entry at index 100/)
+              .to output(/No message at index 100/)
               .to_stdout
           end
         end
@@ -140,9 +140,9 @@ RSpec.describe Falqon::CLI::Delete do
       context "when the --index option is specified multiple times" do
         let(:options) { { queue: "foo", index: [2, 4] } }
 
-        it "deletes the entries at the given indices" do
+        it "deletes the messages at the given indices" do
           expect { command.call }
-            .to output(/Deleted 2 entries from queue foo/) # id = 1 is in the dead queue
+            .to output(/Deleted 2 messages from queue foo/) # id = 1 is in the dead queue
             .to_stdout
         end
       end
@@ -150,9 +150,9 @@ RSpec.describe Falqon::CLI::Delete do
       context "when the --range option is specified" do
         let(:options) { { queue: "foo", range: [2, 4] } }
 
-        it "deletes the entries in the given range" do
+        it "deletes the messages in the given range" do
           expect { command.call }
-            .to output(/Deleted 3 entries from queue foo/) # id = 1 is in the dead queue
+            .to output(/Deleted 3 messages from queue foo/) # id = 1 is in the dead queue
             .to_stdout
         end
       end
@@ -160,9 +160,9 @@ RSpec.describe Falqon::CLI::Delete do
       context "when the --id option is specified" do
         let(:options) { { queue: "foo", id: 4 } }
 
-        it "deletes the entry with the given ID" do
+        it "deletes the message with the given ID" do
           expect { command.call }
-            .to output(/Deleted 1 entry from queue foo/)
+            .to output(/Deleted 1 message from queue foo/)
             .to_stdout
         end
 
@@ -171,7 +171,7 @@ RSpec.describe Falqon::CLI::Delete do
 
           it "prints an error message" do
             expect { command.call }
-              .to output(/No entry with ID 100/)
+              .to output(/No message with ID 100/)
               .to_stdout
           end
         end
@@ -180,9 +180,9 @@ RSpec.describe Falqon::CLI::Delete do
       context "when the --id option is specified multiple times" do
         let(:options) { { queue: "foo", id: [4, 6] } }
 
-        it "deletes the entries with the given IDs" do
+        it "deletes the messages with the given IDs" do
           expect { command.call }
-            .to output(/Deleted 2 entries from queue foo/)
+            .to output(/Deleted 2 messages from queue foo/)
             .to_stdout
         end
       end
