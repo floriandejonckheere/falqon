@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Falqon::Entry do
-  subject(:entry) { described_class.new(queue, message: "message") }
+  subject(:entry) { described_class.new(queue, data: "message") }
 
   let(:queue) { Falqon::Queue.new("name") }
 
@@ -21,28 +21,28 @@ RSpec.describe Falqon::Entry do
     end
   end
 
-  describe "#message" do
+  describe "#data" do
     it "returns a message" do
-      entry = described_class.new(queue, message: "message1")
+      entry = described_class.new(queue, data: "message1")
 
-      expect(entry.message).to eq "message1"
+      expect(entry.data).to eq "message1"
     end
 
     it "retrieves the message" do
       described_class
-        .new(queue, id: 2, message: "message1")
+        .new(queue, id: 2, data: "message1")
         .create
 
       entry = described_class.new(queue, id: 2)
 
-      expect(entry.message).to eq "message1"
+      expect(entry.data).to eq "message1"
     end
   end
 
   describe "#unknown?" do
     it "returns true if the status is unknown" do
       entry = described_class
-        .new(queue, id: 2, message: "message1")
+        .new(queue, id: 2, data: "message1")
         .create
 
       expect(entry).to be_unknown
@@ -52,7 +52,7 @@ RSpec.describe Falqon::Entry do
   describe "#pending?" do
     it "returns true if the status is pending" do
       entry = described_class
-        .new(queue, id: 2, message: "message1")
+        .new(queue, id: 2, data: "message1")
         .create
 
       # FIXME: mock the status correctly
@@ -67,7 +67,7 @@ RSpec.describe Falqon::Entry do
   describe "#processing?" do
     it "returns true if the status is processing" do
       entry = described_class
-        .new(queue, id: 2, message: "message1")
+        .new(queue, id: 2, data: "message1")
         .create
 
       # FIXME: mock the status correctly
@@ -82,7 +82,7 @@ RSpec.describe Falqon::Entry do
   describe "#dead?" do
     it "returns true if the status is dead" do
       entry = described_class
-        .new(queue, id: 2, message: "message1")
+        .new(queue, id: 2, data: "message1")
         .create
 
       entry
@@ -95,7 +95,7 @@ RSpec.describe Falqon::Entry do
   describe "#exists?" do
     it "returns true if the entry exists" do
       entry = described_class
-        .new(queue, id: 2, message: "message1")
+        .new(queue, id: 2, data: "message1")
         .create
 
       expect(entry).to exist
@@ -103,7 +103,7 @@ RSpec.describe Falqon::Entry do
 
     it "returns false if the entry does not exist" do
       entry = described_class
-        .new(queue, id: 2, message: "message1")
+        .new(queue, id: 2, data: "message1")
 
       expect(entry).not_to exist
     end
@@ -112,11 +112,11 @@ RSpec.describe Falqon::Entry do
   describe "#create" do
     it "stores the message" do
       described_class
-        .new(queue, id: 2, message: "message1")
+        .new(queue, id: 2, data: "message1")
         .create
 
       queue.redis.with do |r|
-        expect(r.get("falqon/name:messages:2")).to eq "message1"
+        expect(r.get("falqon/name:data:2")).to eq "message1"
       end
     end
 
@@ -125,7 +125,7 @@ RSpec.describe Falqon::Entry do
         time = Time.now.to_i
 
         entry = described_class
-          .new(queue, id: 2, message: "message1")
+          .new(queue, id: 2, data: "message1")
           .create
 
         expect(entry.metadata.status).to eq "unknown"
@@ -139,7 +139,7 @@ RSpec.describe Falqon::Entry do
   describe "#kill" do
     it "moves the message to the dead queue" do
       entry = described_class
-        .new(queue, id: 2, message: "message1")
+        .new(queue, id: 2, data: "message1")
         .create
 
       entry
@@ -152,7 +152,7 @@ RSpec.describe Falqon::Entry do
 
     it "resets the retry count and sets the status to 'dead'" do
       entry = described_class
-        .new(queue, id: 2, message: "message1")
+        .new(queue, id: 2, data: "message1")
         .create
 
       entry
@@ -166,7 +166,7 @@ RSpec.describe Falqon::Entry do
   describe "#delete" do
     it "removes the message from the queues" do
       entry = described_class
-        .new(queue, id: 2, message: "message1")
+        .new(queue, id: 2, data: "message1")
         .create
 
       entry
@@ -179,14 +179,14 @@ RSpec.describe Falqon::Entry do
 
     it "deletes the message and metadata" do
       entry = described_class
-        .new(queue, id: 2, message: "message1")
+        .new(queue, id: 2, data: "message1")
         .create
 
       entry
         .delete
 
       queue.redis.with do |r|
-        expect(r.get("falqon/name:messages:2")).to be_nil
+        expect(r.get("falqon/name:data:2")).to be_nil
         expect(r.get("falqon/name:metadata:2")).to be_nil
       end
     end

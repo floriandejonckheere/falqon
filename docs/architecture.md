@@ -15,6 +15,6 @@ The following Redis keys are used:
 - `{name}:id`: message identifier sequence
 - `{name}:processing`: list of message identifiers being processed
 - `{name}:dead`: list of message identifiers that have been discarded
-- `{name}:messages:{id}`: message contents for identifier `{id}`
+- `{name}:data:{id}`: message data for identifier `{id}`
 - `{name}:metadata`: metadata for the queue
 - `{name}:metadata:{id}`: metadata for identifier `{id}`

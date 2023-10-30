@@ -76,7 +76,7 @@ The `show` command displays the contents of the queue.
 ```bash
 # Print all entries in the queue (by default only pending entries are displayed)
 $ falqon show --queue jobs
-id = 1 message = 8742 bytes
+id = 1 data = 8742 bytes
 
 # Display only pending entries
 $ falqon show --queue jobs --pending
@@ -96,15 +96,15 @@ $ falqon show --queue jobs --data
 
 # Display additional metadata
 $ falqon show --queue jobs --meta
-id = 1 retries = 0 created_at = 1970-01-01 00:00:00 +0000 updated_at = 1970-01-01 00:00:00 +0000 message = 8742 bytes
+id = 1 retries = 0 created_at = 1970-01-01 00:00:00 +0000 updated_at = 1970-01-01 00:00:00 +0000 data = 8742 bytes
 
 # Display first 5 entries
 $ falqon show --queue jobs --head 5
-id = 1 message = 8742 bytes
-id = 2 message = 8742 bytes
-id = 3 message = 8742 bytes
-id = 4 message = 8742 bytes
-id = 5 message = 8742 bytes
+id = 1 data = 8742 bytes
+id = 2 data = 8742 bytes
+id = 3 data = 8742 bytes
+id = 4 data = 8742 bytes
+id = 5 data = 8742 bytes
 
 # Display last 5 entries
 $ falqon show --queue jobs --tail 5
@@ -112,8 +112,8 @@ $ falqon show --queue jobs --tail 5
 
 # Display entry at index 5
 $ falqon show --queue jobs --index 3 --index 5
-id = 3 message = 8742 bytes
-id = 5 message = 8742 bytes
+id = 3 data = 8742 bytes
+id = 5 data = 8742 bytes
 
 # Display entries from index 5 to 10
 $ falqon show --queue jobs --range 5 10
@@ -121,8 +121,8 @@ $ falqon show --queue jobs --range 5 10
 
 # Display entry with ID 5
 $ falqon show --queue jobs --id 5 --id 1
-id = 5 message = 8742 bytes
-id = 1 message = 8742 bytes
+id = 5 data = 8742 bytes
+id = 1 data = 8742 bytes
 ```
 
 Options:

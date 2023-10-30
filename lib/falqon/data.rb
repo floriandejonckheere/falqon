@@ -5,5 +5,5 @@
 module Falqon
   extend T::Sig
 
-  Message = T.type_alias { String }
+  Data = T.type_alias { String }
 end

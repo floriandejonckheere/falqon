@@ -13,11 +13,11 @@ module Falqon
     sig { returns(Queue) }
     attr_reader :queue
 
-    sig { params(queue: Queue, id: T.nilable(Identifier), message: T.nilable(Message)).void }
-    def initialize(queue, id: nil, message: nil)
+    sig { params(queue: Queue, id: T.nilable(Identifier), data: T.nilable(Data)).void }
+    def initialize(queue, id: nil, data: nil)
       @queue = queue
       @id = id
-      @message = message
+      @data = data
     end
 
     sig { returns(Identifier) }
@@ -27,9 +27,9 @@ module Falqon
     end
 
     sig { returns(String) }
-    def message
+    def data
       # FIXME: use Redis connection of caller
-      @message ||= redis.with { |r| r.get("#{name}:messages:#{id}") }
+      @data ||= redis.with { |r| r.get("#{name}:data:#{id}") }
     end
 
     sig { returns(T::Boolean) }
@@ -56,7 +56,7 @@ module Falqon
     def exists?
       # FIXME: use Redis connection of caller
       redis.with do |r|
-        r.exists("#{name}:messages:#{id}") == 1
+        r.exists("#{name}:data:#{id}") == 1
       end
     end
 
@@ -64,8 +64,8 @@ module Falqon
     def create
       # FIXME: use Redis connection of caller
       redis.with do |r|
-        # Store message
-        r.set("#{name}:messages:#{id}", message)
+        # Store data
+        r.set("#{name}:data:#{id}", data)
 
         # Set metadata
         r.hset("#{name}:metadata:#{id}",
@@ -102,8 +102,8 @@ module Falqon
         queue.pending.remove(id)
         queue.dead.remove(id)
 
-        # Delete message and metadata
-        r.del("#{name}:messages:#{id}", "#{name}:metadata:#{id}")
+        # Delete data and metadata
+        r.del("#{name}:data:#{id}", "#{name}:metadata:#{id}")
       end
     end
 

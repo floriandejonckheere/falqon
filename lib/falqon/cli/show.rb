@@ -92,16 +92,16 @@ module Falqon
         end
 
         def to_s
-          return entry.message if data
+          return entry.data if data
 
           if meta
             "id = #{entry.id} " \
               "retries = #{entry.metadata.retries} " \
               "created_at = #{Time.at(entry.metadata.created_at)} " \
               "updated_at = #{Time.at(entry.metadata.updated_at)} " \
-              "message = #{entry.message.length} bytes"
+              "data = #{entry.data.length} bytes"
           else
-            "id = #{entry.id} message = #{entry.message.length} bytes"
+            "id = #{entry.id} data = #{entry.data.length} bytes"
           end
         end
       end

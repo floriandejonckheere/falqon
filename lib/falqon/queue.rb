@@ -64,18 +64,18 @@ module Falqon
       run_hook :initialize
     end
 
-    sig { params(messages: Message).returns(T.any(Identifier, T::Array[Identifier])) }
-    def push(*messages)
-      logger.debug "Pushing #{messages.size} messages onto queue #{name}"
+    sig { params(data: Data).returns(T.any(Identifier, T::Array[Identifier])) }
+    def push(*data)
+      logger.debug "Pushing #{data.size} messages onto queue #{name}"
 
       run_hook :push, :before
 
       # Set update timestamp
       redis.with { |r| r.hset("#{name}:metadata", :updated_at, Time.now.to_i) }
 
-      ids = messages.map do |message|
+      ids = data.map do |d|
         entry = Entry
-          .new(self, message:)
+          .new(self, data: d)
           .create
 
         # Push identifier to queue
@@ -85,7 +85,7 @@ module Falqon
         redis.with { |r| r.hset("#{name}:metadata:#{entry.id}", :status, "pending") }
 
         # Return identifier(s)
-        messages.size == 1 ? (return entry.id) : (next entry.id)
+        data.size == 1 ? (return entry.id) : (next entry.id)
       end
 
       run_hook :push, :after
@@ -94,7 +94,7 @@ module Falqon
       ids
     end
 
-    sig { params(block: T.nilable(T.proc.params(message: Message).void)).returns(T.nilable(Message)) }
+    sig { params(block: T.nilable(T.proc.params(data: Data).void)).returns(T.nilable(Data)) }
     def pop(&block)
       logger.debug "Popping message from queue #{name}"
 
@@ -120,9 +120,9 @@ module Falqon
         Entry.new(self, id:)
       end
 
-      message = entry.message
+      data = entry.data
 
-      yield message if block
+      yield data if block
 
       run_hook :pop, :after
 
@@ -132,7 +132,7 @@ module Falqon
       # Delete message
       entry.delete
 
-      message
+      data
     rescue Error => e
       logger.debug "Error processing message #{entry.id}: #{e.message}"
 
@@ -145,7 +145,7 @@ module Falqon
       nil
     end
 
-    sig { returns(T.nilable(Message)) }
+    sig { returns(T.nilable(Data)) }
     def peek
       logger.debug "Peeking at next message in queue #{name}"
 
@@ -158,8 +158,8 @@ module Falqon
 
       run_hook :peek, :after
 
-      # Retrieve message
-      Entry.new(self, id:).message
+      # Retrieve data
+      Entry.new(self, id:).data
     end
 
     sig { returns(T::Array[Identifier]) }

@@ -52,8 +52,8 @@ module Falqon
         # Get all identifiers from queue
         ids = r.lrange(name, 0, -1)
 
-        # Delete all messages and clear queue
-        r.del(*ids.flat_map { |id| ["#{queue.name}:messages:#{id}", "#{queue.name}:metadata:#{id}"] }, name, "#{queue.name}:id")
+        # Delete all data and clear queue
+        r.del(*ids.flat_map { |id| ["#{queue.name}:data:#{id}", "#{queue.name}:metadata:#{id}"] }, name, "#{queue.name}:id")
 
         # Return identifiers
         ids.map(&:to_i)

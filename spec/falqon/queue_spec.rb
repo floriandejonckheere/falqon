@@ -70,7 +70,7 @@ RSpec.describe Falqon::Queue do
         expect(r.lrange("falqon/name", 0, -1)).to eq ["1"]
 
         # Check that the messages have been stored
-        expect(r.get("falqon/name:messages:1")).to eq "message1"
+        expect(r.get("falqon/name:data:1")).to eq "message1"
 
         # Check that the processing queue is empty
         expect(r.llen("falqon/name:processing")).to eq 0
@@ -91,8 +91,8 @@ RSpec.describe Falqon::Queue do
         expect(r.lrange("falqon/name", 0, -1)).to eq ["1", "2"]
 
         # Check that the messages have been stored
-        expect(r.get("falqon/name:messages:1")).to eq "message1"
-        expect(r.get("falqon/name:messages:2")).to eq "message2"
+        expect(r.get("falqon/name:data:1")).to eq "message1"
+        expect(r.get("falqon/name:data:2")).to eq "message2"
 
         # Check that the processing queue is empty
         expect(r.llen("falqon/name:processing")).to eq 0
