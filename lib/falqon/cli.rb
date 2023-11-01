@@ -30,7 +30,7 @@ module Falqon
         .call
     end
 
-    desc "show", "Display queue contents"
+    desc "show", "Display messages in a queue"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
 
     option :pending, type: :boolean, desc: "Display pending messages (default)"
@@ -52,26 +52,26 @@ module Falqon
         .call
     end
 
-    desc "delete", "Delete queue contents"
+    desc "delete", "Delete all messages in a queue"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
 
-    option :pending, type: :boolean, desc: "Delete only pending messages"
+    option :pending, type: :boolean, desc: "Delete only pending messages (default)"
     option :processing, type: :boolean, desc: "Delete only processing messages"
     option :dead, type: :boolean, desc: "Delete only dead messages"
 
-    option :head, type: :numeric, desc: "Display N messages from head of queue"
-    option :tail, type: :numeric, desc: "Display N messages from tail of queue"
-    option :index, type: :numeric, desc: "Display message at index N", repeatable: true
-    option :range, type: :array, desc: "Display messages at index N to M", banner: "N M"
+    option :head, type: :numeric, desc: "Delete N messages from head of queue"
+    option :tail, type: :numeric, desc: "Delete N messages from tail of queue"
+    option :index, type: :numeric, desc: "Delete message at index N", repeatable: true
+    option :range, type: :array, desc: "Delete messages at index N to M", banner: "N M"
 
-    option :id, type: :numeric, desc: "Display message with ID N", repeatable: true
+    option :id, type: :numeric, desc: "Delete message with ID N", repeatable: true
     def delete
       Delete
         .new(options)
         .call
     end
 
-    desc "clear", "Clear queue"
+    desc "clear", "Clear all messages in a queue"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
 
     option :pending, type: :boolean, desc: "Clear only pending messages"
