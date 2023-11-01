@@ -42,14 +42,12 @@ module Falqon
         # Delete messages
         messages.each(&:delete)
 
-        if options[:pending]
-          puts "Deleted #{pluralize(messages.count, 'pending message', 'pending messages')} from queue #{queue.id}"
-        elsif options[:processing]
+        if options[:processing]
           puts "Deleted #{pluralize(messages.count, 'processing message', 'processing messages')} from queue #{queue.id}"
         elsif options[:dead]
           puts "Deleted #{pluralize(messages.count, 'dead message', 'dead messages')} from queue #{queue.id}"
-        else
-          puts "Deleted #{pluralize(messages.count, 'message', 'messages')} from queue #{queue.id}"
+        else # options[:pending]
+          puts "Deleted #{pluralize(messages.count, 'pending message', 'pending messages')} from queue #{queue.id}"
         end
       end
 
@@ -64,7 +62,7 @@ module Falqon
                         queue.processing
                       elsif options[:dead]
                         queue.dead
-                      else
+                      else # options[:pending]
                         queue.pending
                       end
       end

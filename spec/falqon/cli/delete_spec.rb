@@ -60,14 +60,14 @@ RSpec.describe Falqon::CLI::Delete do
   describe "#execute" do
     it "deletes the contents of the queue" do
       expect { command.call }
-        .to output(/Deleted 4 messages from queue queue0/)
+        .to output(/Deleted 4 pending messages from queue queue0/)
         .to_stdout
     end
 
     context "when the --pending option is specified" do
       let(:options) { { queue: "queue0", pending: true } }
 
-      it "clears the pending messages" do
+      it "deletes the pending messages" do
         expect { command.call }
           .to output(/Deleted 4 pending messages from queue queue0/)
           .to_stdout
@@ -77,7 +77,7 @@ RSpec.describe Falqon::CLI::Delete do
     context "when the --processing option is specified" do
       let(:options) { { queue: "queue0", processing: true } }
 
-      it "clears the processing messages" do
+      it "deletes the processing messages" do
         expect { command.call }
           .to output(/Deleted 1 processing message from queue queue0/)
           .to_stdout
@@ -87,7 +87,7 @@ RSpec.describe Falqon::CLI::Delete do
     context "when the --dead option is specified" do
       let(:options) { { queue: "queue1", dead: true } }
 
-      it "clears the dead messages" do
+      it "deletes the dead messages" do
         expect { command.call }
           .to output(/Deleted 2 dead messages from queue queue1/)
           .to_stdout
@@ -100,7 +100,7 @@ RSpec.describe Falqon::CLI::Delete do
 
         it "deletes the first N messages" do
           expect { command.call }
-            .to output(/Deleted 3 messages from queue queue0/)
+            .to output(/Deleted 3 pending messages from queue queue0/)
             .to_stdout
         end
       end
@@ -110,7 +110,7 @@ RSpec.describe Falqon::CLI::Delete do
 
         it "deletes the last N messages" do
           expect { command.call }
-            .to output(/Deleted 3 messages from queue queue0/)
+            .to output(/Deleted 3 pending messages from queue queue0/)
             .to_stdout
         end
       end
@@ -120,7 +120,7 @@ RSpec.describe Falqon::CLI::Delete do
 
         it "deletes the message at the given index" do
           expect { command.call }
-            .to output(/Deleted 1 message from queue queue0/)
+            .to output(/Deleted 1 pending message from queue queue0/)
             .to_stdout
         end
 
@@ -140,7 +140,7 @@ RSpec.describe Falqon::CLI::Delete do
 
         it "deletes the messages at the given indices" do
           expect { command.call }
-            .to output(/Deleted 2 messages from queue queue0/)
+            .to output(/Deleted 2 pending messages from queue queue0/)
             .to_stdout
         end
       end
@@ -150,7 +150,7 @@ RSpec.describe Falqon::CLI::Delete do
 
         it "deletes the messages in the given range" do
           expect { command.call }
-            .to output(/Deleted 3 messages from queue queue0/)
+            .to output(/Deleted 3 pending messages from queue queue0/)
             .to_stdout
         end
       end
@@ -160,7 +160,7 @@ RSpec.describe Falqon::CLI::Delete do
 
         it "deletes the message with the given ID" do
           expect { command.call }
-            .to output(/Deleted 1 message from queue queue0/)
+            .to output(/Deleted 1 pending message from queue queue0/)
             .to_stdout
         end
 
@@ -180,7 +180,7 @@ RSpec.describe Falqon::CLI::Delete do
 
         it "deletes the messages with the given IDs" do
           expect { command.call }
-            .to output(/Deleted 2 messages from queue queue0/)
+            .to output(/Deleted 2 pending messages from queue queue0/)
             .to_stdout
         end
       end
