@@ -3,23 +3,21 @@
 RSpec.describe Falqon::CLI::Delete do
   subject(:command) { described_class.new(options) }
 
-  include_context "with a couple of queues"
-
-  let(:options) { { queue: "foo" } }
+  let(:options) { { queue: "queue0" } }
 
   describe "#validate" do
     context "when the given queue does not exist" do
-      let(:options) { { queue: "baz" } }
+      let(:options) { { queue: "notfound" } }
 
       it "prints an error message" do
         expect { command.call }
-          .to output(/No queue registered with this name: baz/)
+          .to output(/No queue registered with this name: notfound/)
           .to_stdout
       end
     end
 
     context "when the --pending, --processing, and --dead options are all specified" do
-      let(:options) { { queue: "foo", pending: true, processing: true, dead: true } }
+      let(:options) { { queue: "queue0", pending: true, processing: true, dead: true } }
 
       it "prints an error message" do
         expect { command.call }
@@ -29,7 +27,7 @@ RSpec.describe Falqon::CLI::Delete do
     end
 
     context "when the --head, --tail, --index, and --range options are all specified" do
-      let(:options) { { queue: "foo", head: 3, tail: 3, index: 3, range: [3, 5] } }
+      let(:options) { { queue: "queue0", head: 3, tail: 3, index: 3, range: [3, 5] } }
 
       it "prints an error message" do
         expect { command.call }
@@ -39,7 +37,7 @@ RSpec.describe Falqon::CLI::Delete do
     end
 
     context "when the --range option is specified with an invalid number of arguments" do
-      let(:options) { { queue: "foo", range: [1] } }
+      let(:options) { { queue: "queue0", range: [1] } }
 
       it "prints an error message" do
         expect { command.call }
@@ -49,7 +47,7 @@ RSpec.describe Falqon::CLI::Delete do
     end
 
     context "when the --id option is specified with --head, --tail, --index, or --range" do
-      let(:options) { { queue: "foo", id: 1, head: 3 } }
+      let(:options) { { queue: "queue0", id: 1, head: 3 } }
 
       it "prints an error message" do
         expect { command.call }
@@ -62,72 +60,72 @@ RSpec.describe Falqon::CLI::Delete do
   describe "#execute" do
     it "deletes the contents of the queue" do
       expect { command.call }
-        .to output(/Deleted 5 messages from queue foo/)
+        .to output(/Deleted 4 messages from queue queue0/)
         .to_stdout
     end
 
     context "when the --pending option is specified" do
-      let(:options) { { queue: "foo", pending: true } }
+      let(:options) { { queue: "queue0", pending: true } }
 
       it "clears the pending messages" do
         expect { command.call }
-          .to output(/Deleted 5 pending messages from queue foo/)
+          .to output(/Deleted 4 pending messages from queue queue0/)
           .to_stdout
       end
     end
 
     context "when the --processing option is specified" do
-      let(:options) { { queue: "foo", processing: true } }
+      let(:options) { { queue: "queue0", processing: true } }
 
       it "clears the processing messages" do
         expect { command.call }
-          .to output(/Deleted 0 processing messages from queue foo/)
+          .to output(/Deleted 1 processing message from queue queue0/)
           .to_stdout
       end
     end
 
     context "when the --dead option is specified" do
-      let(:options) { { queue: "foo", dead: true } }
+      let(:options) { { queue: "queue1", dead: true } }
 
       it "clears the dead messages" do
         expect { command.call }
-          .to output(/Deleted 1 dead message from queue foo/)
+          .to output(/Deleted 2 dead messages from queue queue1/)
           .to_stdout
       end
     end
 
     describe "pagination" do
       context "when the --head option is specified" do
-        let(:options) { { queue: "foo", head: 3 } }
+        let(:options) { { queue: "queue0", head: 3 } }
 
         it "deletes the first N messages" do
           expect { command.call }
-            .to output(/Deleted 3 messages from queue foo/) # id = 1 is in the dead queue
+            .to output(/Deleted 3 messages from queue queue0/)
             .to_stdout
         end
       end
 
       context "when the --tail option is specified" do
-        let(:options) { { queue: "foo", tail: 3 } }
+        let(:options) { { queue: "queue0", tail: 3 } }
 
         it "deletes the last N messages" do
           expect { command.call }
-            .to output(/Deleted 3 messages from queue foo/)
+            .to output(/Deleted 3 messages from queue queue0/)
             .to_stdout
         end
       end
 
       context "when the --index option is specified" do
-        let(:options) { { queue: "foo", index: 2 } }
+        let(:options) { { queue: "queue0", index: 2 } }
 
         it "deletes the message at the given index" do
           expect { command.call }
-            .to output(/Deleted 1 message from queue foo/) # id = 1 is in the dead queue
+            .to output(/Deleted 1 message from queue queue0/)
             .to_stdout
         end
 
         context "when the index does not exist" do
-          let(:options) { { queue: "foo", index: 100 } }
+          let(:options) { { queue: "queue0", index: 100 } }
 
           it "prints an error message" do
             expect { command.call }
@@ -138,36 +136,36 @@ RSpec.describe Falqon::CLI::Delete do
       end
 
       context "when the --index option is specified multiple times" do
-        let(:options) { { queue: "foo", index: [2, 4] } }
+        let(:options) { { queue: "queue0", index: [1, 3] } }
 
         it "deletes the messages at the given indices" do
           expect { command.call }
-            .to output(/Deleted 2 messages from queue foo/) # id = 1 is in the dead queue
+            .to output(/Deleted 2 messages from queue queue0/)
             .to_stdout
         end
       end
 
       context "when the --range option is specified" do
-        let(:options) { { queue: "foo", range: [2, 4] } }
+        let(:options) { { queue: "queue0", range: [1, 3] } }
 
         it "deletes the messages in the given range" do
           expect { command.call }
-            .to output(/Deleted 3 messages from queue foo/) # id = 1 is in the dead queue
+            .to output(/Deleted 3 messages from queue queue0/)
             .to_stdout
         end
       end
 
       context "when the --id option is specified" do
-        let(:options) { { queue: "foo", id: 4 } }
+        let(:options) { { queue: "queue0", id: 4 } }
 
         it "deletes the message with the given ID" do
           expect { command.call }
-            .to output(/Deleted 1 message from queue foo/)
+            .to output(/Deleted 1 message from queue queue0/)
             .to_stdout
         end
 
         context "when the ID does not exist" do
-          let(:options) { { queue: "foo", id: 100 } }
+          let(:options) { { queue: "queue0", id: 100 } }
 
           it "prints an error message" do
             expect { command.call }
@@ -178,11 +176,11 @@ RSpec.describe Falqon::CLI::Delete do
       end
 
       context "when the --id option is specified multiple times" do
-        let(:options) { { queue: "foo", id: [4, 6] } }
+        let(:options) { { queue: "queue0", id: [4, 6] } }
 
         it "deletes the messages with the given IDs" do
           expect { command.call }
-            .to output(/Deleted 2 messages from queue foo/)
+            .to output(/Deleted 2 messages from queue queue0/)
             .to_stdout
         end
       end

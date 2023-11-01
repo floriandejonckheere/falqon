@@ -3,6 +3,8 @@
 RSpec.describe Falqon::Queue do
   subject(:queue) { described_class.new("name") }
 
+  before { Falqon.redis.with(&:flushdb) }
+
   describe "#initialize" do
     it "registers the queue" do
       queue

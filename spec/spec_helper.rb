@@ -107,11 +107,4 @@ RSpec.configure do |config|
   #   # test failures related to randomization by passing the same `--seed` value
   #   # as the one that triggered the failure.
   #   Kernel.srand config.seed
-
-  # Configure Redis connection pool
-  config.before do
-    Falqon.configure do |c|
-      c.redis = ConnectionPool.new(size: 1) { MockRedis.new }
-    end
-  end
 end

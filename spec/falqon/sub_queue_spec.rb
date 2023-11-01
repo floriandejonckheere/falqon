@@ -6,6 +6,8 @@ RSpec.describe Falqon::SubQueue do
   let(:queue) { Falqon::Queue.new("name") }
   let(:name) { "subname" }
 
+  before { Falqon.redis.with(&:flushdb) }
+
   describe "#name" do
     it "appends a suffix" do
       expect(sub_queue.name).to eq "falqon/name:subname"

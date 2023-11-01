@@ -3,23 +3,21 @@
 RSpec.describe Falqon::CLI::Clear do
   subject(:command) { described_class.new(options) }
 
-  include_context "with a couple of queues"
-
-  let(:options) { { queue: "foo" } }
+  let(:options) { { queue: "queue0" } }
 
   describe "#validate" do
     context "when the given queue does not exist" do
-      let(:options) { { queue: "baz" } }
+      let(:options) { { queue: "notfound" } }
 
       it "prints an error message" do
         expect { command.call }
-          .to output(/No queue registered with this name: baz/)
+          .to output(/No queue registered with this name: notfound/)
           .to_stdout
       end
     end
 
     context "when the --pending, --processing, and --dead options are all specified" do
-      let(:options) { { queue: "foo", pending: true, processing: true, dead: true } }
+      let(:options) { { queue: "queue0", pending: true, processing: true, dead: true } }
 
       it "prints an error message" do
         expect { command.call }
@@ -32,36 +30,36 @@ RSpec.describe Falqon::CLI::Clear do
   describe "#execute" do
     it "clears the queue" do
       expect { command.call }
-        .to output(/Cleared 6 messages from queue foo/)
+        .to output(/Cleared 5 messages from queue queue0/)
         .to_stdout
     end
 
     context "when the --pending option is specified" do
-      let(:options) { { queue: "foo", pending: true } }
+      let(:options) { { queue: "queue0", pending: true } }
 
       it "clears the pending messages" do
         expect { command.call }
-          .to output(/Cleared 5 pending messages from queue foo/)
+          .to output(/Cleared 4 pending messages from queue queue0/)
           .to_stdout
       end
     end
 
     context "when the --processing option is specified" do
-      let(:options) { { queue: "foo", processing: true } }
+      let(:options) { { queue: "queue0", processing: true } }
 
       it "clears the processing messages" do
         expect { command.call }
-          .to output(/Cleared 0 processing messages from queue foo/)
+          .to output(/Cleared 1 processing message from queue queue0/)
           .to_stdout
       end
     end
 
     context "when the --dead option is specified" do
-      let(:options) { { queue: "foo", dead: true } }
+      let(:options) { { queue: "queue1", dead: true } }
 
       it "clears the dead messages" do
         expect { command.call }
-          .to output(/Cleared 1 dead message from queue foo/)
+          .to output(/Cleared 2 dead messages from queue queue1/)
           .to_stdout
       end
     end

@@ -5,30 +5,18 @@ RSpec.describe Falqon::CLI::Status do
 
   let(:options) { {} }
 
-  before do
-    # Register queues
-    queue = Falqon::Queue.new("foo")
-    Falqon::Queue.new("bar")
-
-    # Add a few messages to the queue
-    queue.push("foo")
-    queue.push("bar")
-
-    5.times { queue.pop { raise Falqon::Error } }
-  end
-
   describe "#validate" do
     context "when the given queue does not exist" do
-      let(:options) { { queue: "baz" } }
+      let(:options) { { queue: "notfound" } }
 
       it "raises an error" do
         expect { command.validate }
-          .to raise_error(/No queue registered with this name: baz/)
+          .to raise_error(/No queue registered with this name: notfound/)
       end
     end
 
     context "when no queues are registered" do
-      before { Falqon::Queue.all.each(&:delete) }
+      before { Falqon.redis.with(&:flushdb) }
 
       it "raises an error" do
         expect { command.validate }
@@ -40,33 +28,37 @@ RSpec.describe Falqon::CLI::Status do
   describe "#execute" do
     it "prints the status of all queues" do
       expect { command.call }
-        .to output(/foo: 1 pending, 0 processing, 1 dead/)
+        .to output(/queue0: 4 pending, 1 processing, 0 dead/)
         .to_stdout
 
       expect { command.call }
-        .to output(/bar: empty/)
+        .to output(/queue1: empty/)
+        .to_stdout
+
+      expect { command.call }
+        .to output(/queue2: empty/)
         .to_stdout
     end
 
     context "when the queue option is specified" do
-      let(:options) { { queue: "foo" } }
+      let(:options) { { queue: "queue0" } }
 
       it "prints the status of a specific queue" do
         expect { command.call }
-          .to output(/foo/)
+          .to output(/queue0:/)
           .to_stdout
 
         expect { command.call }
-          .not_to output(/bar/)
+          .not_to output(/queue1:/)
           .to_stdout
       end
 
       context "when the given queue does not exist" do
-        let(:options) { { queue: "baz" } }
+        let(:options) { { queue: "notfound" } }
 
         it "prints an error message" do
           expect { command.call }
-            .to output(/No queue registered with this name: baz/)
+            .to output(/No queue registered with this name: notfound/)
             .to_stdout
         end
       end
