@@ -191,6 +191,54 @@ Options:
 - `--range N M`: Delete messages from index N to M
 - `--id N`: Delete message with ID N
 
+### Kill
+
+The `kill` command kills messages in a queue.
+
+```bash
+# Kill all messages in the queue (by default only pending messages are killed)
+$ falqon kill --queue jobs
+Killed 10 messages from queue jobs
+
+# Kill only pending messages
+$ falqon kill --queue jobs --pending
+Killed 10 pending messages from queue jobs
+
+# Kill only processing messages
+$ falqon kill --queue jobs --processing
+Killed 1 processing message from queue jobs
+
+# Kill first 5 messages
+$ falqon kill --queue jobs --head 5
+Killed 5 messages from queue jobs
+
+# Kill last 5 messages
+$ falqon kill --queue jobs --tail 5
+Killed 5 messages from queue jobs
+
+# Kill message at index 5
+$ falqon kill --queue jobs --index 3 --index 5
+Killed 1 message from queue jobs
+
+# Kill messages from index 5 to 10
+$ falqon kill --queue jobs --range 5 10
+Killed 6 messages from queue jobs
+
+# Kill message with ID 5
+$ falqon kill --queue jobs --id 5 --id 1
+Killed 2 messages from queue jobs
+```
+
+Options:
+- `-q`, `--queue=QUEUE`: Queue name (required)
+- `--pending`: Kill only pending messages
+- `--processing`: Kill only processing messages
+- `--head N`: Kill first N messages
+- `--tail N`: Kill last N messages
+- `--index N`: Kill message at index N
+- `--range N M`: Kill messages from index N to M
+- `--id N`: Kill message with ID N
+
 ### Clear
 
 The `clear` command clears all messages in a queue.

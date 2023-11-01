@@ -71,6 +71,24 @@ module Falqon
         .call
     end
 
+    desc "kill", "Kill messages in a queue"
+    option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
+
+    option :pending, type: :boolean, desc: "Kill only pending messages (default)"
+    option :processing, type: :boolean, desc: "Kill only processing messages"
+
+    option :head, type: :numeric, desc: "Kill N messages from head of queue"
+    option :tail, type: :numeric, desc: "Kill N messages from tail of queue"
+    option :index, type: :numeric, desc: "Kill message at index N", repeatable: true
+    option :range, type: :array, desc: "Kill messages at index N to M", banner: "N M"
+
+    option :id, type: :numeric, desc: "Kill message with ID N", repeatable: true
+    def kill
+      Kill
+        .new(options)
+        .call
+    end
+
     desc "clear", "Clear all messages in a queue"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
 
