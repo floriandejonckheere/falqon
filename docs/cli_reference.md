@@ -71,7 +71,7 @@ Options:
 
 ### Show
 
-The `show` command displays the contents of the queue.
+The `show` command displays messages in a queue.
 
 ```bash
 # Print all messages in the queue (by default only pending messages are displayed)
@@ -140,7 +140,7 @@ Options:
 
 ### Delete
 
-The `delete` command deletes (part of) the contents of the queue.
+The `delete` command deletes messages in a queue.
 
 ```bash
 # Delete all messages in the queue (by default only pending messages are deleted)
@@ -193,7 +193,7 @@ Options:
 
 ### Clear
 
-The `clear` command clears the contents of the queue.
+The `clear` command clears all messages in a queue.
 
 ```bash
 # Clear all messages in the queue

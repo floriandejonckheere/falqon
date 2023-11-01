@@ -52,7 +52,7 @@ module Falqon
         .call
     end
 
-    desc "delete", "Delete all messages in a queue"
+    desc "delete", "Delete messages in a queue"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
 
     option :pending, type: :boolean, desc: "Delete only pending messages (default)"
