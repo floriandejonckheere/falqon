@@ -32,7 +32,7 @@ RSpec.describe Falqon::CLI::Status do
         .to_stdout
 
       expect { command.call }
-        .to output(/queue1: empty/)
+        .to output(/queue1: 0 pending, 0 processing, 2 dead/)
         .to_stdout
 
       expect { command.call }
