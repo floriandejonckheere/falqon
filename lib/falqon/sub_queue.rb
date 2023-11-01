@@ -9,6 +9,9 @@ module Falqon
   class SubQueue
     extend T::Sig
 
+    sig { returns(String) }
+    attr_reader :id
+
     sig { returns(Queue) }
     attr_reader :queue
 
@@ -17,6 +20,7 @@ module Falqon
 
     sig { params(queue: Queue, type: T.nilable(String)).void }
     def initialize(queue, type = nil)
+      @id = "#{queue.id}:#{type || 'pending'}"
       @queue = queue
       @name = [queue.name, type].compact.join(":")
     end
@@ -68,6 +72,11 @@ module Falqon
     sig { returns(T::Boolean) }
     def empty?
       size.zero?
+    end
+
+    sig { returns(String) }
+    def inspect
+      "#<#{self.class} id=#{id.inspect} size=#{size}>"
     end
   end
 end
