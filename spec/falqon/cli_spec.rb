@@ -12,4 +12,5 @@ RSpec.describe Falqon::CLI do
   it { is_expected.to respond_to :kill }
   it { is_expected.to respond_to :clear }
   it { is_expected.to respond_to :refill }
+  it { is_expected.to respond_to :revive }
 end

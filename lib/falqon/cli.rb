@@ -116,5 +116,13 @@ module Falqon
         .new(options)
         .call
     end
+
+    desc "revive", "Revive queue (move dead messages to pending)"
+    option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
+    def revive
+      Revive
+        .new(options)
+        .call
+    end
   end
 end

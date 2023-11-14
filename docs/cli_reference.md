@@ -301,3 +301,17 @@ Refilled 3 messages in queue jobs
 Options:
 
 - `-q`, `--queue=QUEUE`: Queue name (required)
+
+### Revive
+
+The `revive` command revives a queue (move dead messages to pending).
+
+```bash
+# Revive the queue
+$ falqon revive --queue jobs
+Revived 3 messages in queue jobs
+```
+
+Options:
+
+- `-q`, `--queue=QUEUE`: Queue name (required)
