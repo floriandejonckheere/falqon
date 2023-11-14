@@ -174,6 +174,16 @@ It also resets the metadata and deregisters the queue.
 Falqon::Queue#delete
 ```
 
+### Refill the queue
+
+Use `Falqon::Queue#refill` to refill the queue.
+This moves all processing messages to the head of the pending queue (in order).
+This method is useful when a worker crashes and messages are stuck in the processing queue.
+
+```ruby
+Falqon::Queue#refill
+```
+
 ### Get the number of messages in the queue
 
 Use `Falqon::Queue#size` to get the number of messages in the queue.

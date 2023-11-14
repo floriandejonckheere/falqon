@@ -206,6 +206,26 @@ module Falqon
       run_hook :delete, :after
     end
 
+    sig { returns(T::Array[Identifier]) }
+    def refill
+      logger.debug "Refilling queue #{name}"
+
+      run_hook :refill, :before
+
+      ids = []
+
+      # Move all identifiers from tail of processing queue to head of pending queue
+      redis.with do |r|
+        while (id = r.lmove(processing.name, name, :right, :left))
+          ids << id
+        end
+      end
+
+      run_hook :refill, :after
+
+      ids
+    end
+
     sig { returns(Integer) }
     def size
       pending.size
