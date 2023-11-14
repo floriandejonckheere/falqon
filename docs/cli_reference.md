@@ -286,3 +286,18 @@ Options:
 - `--dead`: Clear only dead messages
 
 If none of the `--pending`, `--processing`, or `--dead` options are specified, all messages are cleared.
+
+### Refill
+
+The `refill` command refills a queue (move processing messages to pending).
+This command is useful when a worker crashes and messages are stuck in the processing queue.
+
+```bash
+# Refill the queue
+$ falqon refill --queue jobs
+Refilled 3 messages in queue jobs
+```
+
+Options:
+
+- `-q`, `--queue=QUEUE`: Queue name (required)

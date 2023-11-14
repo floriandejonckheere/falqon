@@ -108,5 +108,13 @@ module Falqon
         .new(options)
         .call
     end
+
+    desc "refill", "Refill queue (move processing messages to pending)"
+    option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
+    def refill
+      Refill
+        .new(options)
+        .call
+    end
   end
 end
