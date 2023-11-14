@@ -20,7 +20,7 @@ module Falqon
             queue.processing.remove(message.id)
 
             # Set message status
-            t.hset("#{queue.name}:metadata:#{message.id}", :status, "dead")
+            t.hset("#{queue.id}:metadata:#{message.id}", :status, "dead")
           end
         end
       end

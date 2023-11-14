@@ -4,7 +4,7 @@ module Falqon
   class CLI
     class Refill < Base
       def validate
-        raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:id).include?(options[:queue])
+        raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:name).include?(options[:queue])
       end
 
       def execute
@@ -12,7 +12,7 @@ module Falqon
 
         ids = queue.refill
 
-        puts "Refilled #{pluralize(ids.count, 'message', 'messages')} in queue #{queue.id}"
+        puts "Refilled #{pluralize(ids.count, 'message', 'messages')} in queue #{queue.name}"
       end
     end
   end

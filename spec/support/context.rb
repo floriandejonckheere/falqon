@@ -75,19 +75,19 @@ RSpec.configure do |config|
 
     Falqon.redis.with do |r|
       puts "queue0"
-      puts "  pending: [#{r.lrange(queue0.name, 0, -1).map { |id| r.get("#{queue0.name}:data:#{id}") }.join(', ')}]"
-      puts "  processing: [#{r.lrange(queue0.processing.name, 0, -1).map { |id| r.get("#{queue0.name}:data:#{id}") }.join(', ')}]"
-      puts "  dead: [#{r.lrange(queue0.dead.name, 0, -1).map { |id| r.get("#{queue0.name}:data:#{id}") }.join(', ')}]"
+      puts "  pending: [#{r.lrange(queue0.id, 0, -1).map { |id| r.get("#{queue0.id}:data:#{id}") }.join(', ')}]"
+      puts "  processing: [#{r.lrange(queue0.processing.id, 0, -1).map { |id| r.get("#{queue0.id}:data:#{id}") }.join(', ')}]"
+      puts "  dead: [#{r.lrange(queue0.dead.id, 0, -1).map { |id| r.get("#{queue0.id}:data:#{id}") }.join(', ')}]"
 
       puts "queue1"
-      puts "  pending: [#{r.lrange(queue1.name, 0, -1).map { |id| r.get("#{queue1.name}:data:#{id}") }.join(', ')}]"
-      puts "  processing: [#{r.lrange(queue1.processing.name, 0, -1).map { |id| r.get("#{queue1.name}:data:#{id}") }.join(', ')}]"
-      puts "  dead: [#{r.lrange(queue1.dead.name, 0, -1).map { |id| r.get("#{queue1.name}:data:#{id}") }.join(', ')}]"
+      puts "  pending: [#{r.lrange(queue1.id, 0, -1).map { |id| r.get("#{queue1.id}:data:#{id}") }.join(', ')}]"
+      puts "  processing: [#{r.lrange(queue1.processing.id, 0, -1).map { |id| r.get("#{queue1.id}:data:#{id}") }.join(', ')}]"
+      puts "  dead: [#{r.lrange(queue1.dead.id, 0, -1).map { |id| r.get("#{queue1.id}:data:#{id}") }.join(', ')}]"
 
       puts "queue2"
-      puts "  pending: [#{r.lrange(queue2.name, 0, -1).map { |id| r.get("#{queue2.name}:data:#{id}") }.join(', ')}]"
-      puts "  processing: [#{r.lrange(queue2.processing.name, 0, -1).map { |id| r.get("#{queue2.name}:data:#{id}") }.join(', ')}]"
-      puts "  dead: [#{r.lrange(queue2.dead.name, 0, -1).map { |id| r.get("#{queue2.name}:data:#{id}") }.join(', ')}]"
+      puts "  pending: [#{r.lrange(queue2.id, 0, -1).map { |id| r.get("#{queue2.id}:data:#{id}") }.join(', ')}]"
+      puts "  processing: [#{r.lrange(queue2.processing.id, 0, -1).map { |id| r.get("#{queue2.id}:data:#{id}") }.join(', ')}]"
+      puts "  dead: [#{r.lrange(queue2.dead.id, 0, -1).map { |id| r.get("#{queue2.id}:data:#{id}") }.join(', ')}]"
 
       puts "metadata"
       queues = Falqon::Queue.all

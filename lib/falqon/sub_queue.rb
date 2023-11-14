@@ -10,34 +10,34 @@ module Falqon
     extend T::Sig
 
     sig { returns(String) }
+    attr_reader :type
+
+    sig { returns(String) }
     attr_reader :id
 
     sig { returns(Queue) }
     attr_reader :queue
 
-    sig { returns(String) }
-    attr_reader :name
-
     sig { params(queue: Queue, type: T.nilable(String)).void }
     def initialize(queue, type = nil)
-      @id = "#{queue.id}:#{type || 'pending'}"
+      @type = type || "pending"
+      @id = [queue.id, type].compact.join(":")
       @queue = queue
-      @name = [queue.name, type].compact.join(":")
     end
 
-    sig { params(id: Identifier).void }
-    def add(id)
+    sig { params(message_id: Identifier).void }
+    def add(message_id)
       # FIXME: use Redis connection of caller
       queue.redis.with do |r|
-        r.rpush(name, id)
+        r.rpush(id, message_id)
       end
     end
 
-    sig { params(id: Identifier).void }
-    def remove(id)
+    sig { params(message_id: Identifier).void }
+    def remove(message_id)
       # FIXME: use Redis connection of caller
       queue.redis.with do |r|
-        r.lrem(name, 0, id)
+        r.lrem(id, 0, message_id)
       end
     end
 
@@ -45,7 +45,7 @@ module Falqon
     def peek
       # FIXME: use Redis connection of caller
       queue.redis.with do |r|
-        r.lindex(name, 0)&.to_i
+        r.lindex(id, 0)&.to_i
       end
     end
 
@@ -54,19 +54,19 @@ module Falqon
       # FIXME: use Redis connection of caller
       queue.redis.with do |r|
         # Get all identifiers from queue
-        ids = r.lrange(name, 0, -1)
+        message_ids = r.lrange(id, 0, -1)
 
         # Delete all data and clear queue
-        r.del(*ids.flat_map { |id| ["#{queue.name}:data:#{id}", "#{queue.name}:metadata:#{id}"] }, name, "#{queue.name}:id")
+        r.del(*message_ids.flat_map { |message_id| ["#{queue.id}:data:#{message_id}", "#{queue.id}:metadata:#{message_id}"] }, id, "#{queue.id}:id")
 
         # Return identifiers
-        ids.map(&:to_i)
+        message_ids.map(&:to_i)
       end
     end
 
     sig { returns(Integer) }
     def size
-      queue.redis.with { |r| r.llen(name) }
+      queue.redis.with { |r| r.llen(id) }
     end
 
     sig { returns(T::Boolean) }
@@ -76,7 +76,7 @@ module Falqon
 
     sig { returns(String) }
     def inspect
-      "#<#{self.class} id=#{id.inspect} size=#{size}>"
+      "#<#{self.class} name=#{type} size=#{size}>"
     end
   end
 end

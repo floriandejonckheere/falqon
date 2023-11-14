@@ -7,7 +7,7 @@ module Falqon
 
       def execute
         Falqon::Queue.all.each do |queue|
-          puts queue.id
+          puts queue.name
         end
       end
     end

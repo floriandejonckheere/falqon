@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
 RSpec.describe Falqon::SubQueue do
-  subject(:sub_queue) { described_class.new(queue, name) }
+  subject(:sub_queue) { described_class.new(queue, type) }
 
   let(:queue) { Falqon::Queue.new("name") }
-  let(:name) { "subname" }
+  let(:type) { "subname" }
 
   before { Falqon.redis.with(&:flushdb) }
 
-  describe "#name" do
+  describe "#id" do
     it "appends a suffix" do
-      expect(sub_queue.name).to eq "falqon/name:subname"
+      expect(sub_queue.id).to eq "falqon/name:subname"
     end
 
-    context "when no name is configured" do
-      let(:name) { nil }
+    context "when no type is configured" do
+      let(:type) { nil }
 
       it "does not append a suffix" do
-        expect(sub_queue.name).to eq "falqon/name"
+        expect(sub_queue.id).to eq "falqon/name"
       end
     end
   end

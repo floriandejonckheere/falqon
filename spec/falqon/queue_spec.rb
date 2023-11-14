@@ -9,7 +9,7 @@ RSpec.describe Falqon::Queue do
     it "registers the queue" do
       queue
 
-      expect(described_class.all.map(&:id)).to include "name"
+      expect(described_class.all.map(&:name)).to include "name"
     end
 
     it "sets the creation and update timestamps exactly once" do
@@ -45,9 +45,9 @@ RSpec.describe Falqon::Queue do
     end
   end
 
-  describe "#name" do
+  describe "#id" do
     it "prepends a prefix" do
-      expect(queue.name).to eq "falqon/name"
+      expect(queue.id).to eq "falqon/name"
     end
 
     context "when no prefix is configured" do
@@ -56,7 +56,7 @@ RSpec.describe Falqon::Queue do
           .to receive(:prefix)
           .and_return(nil)
 
-        expect(queue.name).to eq "name"
+        expect(queue.id).to eq "name"
       end
     end
   end
@@ -381,7 +381,7 @@ RSpec.describe Falqon::Queue do
     it "returns all queues" do
       queue
 
-      expect(described_class.all.map(&:id)).to eq ["name"]
+      expect(described_class.all.map(&:name)).to eq ["name"]
     end
   end
 end

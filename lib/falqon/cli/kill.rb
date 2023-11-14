@@ -4,7 +4,7 @@ module Falqon
   class CLI
     class Kill < Base
       def validate
-        raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:id).include?(options[:queue])
+        raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:name).include?(options[:queue])
 
         raise "--pending and --processing are mutually exclusive" if [options[:pending], options[:processing]].count(true) > 1
 
@@ -22,10 +22,10 @@ module Falqon
                 queue.redis.with do |r|
                   if options[:index]
                     Array(options[:index]).map do |i|
-                      r.lindex(subqueue.name, i) || raise("No message at index #{i}")
+                      r.lindex(subqueue.id, i) || raise("No message at index #{i}")
                     end
                   else
-                    r.lrange(subqueue.name, *range_options)
+                    r.lrange(subqueue.id, *range_options)
                   end
                 end
               end
@@ -43,9 +43,9 @@ module Falqon
         messages.each(&:kill)
 
         if options[:processing]
-          puts "Killed #{pluralize(messages.count, 'processing message', 'processing messages')} in queue #{queue.id}"
+          puts "Killed #{pluralize(messages.count, 'processing message', 'processing messages')} in queue #{queue.name}"
         else # options[:pending]
-          puts "Killed #{pluralize(messages.count, 'pending message', 'pending messages')} in queue #{queue.id}"
+          puts "Killed #{pluralize(messages.count, 'pending message', 'pending messages')} in queue #{queue.name}"
         end
       end
 

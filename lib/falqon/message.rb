@@ -23,13 +23,13 @@ module Falqon
     sig { returns(Identifier) }
     def id
       # FIXME: use Redis connection of caller
-      @id ||= redis.with { |r| r.incr("#{name}:id") }
+      @id ||= redis.with { |r| r.incr("#{queue.id}:id") }
     end
 
     sig { returns(String) }
     def data
       # FIXME: use Redis connection of caller
-      @data ||= redis.with { |r| r.get("#{name}:data:#{id}") }
+      @data ||= redis.with { |r| r.get("#{queue.id}:data:#{id}") }
     end
 
     sig { returns(T::Boolean) }
@@ -56,7 +56,7 @@ module Falqon
     def exists?
       # FIXME: use Redis connection of caller
       redis.with do |r|
-        r.exists("#{name}:data:#{id}") == 1
+        r.exists("#{queue.id}:data:#{id}") == 1
       end
     end
 
@@ -65,10 +65,10 @@ module Falqon
       # FIXME: use Redis connection of caller
       redis.with do |r|
         # Store data
-        r.set("#{name}:data:#{id}", data)
+        r.set("#{queue.id}:data:#{id}", data)
 
         # Set metadata
-        r.hset("#{name}:metadata:#{id}",
+        r.hset("#{queue.id}:metadata:#{id}",
                :created_at, Time.now.to_i,
                :updated_at, Time.now.to_i,)
       end
@@ -78,7 +78,7 @@ module Falqon
 
     sig { void }
     def kill
-      logger.debug "Killing message #{id} on queue #{name}"
+      logger.debug "Killing message #{id} on queue #{queue.name}"
 
       # FIXME: use Redis connection of caller
       redis.with do |r|
@@ -86,8 +86,8 @@ module Falqon
         queue.dead.add(id)
 
         # Reset retry count and set status to dead
-        r.hdel("#{name}:metadata:#{id}", :retries)
-        r.hset("#{name}:metadata:#{id}", :status, "dead")
+        r.hdel("#{queue.id}:metadata:#{id}", :retries)
+        r.hset("#{queue.id}:metadata:#{id}", :status, "dead")
 
         # Remove identifier from queues
         queue.pending.remove(id)
@@ -103,7 +103,7 @@ module Falqon
         queue.dead.remove(id)
 
         # Delete data and metadata
-        r.del("#{name}:data:#{id}", "#{name}:metadata:#{id}")
+        r.del("#{queue.id}:data:#{id}", "#{queue.id}:metadata:#{id}")
       end
     end
 
@@ -112,14 +112,13 @@ module Falqon
       queue.redis.with do |r|
         Metadata
           .new(r
-            .hgetall("#{name}:metadata:#{id}")
+            .hgetall("#{queue.id}:metadata:#{id}")
             .to_h { |k, v| [k.to_sym, k == "status" ? v : v.to_i] }) # Transform all keys to symbols, and values to integers (except status)
       end
     end
 
     def_delegator :queue, :redis
     def_delegator :queue, :logger
-    def_delegator :queue, :name
 
     ##
     # Metadata for an message

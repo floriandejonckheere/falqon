@@ -57,7 +57,7 @@ RSpec.describe Falqon::Message do
 
       # FIXME: mock the status correctly
       message.queue.redis.with do |r|
-        r.hset("#{message.name}:metadata:#{message.id}", "status", "pending")
+        r.hset("#{message.queue.id}:metadata:#{message.id}", "status", "pending")
       end
 
       expect(message).to be_pending
@@ -72,7 +72,7 @@ RSpec.describe Falqon::Message do
 
       # FIXME: mock the status correctly
       message.queue.redis.with do |r|
-        r.hset("#{message.name}:metadata:#{message.id}", "status", "processing")
+        r.hset("#{message.queue.id}:metadata:#{message.id}", "status", "processing")
       end
 
       expect(message).to be_processing

@@ -4,7 +4,7 @@ module Falqon
   class CLI
     class Delete < Base
       def validate
-        raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:id).include?(options[:queue])
+        raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:name).include?(options[:queue])
 
         raise "--pending, --processing, and --dead are mutually exclusive" if [options[:pending], options[:processing], options[:dead]].count(true) > 1
 
@@ -22,10 +22,10 @@ module Falqon
                 queue.redis.with do |r|
                   if options[:index]
                     Array(options[:index]).map do |i|
-                      r.lindex(subqueue.name, i) || raise("No message at index #{i}")
+                      r.lindex(subqueue.id, i) || raise("No message at index #{i}")
                     end
                   else
-                    r.lrange(subqueue.name, *range_options)
+                    r.lrange(subqueue.id, *range_options)
                   end
                 end
               end
@@ -43,11 +43,11 @@ module Falqon
         messages.each(&:delete)
 
         if options[:processing]
-          puts "Deleted #{pluralize(messages.count, 'processing message', 'processing messages')} from queue #{queue.id}"
+          puts "Deleted #{pluralize(messages.count, 'processing message', 'processing messages')} from queue #{queue.name}"
         elsif options[:dead]
-          puts "Deleted #{pluralize(messages.count, 'dead message', 'dead messages')} from queue #{queue.id}"
+          puts "Deleted #{pluralize(messages.count, 'dead message', 'dead messages')} from queue #{queue.name}"
         else # options[:pending]
-          puts "Deleted #{pluralize(messages.count, 'pending message', 'pending messages')} from queue #{queue.id}"
+          puts "Deleted #{pluralize(messages.count, 'pending message', 'pending messages')} from queue #{queue.name}"
         end
       end
 

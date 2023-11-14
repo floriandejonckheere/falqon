@@ -17,8 +17,8 @@ nav_order: 4
 
 ### Attributes
 
-- `id`: the queue identifier
-- `name`: the queue name (`id` prefixed with `Falqon.config.prefix`)
+- `name`: the queue name
+- `id`: the queue identifier (`name` prefixed with `Falqon.config.prefix`)
 - `retry_strategy`: the retry strategy (defaults to `Falqon.config.retry_strategy`)
 - `max_retries`: the maximum number of retries before a message is discarded (defaults to `Falqon.config.max_retries`)
 - `redis`: the Redis connection pool (defaults to `Falqon.config.redis`)
@@ -52,14 +52,15 @@ Raises:
 
 Note: currently queues are not compatible between different protocol versions. In the future, it will be possible to upgrade queues to a newer protocol version.
 
-The name of the queue will be automatically prefixed with `Falqon.config.prefix` and a slash if set.
+The id of the queue is the name of the queue prefixed with `Falqon.config.prefix` and a slash (if configured).
 
 ```ruby
 Falqon.configuration.prefix = "falqon"
 
 queue = Falqon::Queue.new("my_queue")
 
-queue.name # => "falqon/my_queue"
+queue.name # => "my_queue"
+queue.id # => "falqon/my_queue"
 ```
 
 ### Push a message to the queue

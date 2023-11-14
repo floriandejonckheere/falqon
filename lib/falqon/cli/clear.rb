@@ -4,7 +4,7 @@ module Falqon
   class CLI
     class Clear < Base
       def validate
-        raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:id).include?(options[:queue])
+        raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:name).include?(options[:queue])
         raise "--pending, --processing, and --dead are mutually exclusive" if [options[:pending], options[:processing], options[:dead]].count(true) > 1
       end
 
@@ -13,13 +13,13 @@ module Falqon
         ids = subqueue.clear
 
         if options[:pending]
-          puts "Cleared #{pluralize(ids.count, 'pending message', 'pending messages')} from queue #{queue.id}"
+          puts "Cleared #{pluralize(ids.count, 'pending message', 'pending messages')} from queue #{queue.name}"
         elsif options[:processing]
-          puts "Cleared #{pluralize(ids.count, 'processing message', 'processing messages')} from queue #{queue.id}"
+          puts "Cleared #{pluralize(ids.count, 'processing message', 'processing messages')} from queue #{queue.name}"
         elsif options[:dead]
-          puts "Cleared #{pluralize(ids.count, 'dead message', 'dead messages')} from queue #{queue.id}"
+          puts "Cleared #{pluralize(ids.count, 'dead message', 'dead messages')} from queue #{queue.name}"
         else
-          puts "Cleared #{pluralize(ids.count, 'message', 'messages')} from queue #{queue.id}"
+          puts "Cleared #{pluralize(ids.count, 'message', 'messages')} from queue #{queue.name}"
         end
       end
 

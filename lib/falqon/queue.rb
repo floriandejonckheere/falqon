@@ -11,10 +11,10 @@ module Falqon
     extend T::Sig
 
     sig { returns(String) }
-    attr_reader :id
+    attr_reader :name
 
     sig { returns(String) }
-    attr_reader :name
+    attr_reader :id
 
     sig { returns(Strategy) }
     attr_reader :retry_strategy
@@ -28,17 +28,17 @@ module Falqon
     sig { returns(Logger) }
     attr_reader :logger
 
-    sig { params(id: String, retry_strategy: Symbol, max_retries: Integer, redis: ConnectionPool, logger: Logger, version: Integer).void }
+    sig { params(name: String, retry_strategy: Symbol, max_retries: Integer, redis: ConnectionPool, logger: Logger, version: Integer).void }
     def initialize(
-      id,
+      name,
       retry_strategy: Falqon.configuration.retry_strategy,
       max_retries: Falqon.configuration.max_retries,
       redis: Falqon.configuration.redis,
       logger: Falqon.configuration.logger,
       version: Falqon::PROTOCOL
     )
-      @id = id
-      @name = [Falqon.configuration.prefix, id].compact.join("/")
+      @name = name
+      @id = [Falqon.configuration.prefix, name].compact.join("/")
       @retry_strategy = Strategies.const_get(retry_strategy.to_s.capitalize).new(self)
       @max_retries = max_retries
       @redis = redis
@@ -46,19 +46,19 @@ module Falqon
       @version = version
 
       redis.with do |r|
-        queue_version = r.hget("#{name}:metadata", :version)
+        queue_version = r.hget("#{id}:metadata", :version)
 
         raise Falqon::VersionMismatchError, "Queue #{name} is using protocol version #{queue_version}, but this client is using protocol version #{version}" if queue_version && queue_version.to_i != @version
 
         # Register the queue
-        r.sadd [Falqon.configuration.prefix, "queues"].compact.join(":"), id
+        r.sadd([Falqon.configuration.prefix, "queues"].compact.join(":"), name)
 
         # Set creation and update timestamp (if not set)
-        r.hsetnx("#{name}:metadata", :created_at, Time.now.to_i)
-        r.hsetnx("#{name}:metadata", :updated_at, Time.now.to_i)
+        r.hsetnx("#{id}:metadata", :created_at, Time.now.to_i)
+        r.hsetnx("#{id}:metadata", :updated_at, Time.now.to_i)
 
         # Set protocol version
-        r.hsetnx("#{name}:metadata", :version, @version)
+        r.hsetnx("#{id}:metadata", :version, @version)
       end
 
       run_hook :initialize
@@ -71,7 +71,7 @@ module Falqon
       run_hook :push, :before
 
       # Set update timestamp
-      redis.with { |r| r.hset("#{name}:metadata", :updated_at, Time.now.to_i) }
+      redis.with { |r| r.hset("#{id}:metadata", :updated_at, Time.now.to_i) }
 
       ids = data.map do |d|
         message = Message
@@ -82,7 +82,7 @@ module Falqon
         pending.add(message.id)
 
         # Set message status
-        redis.with { |r| r.hset("#{name}:metadata:#{message.id}", :status, "pending") }
+        redis.with { |r| r.hset("#{id}:metadata:#{message.id}", :status, "pending") }
 
         # Return identifier(s)
         data.size == 1 ? (return message.id) : (next message.id)
@@ -102,22 +102,22 @@ module Falqon
 
       message = redis.with do |r|
         # Move identifier from pending queue to processing queue
-        id = r.blmove(name, processing.name, :left, :right).to_i
+        message_id = r.blmove(pending.id, processing.id, :left, :right).to_i
 
         # Set message status
-        r.hset("#{name}:metadata:#{id}", :status, "processing")
+        r.hset("#{id}:metadata:#{message_id}", :status, "processing")
 
         # Set update timestamp
-        r.hset("#{name}:metadata", :updated_at, Time.now.to_i)
-        r.hset("#{name}:metadata:#{id}", :updated_at, Time.now.to_i)
+        r.hset("#{id}:metadata", :updated_at, Time.now.to_i)
+        r.hset("#{id}:metadata:#{message_id}", :updated_at, Time.now.to_i)
 
         # Increment processing counter
-        r.hincrby("#{name}:metadata", :processed, 1)
+        r.hincrby("#{id}:metadata", :processed, 1)
 
         # Increment retry counter if message is retried
-        r.hincrby("#{name}:metadata", :retried, 1) if r.hget("#{name}:metadata:#{id}", :retries).to_i.positive?
+        r.hincrby("#{id}:metadata", :retried, 1) if r.hget("#{id}:metadata:#{message_id}", :retries).to_i.positive?
 
-        Message.new(self, id:)
+        Message.new(self, id: message_id)
       end
 
       data = message.data
@@ -137,7 +137,7 @@ module Falqon
       logger.debug "Error processing message #{message.id}: #{e.message}"
 
       # Increment failure counter
-      redis.with { |r| r.hincrby("#{name}:metadata", :failed, 1) }
+      redis.with { |r| r.hincrby("#{id}:metadata", :failed, 1) }
 
       # Retry message according to configured strategy
       retry_strategy.retry(message)
@@ -152,14 +152,14 @@ module Falqon
       run_hook :peek, :before
 
       # Get identifier from pending queue
-      id = pending.peek
+      message_id = pending.peek
 
-      return unless id
+      return unless message_id
 
       run_hook :peek, :after
 
       # Retrieve data
-      Message.new(self, id:).data
+      Message.new(self, id: message_id).data
     end
 
     sig { returns(T::Array[Identifier]) }
@@ -169,20 +169,20 @@ module Falqon
       run_hook :clear, :before
 
       # Clear all sub-queues
-      ids = pending.clear + processing.clear + dead.clear
+      message_ids = pending.clear + processing.clear + dead.clear
 
       redis.with do |r|
         # Clear metadata
-        r.hdel("#{name}:metadata", :processed, :failed, :retried)
+        r.hdel("#{id}:metadata", :processed, :failed, :retried)
 
         # Set update timestamp
-        r.hset("#{name}:metadata", :updated_at, Time.now.to_i)
+        r.hset("#{id}:metadata", :updated_at, Time.now.to_i)
       end
 
       run_hook :clear, :after
 
       # Return identifiers
-      ids
+      message_ids
     end
 
     sig { void }
@@ -197,10 +197,10 @@ module Falqon
 
       redis.with do |r|
         # Delete metadata
-        r.del("#{name}:metadata")
+        r.del("#{id}:metadata")
 
         # Deregister the queue
-        r.srem [Falqon.configuration.prefix, "queues"].compact.join(":"), id
+        r.srem([Falqon.configuration.prefix, "queues"].compact.join(":"), name)
       end
 
       run_hook :delete, :after
@@ -212,18 +212,18 @@ module Falqon
 
       run_hook :refill, :before
 
-      ids = []
+      message_ids = []
 
       # Move all identifiers from tail of processing queue to head of pending queue
       redis.with do |r|
-        while (id = r.lmove(processing.name, name, :right, :left))
-          ids << id
+        while (message_id = r.lmove(processing.id, id, :right, :left))
+          message_ids << message_id
         end
       end
 
       run_hook :refill, :after
 
-      ids
+      message_ids
     end
 
     sig { returns(T::Array[Identifier]) }
@@ -232,18 +232,18 @@ module Falqon
 
       run_hook :revive, :before
 
-      ids = []
+      message_ids = []
 
       # Move all identifiers from tail of dead queue to head of pending queue
       redis.with do |r|
-        while (id = r.lmove(dead.name, name, :right, :left))
-          ids << id
+        while (message_id = r.lmove(dead.id, id, :right, :left))
+          message_ids << message_id
         end
       end
 
       run_hook :revive, :after
 
-      ids
+      message_ids
     end
 
     sig { returns(Integer) }
@@ -261,7 +261,7 @@ module Falqon
       redis.with do |r|
         Metadata
           .new r
-          .hgetall("#{name}:metadata")
+          .hgetall("#{id}:metadata")
           .transform_keys(&:to_sym)
           .transform_values(&:to_i)
       end
@@ -284,7 +284,7 @@ module Falqon
 
     sig { returns(String) }
     def inspect
-      "#<#{self.class} id=#{id.inspect} pending=#{pending.size} processing=#{processing.size} dead=#{dead.size}>"
+      "#<#{self.class} name=#{name.inspect} pending=#{pending.size} processing=#{processing.size} dead=#{dead.size}>"
     end
 
     class << self
