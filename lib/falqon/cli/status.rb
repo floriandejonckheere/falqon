@@ -13,7 +13,7 @@ module Falqon
         queues = options[:queue] ? [Falqon::Queue.new(options[:queue])] : Falqon::Queue.all
 
         # Left pad queue names to the same length
-        length = queues.map(&:id).max.to_s.length
+        length = queues.map { |q| q.id.length }.max
 
         queues.each do |queue|
           if queue.pending.empty? && queue.processing.empty? && queue.dead.empty?
