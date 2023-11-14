@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Falqon::CLI::Queues do
+RSpec.describe Falqon::CLI::List do
   subject(:command) { described_class.new }
 
   describe "#execute" do

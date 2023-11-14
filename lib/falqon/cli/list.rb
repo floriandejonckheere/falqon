@@ -2,7 +2,7 @@
 
 module Falqon
   class CLI
-    class Queues < Base
+    class List < Base
       def validate; end
 
       def execute

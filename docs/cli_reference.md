@@ -41,12 +41,12 @@ REDIS_URL=redis://localhost:6379/0
 
 ## Commands
 
-### Queues
+### List
 
-The `queues` command lists all queues.
+The `list` command lists all queues.
 
 ```bash
-$ falqon queues
+$ falqon list
 jobs
 emails
 ```

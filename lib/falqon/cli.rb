@@ -15,9 +15,9 @@ module Falqon
         .call
     end
 
-    desc "queues", "Display all queues"
-    def queues
-      Queues
+    desc "list", "Display all queues"
+    def list
+      List
         .new(options)
         .call
     end
