@@ -6,6 +6,7 @@ RSpec.describe Falqon::CLI do
   it { is_expected.to respond_to :version }
   it { is_expected.to respond_to :queues }
   it { is_expected.to respond_to :status }
+  it { is_expected.to respond_to :stats }
   it { is_expected.to respond_to :show }
   it { is_expected.to respond_to :delete }
   it { is_expected.to respond_to :kill }

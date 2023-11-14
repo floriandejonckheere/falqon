@@ -30,6 +30,14 @@ module Falqon
         .call
     end
 
+    desc "stats", "Display queue statistics"
+    option :queue, aliases: "-q", type: :string, desc: "Queue name"
+    def stats
+      Stats
+        .new(options)
+        .call
+    end
+
     desc "show", "Display messages in a queue"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
 

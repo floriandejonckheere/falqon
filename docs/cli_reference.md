@@ -69,6 +69,23 @@ jobs: 41 messages (34 pending, 2 processing, 5 dead)
 Options:
 - `-q`, `--queue=QUEUE`: Queue name
 
+### Stats
+
+The `stats` command displays the statistics of a queue, or all queues if no queue name is specified.
+
+```bash
+# Print statistics of all queues
+$ falqon stats
+jobs: 492 processed, 43 failed, 15 retried (created: 1970-01-01 00:00:00 +0000, updated: 1970-01-01 00:00:00 +0000)
+
+# Print statistics of a specific queue
+$ falqon status --queue jobs
+jobs: 492 processed, 43 failed, 15 retried (created: 1970-01-01 00:00:00 +0000, updated: 1970-01-01 00:00:00 +0000)
+```
+
+Options:
+- `-q`, `--queue=QUEUE`: Queue name
+
 ### Show
 
 The `show` command displays messages in a queue.
