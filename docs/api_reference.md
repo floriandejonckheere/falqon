@@ -184,6 +184,15 @@ This method is useful when a worker crashes and messages are stuck in the proces
 Falqon::Queue#refill
 ```
 
+### Revive the queue
+
+Use `Falqon::Queue#revive` to revive the queue.
+This moves all dead messages to the head of the pending queue (in order).
+
+```ruby
+Falqon::Queue#refill
+```
+
 ### Get the number of messages in the queue
 
 Use `Falqon::Queue#size` to get the number of messages in the queue.

@@ -313,6 +313,21 @@ RSpec.describe Falqon::Queue do
     end
   end
 
+  describe "#revive" do
+    it "revives the queue" do
+      queue.push("message1", "message2", "message3", "message4")
+
+      10.times { queue.pop { raise Falqon::Error } }
+
+      queue.revive
+
+      queue.redis.with do |r|
+        # Check that the identifiers have been pushed back to the queue
+        expect(r.lrange("falqon/name", 0, -1)).to eq ["1", "2", "3", "4"]
+      end
+    end
+  end
+
   describe "#size" do
     it "returns the size of the queue" do
       queue.push("message1", "message2")

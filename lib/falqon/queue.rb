@@ -226,6 +226,26 @@ module Falqon
       ids
     end
 
+    sig { returns(T::Array[Identifier]) }
+    def revive
+      logger.debug "Reviving queue #{name}"
+
+      run_hook :revive, :before
+
+      ids = []
+
+      # Move all identifiers from tail of dead queue to head of pending queue
+      redis.with do |r|
+        while (id = r.lmove(dead.name, name, :right, :left))
+          ids << id
+        end
+      end
+
+      run_hook :revive, :after
+
+      ids
+    end
+
     sig { returns(Integer) }
     def size
       pending.size
