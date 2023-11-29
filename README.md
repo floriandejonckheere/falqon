@@ -1,6 +1,5 @@
 # Falqon
-
-![Continuous Integration](https://github.com/floriandejonckheere/falqon/workflows/Continuous%20Integration/badge.svg)
+[![Continuous Integration](https://github.com/floriandejonckheere/falqon/actions/workflows/ci.yml/badge.svg)](https://github.com/floriandejonckheere/falqon/actions/workflows/ci.yml)
 ![Release](https://img.shields.io/github/v/release/floriandejonckheere/falqon?label=Latest%20release)
 
 Simple, efficient, and reliable messaging queue for Ruby.
