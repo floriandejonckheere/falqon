@@ -307,6 +307,12 @@ RSpec.describe Falqon::Queue do
           queue.redis.with do |r|
             # Check that the identifiers have been pushed back to the queue
             expect(r.lrange("falqon/name", 0, -1)).to eq ["1", "2", "3", "4"]
+
+            # Check that the message status has been set to pending
+            expect(r.hget("falqon/name:metadata:1", :status)).to eq "pending"
+            expect(r.hget("falqon/name:metadata:2", :status)).to eq "pending"
+            expect(r.hget("falqon/name:metadata:3", :status)).to eq "pending"
+            expect(r.hget("falqon/name:metadata:4", :status)).to eq "pending"
           end
         end
       end
@@ -324,6 +330,12 @@ RSpec.describe Falqon::Queue do
       queue.redis.with do |r|
         # Check that the identifiers have been pushed back to the queue
         expect(r.lrange("falqon/name", 0, -1)).to eq ["1", "2", "3", "4"]
+
+        # Check that the message status has been set to pending
+        expect(r.hget("falqon/name:metadata:1", :status)).to eq "pending"
+        expect(r.hget("falqon/name:metadata:2", :status)).to eq "pending"
+        expect(r.hget("falqon/name:metadata:3", :status)).to eq "pending"
+        expect(r.hget("falqon/name:metadata:4", :status)).to eq "pending"
       end
     end
   end

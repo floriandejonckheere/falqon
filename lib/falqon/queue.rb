@@ -217,6 +217,9 @@ module Falqon
       # Move all identifiers from tail of processing queue to head of pending queue
       redis.with do |r|
         while (message_id = r.lmove(processing.id, id, :right, :left))
+          # Set message status
+          r.hset("#{id}:metadata:#{message_id}", :status, "pending")
+
           message_ids << message_id
         end
       end
@@ -237,6 +240,9 @@ module Falqon
       # Move all identifiers from tail of dead queue to head of pending queue
       redis.with do |r|
         while (message_id = r.lmove(dead.id, id, :right, :left))
+          # Set message status
+          r.hset("#{id}:metadata:#{message_id}", :status, "pending")
+
           message_ids << message_id
         end
       end
