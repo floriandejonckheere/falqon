@@ -22,13 +22,11 @@ module Falqon
 
     sig { returns(Identifier) }
     def id
-      # FIXME: use Redis connection of caller
       @id ||= redis.with { |r| r.incr("#{queue.id}:id") }
     end
 
     sig { returns(String) }
     def data
-      # FIXME: use Redis connection of caller
       @data ||= redis.with { |r| r.get("#{queue.id}:data:#{id}") }
     end
 
@@ -54,7 +52,6 @@ module Falqon
 
     sig { returns(T::Boolean) }
     def exists?
-      # FIXME: use Redis connection of caller
       redis.with do |r|
         r.exists("#{queue.id}:data:#{id}") == 1
       end
@@ -62,7 +59,6 @@ module Falqon
 
     sig { returns(Message) }
     def create
-      # FIXME: use Redis connection of caller
       redis.with do |r|
         # Store data
         r.set("#{queue.id}:data:#{id}", data)
@@ -80,7 +76,6 @@ module Falqon
     def kill
       logger.debug "Killing message #{id} on queue #{queue.name}"
 
-      # FIXME: use Redis connection of caller
       redis.with do |r|
         # Add identifier to dead queue
         queue.dead.add(id)
@@ -96,7 +91,6 @@ module Falqon
 
     sig { void }
     def delete
-      # FIXME: use Redis connection of caller
       redis.with do |r|
         # Delete message from queue
         queue.pending.remove(id)

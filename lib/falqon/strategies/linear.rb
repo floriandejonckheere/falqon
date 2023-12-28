@@ -10,7 +10,6 @@ module Falqon
     class Linear < Strategy
       sig { params(message: Message).void }
       def retry(message)
-        # FIXME: use Redis connection of caller
         queue.redis.with do |r|
           # Increment retry count
           retries = r.hincrby("#{queue.id}:metadata:#{message.id}", :retries, 1)

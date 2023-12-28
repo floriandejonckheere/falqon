@@ -27,7 +27,6 @@ module Falqon
 
     sig { params(message_id: Identifier).void }
     def add(message_id)
-      # FIXME: use Redis connection of caller
       queue.redis.with do |r|
         r.rpush(id, message_id)
       end
@@ -35,7 +34,6 @@ module Falqon
 
     sig { params(message_id: Identifier).void }
     def remove(message_id)
-      # FIXME: use Redis connection of caller
       queue.redis.with do |r|
         r.lrem(id, 0, message_id)
       end
@@ -43,7 +41,6 @@ module Falqon
 
     sig { returns(T.nilable(Identifier)) }
     def peek
-      # FIXME: use Redis connection of caller
       queue.redis.with do |r|
         r.lindex(id, 0)&.to_i
       end
@@ -51,7 +48,6 @@ module Falqon
 
     sig { returns(T::Array[Identifier]) }
     def clear
-      # FIXME: use Redis connection of caller
       queue.redis.with do |r|
         # Get all identifiers from queue
         message_ids = r.lrange(id, 0, -1)

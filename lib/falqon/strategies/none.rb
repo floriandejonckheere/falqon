@@ -10,7 +10,6 @@ module Falqon
     class None < Strategy
       sig { params(message: Message).void }
       def retry(message)
-        # FIXME: use Redis connection of caller
         queue.redis.with do |r|
           r.multi do |t|
             # Kill message immediately
