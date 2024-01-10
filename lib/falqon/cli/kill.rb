@@ -6,7 +6,7 @@ module Falqon
       def validate
         raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:name).include?(options[:queue])
 
-        raise "--pending and --processing are mutually exclusive" if [options[:pending], options[:processing]].count(true) > 1
+        raise "--pending, --scheduled, and --processing are mutually exclusive" if [options[:pending], options[:scheduled], options[:processing]].count(true) > 1
 
         raise "--head, --tail, --index, and --range are mutually exclusive" if [options[:head], options[:tail], options[:index], options[:range]].count { |o| o } > 1
         raise "--range must be specified as two integers" if options[:range] && options[:range].count != 2
@@ -44,6 +44,8 @@ module Falqon
 
         if options[:processing]
           puts "Killed #{pluralize(messages.count, 'processing message', 'processing messages')} in queue #{queue.name}"
+        elsif options[:scheduled]
+          puts "Killed #{pluralize(messages.count, 'scheduled message', 'scheduled messages')} in queue #{queue.name}"
         else # options[:pending]
           puts "Killed #{pluralize(messages.count, 'pending message', 'pending messages')} in queue #{queue.name}"
         end
@@ -58,6 +60,8 @@ module Falqon
       def subqueue
         @subqueue ||= if options[:processing]
                         queue.processing
+                      elsif options[:scheduled]
+                        queue.scheduled
                       else # options[:pending]
                         queue.pending
                       end

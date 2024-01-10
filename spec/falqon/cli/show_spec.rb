@@ -16,12 +16,12 @@ RSpec.describe Falqon::CLI::Show do
       end
     end
 
-    context "when the --pending, --processing, and --dead options are all specified" do
-      let(:options) { { queue: "queue0", pending: true, processing: true, dead: true } }
+    context "when the --pending, --processing, --scheduled, and --dead options are all specified" do
+      let(:options) { { queue: "queue0", pending: true, processing: true, scheduled: true, dead: true } }
 
       it "prints an error message" do
         expect { command.call }
-          .to output(/--pending, --processing, and --dead are mutually exclusive/)
+          .to output(/--pending, --processing, --scheduled, and --dead are mutually exclusive/)
           .to_stdout
       end
     end
@@ -110,6 +110,16 @@ RSpec.describe Falqon::CLI::Show do
       it "prints the contents of the processing subqueue" do
         expect { command.call }
           .to output(/id = 4 data = 8 bytes/)
+          .to_stdout
+      end
+    end
+
+    context "when the --scheduled option is specified" do
+      let(:options) { { queue: "queue0", scheduled: true } }
+
+      it "prints the contents of the scheduled subqueue" do
+        expect { command.call }
+          .to output(//)
           .to_stdout
       end
     end

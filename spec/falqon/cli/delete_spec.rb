@@ -16,12 +16,12 @@ RSpec.describe Falqon::CLI::Delete do
       end
     end
 
-    context "when the --pending, --processing, and --dead options are all specified" do
-      let(:options) { { queue: "queue0", pending: true, processing: true, dead: true } }
+    context "when the --pending, --processing, --scheduled, and --dead options are all specified" do
+      let(:options) { { queue: "queue0", pending: true, processing: true, scheduled: true, dead: true } }
 
       it "prints an error message" do
         expect { command.call }
-          .to output(/--pending, --processing, and --dead are mutually exclusive/)
+          .to output(/--pending, --processing, --scheduled, and --dead are mutually exclusive/)
           .to_stdout
       end
     end
@@ -80,6 +80,16 @@ RSpec.describe Falqon::CLI::Delete do
       it "deletes the processing messages" do
         expect { command.call }
           .to output(/Deleted 1 processing message from queue queue0/)
+          .to_stdout
+      end
+    end
+
+    context "when the --scheduled option is specified" do
+      let(:options) { { queue: "queue0", scheduled: true } }
+
+      it "deletes the scheduled messages" do
+        expect { command.call }
+          .to output(/Deleted 0 scheduled messages from queue queue0/)
           .to_stdout
       end
     end

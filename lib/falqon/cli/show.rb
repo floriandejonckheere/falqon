@@ -6,7 +6,7 @@ module Falqon
       def validate
         raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:name).include?(options[:queue])
 
-        raise "--pending, --processing, and --dead are mutually exclusive" if [options[:pending], options[:processing], options[:dead]].count(true) > 1
+        raise "--pending, --processing, --scheduled, and --dead are mutually exclusive" if [options[:pending], options[:processing], options[:scheduled], options[:dead]].count(true) > 1
         raise "--meta and --data are mutually exclusive" if [options[:meta], options[:data]].count(true) > 1
 
         raise "--head, --tail, --index, and --range are mutually exclusive" if [options[:head], options[:tail], options[:index], options[:range]].count { |o| o } > 1
@@ -56,6 +56,8 @@ module Falqon
       def subqueue
         @subqueue ||= if options[:processing]
                         queue.processing
+                      elsif options[:scheduled]
+                        queue.scheduled
                       elsif options[:dead]
                         queue.dead
                       else

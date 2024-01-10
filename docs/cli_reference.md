@@ -58,12 +58,12 @@ The `status` command displays the status of a queue, or all queues if no queue n
 ```bash
 # Print status of all queues
 $ falqon status
-jobs: 41 messages (34 pending, 2 processing, 5 dead)
+jobs: 41 messages (34 pending, 2 processing, 0 scheduled, 5 dead)
 emails: empty
 
 # Print status of a specific queue
 $ falqon status --queue jobs
-jobs: 41 messages (34 pending, 2 processing, 5 dead)
+jobs: 41 messages (34 pending, 2 processing, 0 scheduled, 5 dead)
 ```
 
 Options:
@@ -101,6 +101,10 @@ $ falqon show --queue jobs --pending
 
 # Display only processing messages
 $ falqon show --queue jobs --processing
+...
+
+# Display only scheduled messages
+$ falqon show --queue jobs --scheduled
 ...
 
 # Display only dead messages
@@ -146,6 +150,7 @@ Options:
 - `-q`, `--queue=QUEUE`: Queue name (required)
 - `--pending`: Display pending messages (default)
 - `--processing`: Display processing messages
+- `--scheduled`: Display scheduled messages
 - `--dead`: Display dead messages
 - `-d`, `--data`: Display raw data
 - `-m`, `--meta`: Display additional metadata
@@ -171,6 +176,10 @@ Deleted 10 pending messages from queue jobs
 # Delete only processing messages
 $ falqon delete --queue jobs --processing
 Deleted 1 processing message from queue jobs
+
+# Delete only scheduled messages
+$ falqon delete --queue jobs --scheduled
+Deleted 1 scheduled message from queue jobs
 
 # Delete only dead messages
 $ falqon delete --queue jobs --dead
@@ -201,6 +210,7 @@ Options:
 - `-q`, `--queue=QUEUE`: Queue name (required)
 - `--pending`: Delete only pending messages
 - `--processing`: Delete only processing messages
+- `--scheduled`: Delete only scheduled messages
 - `--dead`: Delete only dead messages
 - `--head N`: Delete first N messages
 - `--tail N`: Delete last N messages
@@ -224,6 +234,10 @@ Killed 10 pending messages from queue jobs
 # Kill only processing messages
 $ falqon kill --queue jobs --processing
 Killed 1 processing message from queue jobs
+
+# Kill only scheduled messages
+$ falqon kill --queue jobs --scheduled
+Killed 1 scheduled message from queue jobs
 
 # Kill first 5 messages
 $ falqon kill --queue jobs --head 5
@@ -250,6 +264,7 @@ Options:
 - `-q`, `--queue=QUEUE`: Queue name (required)
 - `--pending`: Kill only pending messages
 - `--processing`: Kill only processing messages
+- `--scheduled`: Kill only scheduled messages
 - `--head N`: Kill first N messages
 - `--tail N`: Kill last N messages
 - `--index N`: Kill message at index N
@@ -273,6 +288,10 @@ Cleared 3 messages from queue jobs
 $ falqon clear --queue jobs --processing
 Cleared 3 messages from queue jobs
 
+# Clear only scheduled messages
+$ falqon clear --queue jobs --scheduled
+Cleared 3 messages from queue jobs
+
 # Clear only dead messages
 $ falqon clear --queue jobs --dead
 Cleared 3 messages from queue jobs
@@ -283,9 +302,10 @@ Options:
 - `-q`, `--queue=QUEUE`: Queue name (required)
 - `--pending`: Clear only pending messages
 - `--processing`: Clear only processing messages
+- `--scheduled`: Clear only scheduled messages
 - `--dead`: Clear only dead messages
 
-If none of the `--pending`, `--processing`, or `--dead` options are specified, all messages are cleared.
+If none of the `--pending`, `--processing`, `--scheduled`, or `--dead` options are specified, all messages are cleared.
 
 ### Refill
 

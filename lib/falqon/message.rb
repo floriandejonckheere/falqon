@@ -118,7 +118,7 @@ module Falqon
     # Metadata for an message
     #
     class Metadata < T::Struct
-      # Status (unknown, pending, processing, dead)
+      # Status (unknown, pending, processing, scheduled, dead)
       prop :status, String, default: "unknown"
 
       # Number of times the message has been retried

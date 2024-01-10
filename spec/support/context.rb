@@ -15,19 +15,22 @@ RSpec.configure do |config|
     # queue0
     #   pending: [message4, message5, message6, message2]
     #   processing: [message3]
+    #   scheduled: []
     #   dead: []
     # queue1
     #   pending: []
     #   processing: []
+    #   scheduled: []
     #   dead: [message7, message8]
     # queue2
     #   pending: []
     #   processing: []
+    #   scheduled: []
     #   dead: []
     # metadata
     #   3 queues
     #   8 processed
-    #   4 failed
+    #   4 scheduled
     #   2 retried
 
     queue0 = Falqon::Queue.new("queue0")
@@ -77,23 +80,26 @@ RSpec.configure do |config|
       puts "queue0"
       puts "  pending: [#{r.lrange(queue0.id, 0, -1).map { |id| r.get("#{queue0.id}:data:#{id}") }.join(', ')}]"
       puts "  processing: [#{r.lrange(queue0.processing.id, 0, -1).map { |id| r.get("#{queue0.id}:data:#{id}") }.join(', ')}]"
+      puts "  scheduled: [#{r.lrange(queue0.scheduled.id, 0, -1).map { |id| r.get("#{queue0.id}:data:#{id}") }.join(', ')}]"
       puts "  dead: [#{r.lrange(queue0.dead.id, 0, -1).map { |id| r.get("#{queue0.id}:data:#{id}") }.join(', ')}]"
 
       puts "queue1"
       puts "  pending: [#{r.lrange(queue1.id, 0, -1).map { |id| r.get("#{queue1.id}:data:#{id}") }.join(', ')}]"
       puts "  processing: [#{r.lrange(queue1.processing.id, 0, -1).map { |id| r.get("#{queue1.id}:data:#{id}") }.join(', ')}]"
+      puts "  scheduled: [#{r.lrange(queue0.scheduled.id, 0, -1).map { |id| r.get("#{queue0.id}:data:#{id}") }.join(', ')}]"
       puts "  dead: [#{r.lrange(queue1.dead.id, 0, -1).map { |id| r.get("#{queue1.id}:data:#{id}") }.join(', ')}]"
 
       puts "queue2"
       puts "  pending: [#{r.lrange(queue2.id, 0, -1).map { |id| r.get("#{queue2.id}:data:#{id}") }.join(', ')}]"
       puts "  processing: [#{r.lrange(queue2.processing.id, 0, -1).map { |id| r.get("#{queue2.id}:data:#{id}") }.join(', ')}]"
+      puts "  scheduled: [#{r.lrange(queue0.scheduled.id, 0, -1).map { |id| r.get("#{queue0.id}:data:#{id}") }.join(', ')}]"
       puts "  dead: [#{r.lrange(queue2.dead.id, 0, -1).map { |id| r.get("#{queue2.id}:data:#{id}") }.join(', ')}]"
 
       puts "metadata"
       queues = Falqon::Queue.all
       puts "  #{queues.count} queues"
       puts "  #{queues.sum { |q| q.metadata.processed }} processed"
-      puts "  #{queues.sum { |q| q.metadata.failed }} failed"
+      puts "  #{queues.sum { |q| q.metadata.scheduled }} scheduled"
       puts "  #{queues.sum { |q| q.metadata.retried }} retried"
     end
   end

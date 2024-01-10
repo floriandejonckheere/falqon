@@ -174,7 +174,7 @@ module Falqon
       run_hook :clear, :before
 
       # Clear all sub-queues
-      message_ids = pending.clear + processing.clear + dead.clear
+      message_ids = pending.clear + processing.clear + scheduled.clear + dead.clear
 
       redis.with do |r|
         # Clear metadata
@@ -289,13 +289,18 @@ module Falqon
     end
 
     sig { returns(SubQueue) }
+    def scheduled
+      @scheduled ||= SubQueue.new(self, "scheduled")
+    end
+
+    sig { returns(SubQueue) }
     def dead
       @dead ||= SubQueue.new(self, "dead")
     end
 
     sig { returns(String) }
     def inspect
-      "#<#{self.class} name=#{name.inspect} pending=#{pending.size} processing=#{processing.size} dead=#{dead.size}>"
+      "#<#{self.class} name=#{name.inspect} pending=#{pending.size} processing=#{processing.size} scheduled=#{scheduled.size} dead=#{dead.size}>"
     end
 
     class << self

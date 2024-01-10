@@ -19,7 +19,7 @@ module Falqon
           if queue.pending.empty? && queue.processing.empty? && queue.dead.empty?
             puts "#{queue.name.ljust length}: empty"
           else
-            puts "#{queue.name.ljust length}: #{queue.pending.size} pending, #{queue.processing.size} processing, #{queue.dead.size} dead"
+            puts "#{queue.name.ljust length}: #{queue.pending.size} pending, #{queue.processing.size} processing, #{queue.scheduled.size} scheduled, #{queue.dead.size} dead"
           end
         end
       end

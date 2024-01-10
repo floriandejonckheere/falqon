@@ -16,12 +16,12 @@ RSpec.describe Falqon::CLI::Kill do
       end
     end
 
-    context "when the --pending and --processing options are all specified" do
-      let(:options) { { queue: "queue0", pending: true, processing: true } }
+    context "when the --pending, --scheduled, and --processing options are all specified" do
+      let(:options) { { queue: "queue0", pending: true, scheduled: true, processing: true } }
 
       it "prints an error message" do
         expect { command.call }
-          .to output(/--pending and --processing are mutually exclusive/)
+          .to output(/--pending, --scheduled, and --processing are mutually exclusive/)
           .to_stdout
       end
     end
@@ -70,6 +70,16 @@ RSpec.describe Falqon::CLI::Kill do
       it "clears the pending messages" do
         expect { command.call }
           .to output(/Killed 4 pending messages in queue queue0/)
+          .to_stdout
+      end
+    end
+
+    context "when the --scheduled option is specified" do
+      let(:options) { { queue: "queue0", scheduled: true } }
+
+      it "clears the scheduled messages" do
+        expect { command.call }
+          .to output(/Killed 0 scheduled messages in queue queue0/)
           .to_stdout
       end
     end
