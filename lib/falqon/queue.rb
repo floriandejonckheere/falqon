@@ -22,17 +22,21 @@ module Falqon
     sig { returns(Integer) }
     attr_reader :max_retries
 
+    sig { returns(Integer) }
+    attr_reader :retry_delay
+
     sig { returns(ConnectionPool) }
     attr_reader :redis
 
     sig { returns(Logger) }
     attr_reader :logger
 
-    sig { params(name: String, retry_strategy: Symbol, max_retries: Integer, redis: ConnectionPool, logger: Logger, version: Integer).void }
+    sig { params(name: String, retry_strategy: Symbol, max_retries: Integer, retry_delay: Integer, redis: ConnectionPool, logger: Logger, version: Integer).void }
     def initialize(
       name,
       retry_strategy: Falqon.configuration.retry_strategy,
       max_retries: Falqon.configuration.max_retries,
+      retry_delay: Falqon.configuration.retry_delay,
       redis: Falqon.configuration.redis,
       logger: Falqon.configuration.logger,
       version: Falqon::PROTOCOL
@@ -41,6 +45,7 @@ module Falqon
       @id = [Falqon.configuration.prefix, name].compact.join("/")
       @retry_strategy = Strategies.const_get(retry_strategy.to_s.capitalize).new(self)
       @max_retries = max_retries
+      @retry_delay = retry_delay
       @redis = redis
       @logger = logger
       @version = version

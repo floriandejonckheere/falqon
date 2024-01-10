@@ -21,6 +21,7 @@ nav_order: 4
 - `id`: the queue identifier (`name` prefixed with `Falqon.config.prefix`)
 - `retry_strategy`: the retry strategy (defaults to `Falqon.config.retry_strategy`)
 - `max_retries`: the maximum number of retries before a message is discarded (defaults to `Falqon.config.max_retries`)
+- `retry_delay`: the delay between retries (defaults to `Falqon.config.retry_delay` or `0` if not set)
 - `redis`: the Redis connection pool (defaults to `Falqon.config.redis`)
 - `logger`: the logger (defaults to `Falqon.config.logger`)
 - `version`: the queue protocol version (defaults to `Falqon::PROTOCOL`)
@@ -31,13 +32,14 @@ Use `Falqon::Queue.new` to create a new queue.
 This will register the queue and set the appropriate metadata (timestamps, etc.).
 
 ```ruby
-Falqon::Queue.new(name, max_retries:, redis:, logger:)
+Falqon::Queue.new(name)
 ```
 
 Arguments:
 
 - `name`: the name of the queue
 - `max_retries` (optional): the maximum number of retries before a message is discarded (defaults to `Falqon.configuration.max_retries`)
+- `retry_delay` (optional): the delay between retries (defaults to `Falqon.configuration.retry_delay` or `0` if not set)
 - `redis` (optional): the Redis connection pool to use (defaults to `Falqon.configuration.redis`)
 - `logger` (optional): the logger to use (defaults to `Falqon.configuration.logger`)
 - `version` (optional): the queue protocol version to use (defaults to `Falqon::PROTOCOL`)

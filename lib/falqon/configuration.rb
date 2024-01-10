@@ -19,6 +19,10 @@ module Falqon
     sig { params(max_retries: Integer).returns(Integer) }
     attr_writer :max_retries
 
+    # Delay between retries (in seconds)
+    sig { params(retry_delay: Integer).returns(Integer) }
+    attr_writer :retry_delay
+
     # Redis connection pool
     sig { params(redis: ConnectionPool).returns(ConnectionPool) }
     attr_writer :redis
@@ -47,6 +51,11 @@ module Falqon
     sig { returns(Integer) }
     def max_retries
       @max_retries ||= 3
+    end
+
+    sig { returns(Integer) }
+    def retry_delay
+      @retry_delay ||= 0
     end
 
     sig { returns(ConnectionPool) }

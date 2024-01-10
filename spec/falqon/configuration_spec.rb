@@ -39,4 +39,15 @@ RSpec.describe Falqon::Configuration do
       expect(configuration.max_retries).to eq 10
     end
   end
+
+  describe "#retry_delay" do
+    it "has a default value" do
+      expect(configuration.retry_delay).to eq 0
+    end
+
+    it "can be set" do
+      configuration.retry_delay = 10
+      expect(configuration.retry_delay).to eq 10
+    end
+  end
 end
