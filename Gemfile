@@ -19,7 +19,7 @@ group :development, :test do
   gem "rake", "13.1.0", require: false
 
   # Behavior-driven test framework
-  gem "rspec", "3.12.0", require: false
+  gem "rspec", "3.13.0", require: false
 
   # Linter
   gem "rubocop", "1.60.2", require: false
