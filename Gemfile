@@ -22,7 +22,7 @@ group :development, :test do
   gem "rspec", "3.13.0", require: false
 
   # Linter
-  gem "rubocop", "1.61.0", require: false
+  gem "rubocop", "1.62.1", require: false
   gem "rubocop-performance", "1.20.2", require: false
   gem "rubocop-rspec", "2.27.1", require: false
 
