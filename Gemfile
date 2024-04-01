@@ -7,7 +7,7 @@ gemspec
 
 group :development, :test do
   # Debugger
-  gem "debug", "1.9.1", require: false
+  gem "debug", "1.9.2", require: false
 
   # Generate fake data
   gem "ffaker", "2.23.0", require: false
