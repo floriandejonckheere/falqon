@@ -3,9 +3,9 @@ name: Continuous Integration
 on:
   push:
     branches:
-      - '*'
+      - '**'
     tags:
-      - '*'
+      - '**'
 
 jobs:
   build:
