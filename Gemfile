@@ -27,8 +27,8 @@ group :development, :test do
   gem "rubocop-rspec", "2.29.2", require: false
 
   # Type checker
-  gem "sorbet", "0.5.11368", require: false
-  gem "tapioca", "0.13.3", require: false
+  gem "sorbet", "0.5.11372", require: false
+  gem "tapioca", "0.14.1", require: false
 
   # Time control
   gem "timecop", "0.9.8", require: false
