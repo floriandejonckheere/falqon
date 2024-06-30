@@ -8,7 +8,7 @@ module Falqon
     def with(...)
       puts "#{caller(1..1).first[/.*:in/][0..-4]} #{caller(1..1).first[/`.*'/][1..-2]}"
 
-      super(...)
+      super
     end
   end
 end
