@@ -53,9 +53,6 @@ RSpec/BeforeAfterAll:
 RSpec/ExampleLength:
   Enabled: false
 
-RSpec/FilePath:
-  Enabled: false
-
 RSpec/MultipleExpectations:
   Enabled: false
 
@@ -66,6 +63,10 @@ RSpec/PendingWithoutReason:
   Enabled: false
 
 RSpec/SpecFilePathFormat:
+  Exclude:
+    - spec/falqon/concerns/**/*.rb
+
+RSpec/SpecFilePathSuffix:
   Exclude:
     - spec/falqon/concerns/**/*.rb
 
