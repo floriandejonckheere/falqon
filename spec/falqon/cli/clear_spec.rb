@@ -39,7 +39,7 @@ RSpec.describe Falqon::CLI::Clear do
 
       it "clears the pending messages" do
         expect { command.call }
-          .to output(/Cleared 4 pending messages from queue queue0/)
+          .to output(/Cleared 3 pending messages from queue queue0/)
           .to_stdout
       end
     end
@@ -59,8 +59,8 @@ RSpec.describe Falqon::CLI::Clear do
 
       it "clears the scheduled messages" do
         expect { command.call }
-          .to output(/Cleared 0 scheduled messages from queue queue0/)
-                .to_stdout
+          .to output(/Cleared 1 scheduled message from queue queue0/)
+          .to_stdout
       end
     end
 

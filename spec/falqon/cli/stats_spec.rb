@@ -28,11 +28,11 @@ RSpec.describe Falqon::CLI::Stats do
   describe "#execute" do
     it "prints the statistics of all queues" do
       expect { command.call }
-        .to output(/queue0: 4 processed, 1 failed, 0 retried \(created: .*, updated: .*\)/)
+        .to output(/queue0: 5 processed, 2 failed, 0 retried \(created: .*, updated: .*\)/)
         .to_stdout
 
       expect { command.call }
-        .to output(/queue1: 6 processed, 6 failed, 4 retried \(created: .*, updated: .*\)/)
+        .to output(/queue1: 4 processed, 4 failed, 2 retried \(created: .*, updated: .*\)/)
         .to_stdout
 
       expect { command.call }

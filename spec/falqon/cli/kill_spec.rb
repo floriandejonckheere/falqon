@@ -60,7 +60,7 @@ RSpec.describe Falqon::CLI::Kill do
   describe "#execute" do
     it "kills the contents of the queue" do
       expect { command.call }
-        .to output(/Killed 4 pending messages in queue queue0/)
+        .to output(/Killed 3 pending messages in queue queue0/)
         .to_stdout
     end
 
@@ -69,7 +69,7 @@ RSpec.describe Falqon::CLI::Kill do
 
       it "clears the pending messages" do
         expect { command.call }
-          .to output(/Killed 4 pending messages in queue queue0/)
+          .to output(/Killed 3 pending messages in queue queue0/)
           .to_stdout
       end
     end
@@ -79,7 +79,7 @@ RSpec.describe Falqon::CLI::Kill do
 
       it "clears the scheduled messages" do
         expect { command.call }
-          .to output(/Killed 0 scheduled messages in queue queue0/)
+          .to output(/Killed 1 scheduled message in queue queue0/)
           .to_stdout
       end
     end
@@ -96,21 +96,21 @@ RSpec.describe Falqon::CLI::Kill do
 
     describe "pagination" do
       context "when the --head option is specified" do
-        let(:options) { { queue: "queue0", head: 3 } }
+        let(:options) { { queue: "queue0", head: 2 } }
 
         it "kills the first N messages" do
           expect { command.call }
-            .to output(/Killed 3 pending messages in queue queue0/)
+            .to output(/Killed 2 pending messages in queue queue0/)
             .to_stdout
         end
       end
 
       context "when the --tail option is specified" do
-        let(:options) { { queue: "queue0", tail: 3 } }
+        let(:options) { { queue: "queue0", tail: 2 } }
 
         it "kills the last N messages" do
           expect { command.call }
-            .to output(/Killed 3 pending messages in queue queue0/)
+            .to output(/Killed 2 pending messages in queue queue0/)
             .to_stdout
         end
       end
@@ -136,7 +136,7 @@ RSpec.describe Falqon::CLI::Kill do
       end
 
       context "when the --index option is specified multiple times" do
-        let(:options) { { queue: "queue0", index: [1, 3] } }
+        let(:options) { { queue: "queue0", index: [0, 2] } }
 
         it "kills the messages at the given indices" do
           expect { command.call }
@@ -146,11 +146,11 @@ RSpec.describe Falqon::CLI::Kill do
       end
 
       context "when the --range option is specified" do
-        let(:options) { { queue: "queue0", range: [1, 3] } }
+        let(:options) { { queue: "queue0", range: [1, 2] } }
 
         it "kills the messages in the given range" do
           expect { command.call }
-            .to output(/Killed 3 pending messages in queue queue0/)
+            .to output(/Killed 2 pending messages in queue queue0/)
             .to_stdout
         end
       end

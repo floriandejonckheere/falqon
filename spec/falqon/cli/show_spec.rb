@@ -70,7 +70,7 @@ RSpec.describe Falqon::CLI::Show do
   describe "#execute" do
     it "prints the contents of the queue" do
       expect { command.call }
-        .to output(/id = 5 data = 8 bytes/)
+        .to output(/id = 6.*\n.*id = 7.*\n.*id = 3/)
         .to_stdout
     end
 
@@ -79,7 +79,7 @@ RSpec.describe Falqon::CLI::Show do
 
       it "prints the raw data" do
         expect { command.call }
-          .to output(/message4/)
+          .to output(/message6.*\n.*message7.*\n.*message3/)
           .to_stdout
       end
     end
@@ -99,7 +99,7 @@ RSpec.describe Falqon::CLI::Show do
 
       it "prints the contents of the pending subqueue" do
         expect { command.call }
-          .to output(/id = 5 data = 8 bytes/)
+          .to output(/id = 3 data = 8 bytes/)
           .to_stdout
       end
     end
@@ -109,7 +109,7 @@ RSpec.describe Falqon::CLI::Show do
 
       it "prints the contents of the processing subqueue" do
         expect { command.call }
-          .to output(/id = 4 data = 8 bytes/)
+          .to output(/id = 5 data = 8 bytes/)
           .to_stdout
       end
     end
@@ -136,27 +136,27 @@ RSpec.describe Falqon::CLI::Show do
 
     describe "pagination" do
       context "when the --head option is specified" do
-        let(:options) { { queue: "queue0", head: 3 } }
+        let(:options) { { queue: "queue0", head: 2 } }
 
         it "prints the first N messages" do
           expect { command.call }
-            .to output(/id = 5.*\n.*id = 6.*\n.*id = 7/)
+            .to output(/id = 6.*\n.*id = 7/)
             .to_stdout
         end
       end
 
       context "when the --tail option is specified" do
-        let(:options) { { queue: "queue0", tail: 3 } }
+        let(:options) { { queue: "queue0", tail: 2 } }
 
         it "prints the last N messages" do
           expect { command.call }
-            .to output(/id = 6.*\n.*id = 7.*\n.*id = 3/)
+            .to output(/id = 7.*\n.*id = 3/)
             .to_stdout
         end
       end
 
       context "when the --index option is specified" do
-        let(:options) { { queue: "queue0", index: 2 } }
+        let(:options) { { queue: "queue0", index: 1 } }
 
         it "prints the message at the given index" do
           expect { command.call }
@@ -176,7 +176,7 @@ RSpec.describe Falqon::CLI::Show do
       end
 
       context "when the --index option is specified multiple times" do
-        let(:options) { { queue: "queue0", index: [1, 3] } }
+        let(:options) { { queue: "queue0", index: [0, 2] } }
 
         it "prints the messages at the given indices" do
           expect { command.call }
@@ -186,11 +186,11 @@ RSpec.describe Falqon::CLI::Show do
       end
 
       context "when the --range option is specified" do
-        let(:options) { { queue: "queue0", range: [1, 3] } }
+        let(:options) { { queue: "queue0", range: [0, 1] } }
 
         it "prints the messages in the given range" do
           expect { command.call }
-            .to output(/id = 6.*\n.*id = 7.*\n.*id = 3/)
+            .to output(/id = 6.*\n.*id = 7/)
             .to_stdout
         end
       end

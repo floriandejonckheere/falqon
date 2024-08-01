@@ -60,7 +60,7 @@ RSpec.describe Falqon::CLI::Delete do
   describe "#execute" do
     it "deletes the contents of the queue" do
       expect { command.call }
-        .to output(/Deleted 4 pending messages from queue queue0/)
+        .to output(/Deleted 3 pending messages from queue queue0/)
         .to_stdout
     end
 
@@ -69,7 +69,7 @@ RSpec.describe Falqon::CLI::Delete do
 
       it "deletes the pending messages" do
         expect { command.call }
-          .to output(/Deleted 4 pending messages from queue queue0/)
+          .to output(/Deleted 3 pending messages from queue queue0/)
           .to_stdout
       end
     end
@@ -89,7 +89,7 @@ RSpec.describe Falqon::CLI::Delete do
 
       it "deletes the scheduled messages" do
         expect { command.call }
-          .to output(/Deleted 0 scheduled messages from queue queue0/)
+          .to output(/Deleted 1 scheduled message from queue queue0/)
           .to_stdout
       end
     end
@@ -106,21 +106,21 @@ RSpec.describe Falqon::CLI::Delete do
 
     describe "pagination" do
       context "when the --head option is specified" do
-        let(:options) { { queue: "queue0", head: 3 } }
+        let(:options) { { queue: "queue0", head: 2 } }
 
         it "deletes the first N messages" do
           expect { command.call }
-            .to output(/Deleted 3 pending messages from queue queue0/)
+            .to output(/Deleted 2 pending messages from queue queue0/)
             .to_stdout
         end
       end
 
       context "when the --tail option is specified" do
-        let(:options) { { queue: "queue0", tail: 3 } }
+        let(:options) { { queue: "queue0", tail: 2 } }
 
         it "deletes the last N messages" do
           expect { command.call }
-            .to output(/Deleted 3 pending messages from queue queue0/)
+            .to output(/Deleted 2 pending messages from queue queue0/)
             .to_stdout
         end
       end
@@ -146,7 +146,7 @@ RSpec.describe Falqon::CLI::Delete do
       end
 
       context "when the --index option is specified multiple times" do
-        let(:options) { { queue: "queue0", index: [1, 3] } }
+        let(:options) { { queue: "queue0", index: [0, 1] } }
 
         it "deletes the messages at the given indices" do
           expect { command.call }
@@ -156,7 +156,7 @@ RSpec.describe Falqon::CLI::Delete do
       end
 
       context "when the --range option is specified" do
-        let(:options) { { queue: "queue0", range: [1, 3] } }
+        let(:options) { { queue: "queue0", range: [0, 2] } }
 
         it "deletes the messages in the given range" do
           expect { command.call }
