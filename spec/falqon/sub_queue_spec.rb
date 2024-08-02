@@ -112,4 +112,13 @@ RSpec.describe Falqon::SubQueue do
       end
     end
   end
+
+  describe "#to_a" do
+    it "returns the identifiers in the queue" do
+      sub_queue.add(1)
+      sub_queue.add(2)
+
+      expect(sub_queue.to_a).to eq [1, 2]
+    end
+  end
 end

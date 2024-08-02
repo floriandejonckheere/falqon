@@ -70,6 +70,11 @@ module Falqon
       size.zero?
     end
 
+    sig { returns(T::Array[Identifier]) }
+    def to_a
+      queue.redis.with { |r| r.zrange(id, 0, -1).map(&:to_i) }
+    end
+
     sig { returns(String) }
     def inspect
       "#<#{self.class} name=#{type} size=#{size}>"

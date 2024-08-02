@@ -113,4 +113,13 @@ RSpec.describe Falqon::SubSet do
       end
     end
   end
+
+  describe "#to_a" do
+    it "returns the identifiers in the queue" do
+      sub_set.add(1, 5)
+      sub_set.add(2, 6)
+
+      expect(sub_set.to_a).to eq [1, 2]
+    end
+  end
 end
