@@ -288,9 +288,9 @@ module Falqon
       @processing ||= SubQueue.new(self, "processing")
     end
 
-    sig { returns(SubQueue) }
+    sig { returns(SubSet) }
     def scheduled
-      @scheduled ||= SubQueue.new(self, "scheduled")
+      @scheduled ||= SubSet.new(self, "scheduled")
     end
 
     sig { returns(SubQueue) }
