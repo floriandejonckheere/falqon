@@ -17,10 +17,10 @@ nav_order: 4
 
 ### Attributes
 
-- `name`: the queue name
-- `id`: the queue identifier (`name` prefixed with `Falqon.config.prefix`)
-- `retry_strategy`: the retry strategy (defaults to `Falqon.config.retry_strategy`)
-- `max_retries`: the maximum number of retries before a message is discarded (defaults to `Falqon.config.max_retries`)
+- `name`: the queue name (e.g. `my_queue`)
+- `id`: the queue identifier (`name` prefixed with `Falqon.config.prefix` and a slash, e.g. `falqon/my_queue`)
+- `retry_strategy`: the retry strategy (defaults to `Falqon.config.retry_strategy` or `linear` if not set)
+- `max_retries`: the maximum number of retries before a message is discarded (defaults to `Falqon.config.max_retries` or `3` if not set)
 - `retry_delay`: the delay between retries (defaults to `Falqon.config.retry_delay` or `0` if not set)
 - `redis`: the Redis connection pool (defaults to `Falqon.config.redis`)
 - `logger`: the logger (defaults to `Falqon.config.logger`)
