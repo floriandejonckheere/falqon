@@ -42,7 +42,7 @@ RSpec.configure do |config|
     #   9 processed
     #   2 retried
 
-    queue0 = Falqon::Queue.new("queue0", retry_strategy: :linear, max_retries: 3)
+    queue0 = Falqon::Queue.new("queue0", retry_strategy: :linear, retry_delay: 60, max_retries: 3)
 
     queue0.push("message1", "message2", "message3", "message4", "message5", "message6", "message7")
 
@@ -60,7 +60,7 @@ RSpec.configure do |config|
       # Do nothing, so message5 stays in the processing queue
     end
 
-    queue1 = Falqon::Queue.new("queue1", retry_strategy: :linear, max_retries: 2)
+    queue1 = Falqon::Queue.new("queue1", retry_strategy: :linear, retry_delay: 60, max_retries: 2)
 
     queue1.push("message8", "message9")
 

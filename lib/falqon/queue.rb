@@ -257,6 +257,41 @@ module Falqon
       message_ids
     end
 
+    sig { returns(T::Array[Identifier]) }
+    def schedule
+      logger.debug "Scheduling failed messages on queue #{name}"
+
+      run_hook :schedule, :before
+
+      message_ids = T.let([], T::Array[Identifier])
+
+      # Move all due identifiers from scheduled queue to head of pending queue
+      redis.with do |r|
+        # Select all identifiers that are due (score <= current timestamp)
+        # FIXME: replace with zrange(by_score: true) when https://github.com/sds/mock_redis/issues/307 is resolved
+        message_ids = r.zrangebyscore(scheduled.id, 0, Time.now.to_i).map(&:to_i)
+
+        # require "debug"; binding.b if Time.now.to_i == 0
+
+        logger.debug "Scheduling messages #{message_ids.join(', ')} on queue #{name}"
+
+        message_ids.each do |message_id|
+          # Set message status
+          r.hset("#{id}:metadata:#{message_id}", :status, "pending")
+
+          # Add identifier to pending queue
+          pending.add(message_id)
+
+          # Remove identifier from scheduled queue
+          scheduled.remove(message_id)
+        end
+      end
+
+      run_hook :schedule, :after
+
+      message_ids
+    end
+
     sig { returns(Integer) }
     def size
       pending.size

@@ -340,6 +340,35 @@ RSpec.describe Falqon::Queue do
     end
   end
 
+  describe "#schedule" do
+    let(:queue) { described_class.new("name", retry_strategy: :linear, retry_delay: 60, max_retries: 3) }
+
+    it "schedules due messages" do
+      Timecop.freeze(1970, 1, 1, 1, 0, 0)
+
+      queue.push("message1", "message2")
+
+      # Raise an error to rechedule the message
+      queue.pop { raise Falqon::Error }
+      Timecop.travel(1) { queue.pop { raise Falqon::Error } }
+
+      queue.schedule
+
+      # Neither message1 nor message2 should have been scheduled
+      expect(queue).to be_empty
+
+      Timecop.travel(queue.retry_delay) do
+        queue.schedule
+
+        # message1 should have been scheduled, but message2 should not
+        queue.redis.with do |r|
+          expect(r.lrange("falqon/name", 0, -1)).to eq ["1"]
+          expect(r.zrange("falqon/name:scheduled", 0, -1)).to eq ["2"]
+        end
+      end
+    end
+  end
+
   describe "#size" do
     it "returns the size of the queue" do
       queue.push("message1", "message2")
