@@ -38,6 +38,7 @@ Falqon::Queue.new(name)
 Arguments:
 
 - `name`: the name of the queue
+- `retry_strategy`: the retry strategy to use (defaults to `Falqon.configuration.retry_strategy`)
 - `max_retries` (optional): the maximum number of retries before a message is discarded (defaults to `Falqon.configuration.max_retries`)
 - `retry_delay` (optional): the delay between retries (defaults to `Falqon.configuration.retry_delay` or `0` if not set)
 - `redis` (optional): the Redis connection pool to use (defaults to `Falqon.configuration.redis`)
