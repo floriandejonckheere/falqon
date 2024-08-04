@@ -214,7 +214,7 @@ module Falqon
       run_hook :delete, :before
 
       # Delete all sub-queues
-      [pending, processing, dead]
+      [pending, processing, scheduled, dead]
         .each(&:clear)
 
       redis.with do |r|
