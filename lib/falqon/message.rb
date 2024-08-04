@@ -46,6 +46,11 @@ module Falqon
     end
 
     sig { returns(T::Boolean) }
+    def scheduled?
+      metadata.status == "scheduled"
+    end
+
+    sig { returns(T::Boolean) }
     def dead?
       metadata.status == "dead"
     end

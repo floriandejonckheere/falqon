@@ -338,7 +338,7 @@ Returns:
 
 None
 
-### Check existance
+### Check existence
 
 Use `Falqon::Message#exists?` to check if an message exists.
 
@@ -365,7 +365,7 @@ Falqon::Message#metadata
 Returns:
 
 - `Falqon::Message::Metadata`: message metadata. Supported attributes:
-  - `status`: message status (unknown, pending, processing, dead)
+  - `status`: message status (unknown, pending, processing, scheduled, dead)
   - `retries`: total number of processing retries
   - `created_at`: timestamp of the message creation
   - `updated_at`: timestamp of the message update
@@ -374,4 +374,5 @@ The following convenience methods are also defined on `Message`:
 - `unknown?`
 - `pending?`
 - `processing?`
+- `scheduled?`
 - `dead?`

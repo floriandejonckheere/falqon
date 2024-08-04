@@ -79,6 +79,21 @@ RSpec.describe Falqon::Message do
     end
   end
 
+  describe "#scheduled?" do
+    it "returns true if the status is scheduled" do
+      message = described_class
+        .new(queue, id: 2, data: "message1")
+        .create
+
+      # FIXME: mock the status correctly
+      message.queue.redis.with do |r|
+        r.hset("#{message.queue.id}:metadata:#{message.id}", "status", "scheduled")
+      end
+
+      expect(message).to be_scheduled
+    end
+  end
+
   describe "#dead?" do
     it "returns true if the status is dead" do
       message = described_class
