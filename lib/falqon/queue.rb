@@ -66,7 +66,7 @@ module Falqon
         r.hsetnx("#{id}:metadata", :version, @version)
       end
 
-      run_hook :initialize
+      run_hook :initialize, :after
     end
 
     sig { params(data: Data).returns(T.any(Identifier, T::Array[Identifier])) }
