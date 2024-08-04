@@ -146,6 +146,10 @@ Use `Falqon::Queue#peek` to peek to the next message in the queue.
 Falqon::Queue#peek
 ```
 
+Arguments:
+
+- `index` (optional): the index of the message to peek to (defaults to `0`)
+
 Returns:
 
 - `String`: the message contents

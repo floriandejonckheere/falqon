@@ -52,6 +52,16 @@ RSpec.describe Falqon::SubSet do
       expect(sub_set.peek).to eq 2
     end
 
+    it "returns the nth identifier in the queue" do
+      sub_set.add(1, 5)
+      sub_set.add(2, 4)
+      sub_set.add(3, 3)
+
+      expect(sub_set.peek(index: 0)).to eq 3
+      expect(sub_set.peek(index: 1)).to eq 2
+      expect(sub_set.peek(index: 2)).to eq 1
+    end
+
     context "when the queue is empty" do
       it "returns nil" do
         expect(sub_set.peek).to be_nil

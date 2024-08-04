@@ -39,10 +39,10 @@ module Falqon
       end
     end
 
-    sig { returns(T.nilable(Identifier)) }
-    def peek
+    sig { params(index: Integer).returns(T.nilable(Identifier)) }
+    def peek(index: 0)
       queue.redis.with do |r|
-        r.lindex(id, 0)&.to_i
+        r.lindex(id, index)&.to_i
       end
     end
 

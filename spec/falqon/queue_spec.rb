@@ -212,11 +212,19 @@ RSpec.describe Falqon::Queue do
   end
 
   describe "#peek" do
-    it "peeks at the next message from the queue and returns it" do
+    it "returns the first message in the queue" do
       queue.push("message1", "message2")
 
       expect(queue.peek).to eq "message1"
       expect(queue.peek).to eq "message1"
+    end
+
+    it "returns the nth message in the queue" do
+      queue.push("message1", "message2", "message3")
+
+      expect(queue.peek(index: 0)).to eq "message1"
+      expect(queue.peek(index: 1)).to eq "message2"
+      expect(queue.peek(index: 2)).to eq "message3"
     end
 
     context "when the queue is empty" do

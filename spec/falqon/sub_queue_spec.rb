@@ -51,6 +51,16 @@ RSpec.describe Falqon::SubQueue do
       expect(sub_queue.peek).to eq 1
     end
 
+    it "returns the nth identifier in the queue" do
+      sub_queue.add(1)
+      sub_queue.add(2)
+      sub_queue.add(3)
+
+      expect(sub_queue.peek(index: 0)).to eq 1
+      expect(sub_queue.peek(index: 1)).to eq 2
+      expect(sub_queue.peek(index: 2)).to eq 3
+    end
+
     context "when the queue is empty" do
       it "returns nil" do
         expect(sub_queue.peek).to be_nil

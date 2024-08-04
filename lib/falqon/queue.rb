@@ -150,14 +150,14 @@ module Falqon
       nil
     end
 
-    sig { returns(T.nilable(Data)) }
-    def peek
+    sig { params(index: Integer).returns(T.nilable(Data)) }
+    def peek(index: 0)
       logger.debug "Peeking at next message in queue #{name}"
 
       run_hook :peek, :before
 
       # Get identifier from pending queue
-      message_id = pending.peek
+      message_id = pending.peek(index:)
 
       return unless message_id
 
