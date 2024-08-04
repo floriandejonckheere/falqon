@@ -106,6 +106,13 @@ module Falqon
       end
     end
 
+    sig { returns Integer }
+    def size
+      redis.with do |r|
+        r.strlen("#{queue.id}:data:#{id}")
+      end
+    end
+
     sig { returns Metadata }
     def metadata
       queue.redis.with do |r|

@@ -338,6 +338,22 @@ Returns:
 
 None
 
+### Check message size
+
+Use `Falqon::Message#size` to get the message size.
+
+```ruby
+message.size
+```
+
+Arguments:
+
+None
+
+Returns:
+
+- `Integer`: the message size (in bytes)
+
 ### Check existence
 
 Use `Falqon::Message#exists?` to check if an message exists.

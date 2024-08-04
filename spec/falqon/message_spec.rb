@@ -207,6 +207,16 @@ RSpec.describe Falqon::Message do
     end
   end
 
+  describe "#size" do
+    it "returns the size of the message" do
+      id = queue.push("message2")
+
+      message = described_class.new(queue, id:)
+
+      expect(message.size).to eq 8
+    end
+  end
+
   describe "#metadata" do
     it "returns metadata" do
       Timecop.freeze do
