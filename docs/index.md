@@ -10,7 +10,7 @@ nav_order: 0
 # Falqon
 
 Falqon is a simple, efficient, and reliable messaging queue implementation for Ruby.
-It offers a simple integration to send and receive messages in your application, backed by Redis.
+It offers a simple API to send and receive messages in your application, backed by Redis.
 
 ## Features
 
@@ -19,7 +19,7 @@ Falqon offers an elegant solution for messaging queues in Ruby.
 - Elegant: only two methods to send and receive messages
 - Reliable: no data is lost when a client crashes unexpectedly
 - Fast: Falqon is built on top of Redis, a fast in-memory data store
-- Flexible: tailor the retry and discard behaviour to your needs
+- Flexible: tune the behaviour of the queue to your needs
 
 ## Get started
 
