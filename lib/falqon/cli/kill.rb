@@ -18,16 +18,14 @@ module Falqon
         # Collect identifiers
         ids = if options[:id]
                 Array(options[:id])
-              else
-                queue.redis.with do |r|
-                  if options[:index]
-                    Array(options[:index]).map do |i|
-                      r.lindex(subqueue.id, i) || raise("No message at index #{i}")
-                    end
-                  else
-                    r.lrange(subqueue.id, *range_options)
-                  end
+              elsif options[:index]
+                Array(options[:index]).map do |i|
+                  subqueue.peek(index: i) || raise("No message at index #{i}")
                 end
+              else
+                start, stop = range_options
+
+                subqueue.range(start:, stop:).map(&:to_i)
               end
 
         # Transform identifiers to messages
