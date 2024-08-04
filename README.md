@@ -22,6 +22,16 @@ bundle exec rspec
 To release a new version, update the version number in `lib/falqon/version.rb`, update the changelog, commit the files and create a git tag starting with `v`, and push it to the repository.
 Github Actions will automatically run the test suite, build the `.gem` file and push it to [rubygems.org](https://rubygems.org).
 
+## Documentation
+
+The documentation in `docs/` is automatically built by Github Pages and pushed to [docs.falqon.dev](https://docs.falqon.dev) on every push to the `main` branch.
+Locally, you can build the documentation using Jekyll:
+
+```sh
+$ cd docs
+$ docker compose up docs
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at [https://github.com/floriandejonckheere/falqon](https://github.com/floriandejonckheere/falqon). 
