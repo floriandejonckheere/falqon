@@ -167,6 +167,23 @@ module Falqon
       Message.new(self, id: message_id).data
     end
 
+    sig { params(start: Integer, stop: Integer).returns(T::Array[Data]) }
+    def range(start: 0, stop: -1)
+      logger.debug "Peeking at next messages in queue #{name}"
+
+      run_hook :range, :before
+
+      # Get identifiers from pending queue
+      message_ids = pending.range(start:, stop:)
+
+      return [] unless message_ids.any?
+
+      run_hook :range, :after
+
+      # Retrieve data
+      message_ids.map { |id| Message.new(self, id:).data }
+    end
+
     sig { returns(T::Array[Identifier]) }
     def clear
       logger.debug "Clearing queue #{name}"

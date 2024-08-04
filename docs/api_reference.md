@@ -157,6 +157,26 @@ Returns:
 
 This method does not block.
 
+### Peek to a message range in the queue
+
+Use `Falqon::Queue#range` to peek to a message range in the queue.
+
+```ruby
+Falqon::Queue#range
+```
+
+Arguments:
+
+- `start` (optional): the start index of the message range (defaults to `0`)
+- `stop` (optional): the stop index of the message range (defaults to `-1`)
+
+Returns:
+
+- `Array[String]`: the messages contents
+- `[]`: if no message is available
+
+This method does not block.
+
 ### Clear the queue
 
 Use `Falqon::Queue#clear` to clear the queue.

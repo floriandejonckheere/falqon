@@ -69,7 +69,34 @@ RSpec.describe Falqon::SubSet do
     end
   end
 
-  describe "clear" do
+  describe "#range" do
+    it "returns the identifiers in the queue" do
+      sub_set.add(1, 5)
+      sub_set.add(2, 4)
+      sub_set.add(3, 3)
+
+      expect(sub_set.range).to eq [3, 2, 1]
+    end
+
+    it "returns the identifiers in the queue in the given range" do
+      sub_set.add(1, 5)
+      sub_set.add(2, 4)
+      sub_set.add(3, 3)
+
+      expect(sub_set.range(start: 1)).to eq [2, 1]
+      expect(sub_set.range(start: 1, stop: 1)).to eq [2]
+      expect(sub_set.range(start: 1, stop: 2)).to eq [2, 1]
+      expect(sub_set.range(stop: 1)).to eq [3, 2]
+    end
+
+    context "when the queue is empty" do
+      it "returns an empty array" do
+        expect(sub_set.range).to be_empty
+      end
+    end
+  end
+
+  describe "#clear" do
     it "clears the queue" do
       sub_set.add(1, 5)
       sub_set.add(2, 5)

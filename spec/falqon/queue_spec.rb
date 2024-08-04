@@ -234,6 +234,29 @@ RSpec.describe Falqon::Queue do
     end
   end
 
+  describe "#range" do
+    it "returns the messages in the queue" do
+      queue.push("message1", "message2", "message3")
+
+      expect(queue.range).to eq ["message1", "message2", "message3"]
+    end
+
+    it "returns the identifiers in the queue in the given range" do
+      queue.push("message1", "message2", "message3")
+
+      expect(queue.range(start: 1)).to eq ["message2", "message3"]
+      expect(queue.range(start: 1, stop: 1)).to eq ["message2"]
+      expect(queue.range(start: 1, stop: 2)).to eq ["message2", "message3"]
+      expect(queue.range(stop: 1)).to eq ["message1", "message2"]
+    end
+
+    context "when the queue is empty" do
+      it "returns an empty array" do
+        expect(queue.range).to be_empty
+      end
+    end
+  end
+
   describe "#clear" do
     it "clears the queue" do
       queue.push("message1", "message2")

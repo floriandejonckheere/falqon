@@ -46,6 +46,13 @@ module Falqon
       end
     end
 
+    sig { params(start: Integer, stop: Integer).returns(T::Array[Identifier]) }
+    def range(start: 0, stop: -1)
+      queue.redis.with do |r|
+        r.zrange(id, start, stop).map(&:to_i)
+      end
+    end
+
     sig { returns(T::Array[Identifier]) }
     def clear
       queue.redis.with do |r|
