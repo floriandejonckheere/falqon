@@ -89,7 +89,7 @@ RSpec.describe Falqon::CLI::Show do
 
       it "prints the metadata" do
         expect { command.call }
-          .to output(/id = 3 retries = 1 created_at = .* updated_at = .* data = 8 bytes/)
+          .to output(/id = 3 retries = 1 created_at = .* updated_at = .* data = 17 bytes/)
           .to_stdout
       end
     end
@@ -99,7 +99,7 @@ RSpec.describe Falqon::CLI::Show do
 
       it "prints the contents of the pending subqueue" do
         expect { command.call }
-          .to output(/id = 3 data = 8 bytes/)
+          .to output(/id = 3 data = 17 bytes/)
           .to_stdout
       end
     end
@@ -109,7 +109,7 @@ RSpec.describe Falqon::CLI::Show do
 
       it "prints the contents of the processing subqueue" do
         expect { command.call }
-          .to output(/id = 5 data = 8 bytes/)
+          .to output(/id = 5 data = 17 bytes/)
           .to_stdout
       end
     end
@@ -129,7 +129,7 @@ RSpec.describe Falqon::CLI::Show do
 
       it "prints the contents of the dead subqueue" do
         expect { command.call }
-          .to output(/id = 1 data = 8 bytes/)
+          .to output(/id = 1 data = 17 bytes/)
           .to_stdout
       end
     end
