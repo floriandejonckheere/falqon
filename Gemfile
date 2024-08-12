@@ -24,7 +24,7 @@ group :development, :test do
   # Linter
   gem "rubocop", "1.65.1", require: false
   gem "rubocop-performance", "1.21.1", require: false
-  gem "rubocop-rspec", "3.0.3", require: false
+  gem "rubocop-rspec", "3.0.4", require: false
 
   # Type checker
   gem "sorbet", "0.5.11518", require: false
