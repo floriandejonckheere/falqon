@@ -5,9 +5,11 @@ RSpec.describe Falqon::CLI::Version do
 
   let(:options) { {} }
 
-  it "prints the version" do
-    expect { command.call }
-      .to output("Falqon #{Falqon::VERSION}\n")
-      .to_stdout
+  describe "#execute" do
+    it "prints the version" do
+      expect { command.call }
+        .to output("Falqon #{Falqon::VERSION}\n")
+        .to_stdout
+    end
   end
 end
