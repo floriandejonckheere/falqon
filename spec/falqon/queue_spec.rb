@@ -456,4 +456,12 @@ RSpec.describe Falqon::Queue do
       expect(described_class.all.map(&:name)).to eq ["name"]
     end
   end
+
+  describe ".size" do
+    it "returns the number of queues" do
+      queue
+
+      expect(described_class.size).to eq 1
+    end
+  end
 end

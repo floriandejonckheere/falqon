@@ -276,6 +276,19 @@ Returns:
 
 - `Array[Falqon::Queue]`: active (registered) queues
 
+### Get number of queues
+
+Use `Falqon::Queue.size` to get the number of active (registered) queues.
+Queues are registered on initialization, and deregistered on deletion.
+
+```ruby
+Falqon::Queue.size
+```
+
+Returns:
+
+- `Integer`: the number of active (registered) queues
+
 ## Message
 
 An message describes an item in a queue.

@@ -363,6 +363,13 @@ module Falqon
             .map { |id| new(id) }
         end
       end
+
+      def size
+        Falqon.configuration.redis.with do |r|
+          r
+            .scard([Falqon.configuration.prefix, "queues"].compact.join(":"))
+        end
+      end
     end
 
     ##
