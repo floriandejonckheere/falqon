@@ -123,6 +123,11 @@ module Falqon
       end
     end
 
+    sig { returns(String) }
+    def inspect
+      "#<#{self.class} id=#{id.inspect} size=#{size.inspect}>"
+    end
+
     def_delegator :queue, :redis
     def_delegator :queue, :logger
 
