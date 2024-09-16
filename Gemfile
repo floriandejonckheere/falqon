@@ -13,7 +13,7 @@ group :development, :test do
   gem "ffaker", "2.23.0", require: false
 
   # Mock Redis server
-  gem "mock_redis", "0.44.0", require: false
+  gem "mock_redis", "0.45.0", require: false
 
   # Task runner
   gem "rake", "13.2.1", require: false
@@ -27,7 +27,7 @@ group :development, :test do
   gem "rubocop-rspec", "3.0.5", require: false
 
   # Type checker
-  gem "sorbet", "0.5.11553", require: false
+  gem "sorbet", "0.5.11558", require: false
   gem "tapioca", "0.16.2", require: false
 
   # Time control
