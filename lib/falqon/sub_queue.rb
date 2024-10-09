@@ -25,10 +25,14 @@ module Falqon
       @queue = queue
     end
 
-    sig { params(message_id: Identifier).void }
-    def add(message_id)
+    sig { params(message_id: Identifier, head: T.nilable(T::Boolean)).void }
+    def add(message_id, head: false)
       queue.redis.with do |r|
-        r.rpush(id, message_id)
+        if head
+          r.lpush(id, message_id)
+        else
+          r.rpush(id, message_id)
+        end
       end
     end
 

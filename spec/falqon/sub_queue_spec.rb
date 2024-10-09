@@ -23,12 +23,20 @@ RSpec.describe Falqon::SubQueue do
   end
 
   describe "#add" do
-    it "adds an identifier to the queue" do
+    it "adds an identifier to the tail of the queue" do
       sub_queue.add(1)
+      sub_queue.add(2)
 
-      queue.redis.with do |r|
-        expect(r.lrange("falqon/name:subname", 0, -1)).to eq ["1"]
-      end
+      expect(sub_queue.peek(index: 0)).to eq 1
+      expect(sub_queue.peek(index: 1)).to eq 2
+    end
+
+    it "adds an identifier to the head of the queue" do
+      sub_queue.add(1)
+      sub_queue.add(2, head: true)
+
+      expect(sub_queue.peek(index: 0)).to eq 2
+      expect(sub_queue.peek(index: 1)).to eq 1
     end
   end
 
