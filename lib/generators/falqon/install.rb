@@ -21,7 +21,10 @@ module Falqon
           # Retry delay (in seconds) for linear retry strategy (defaults to 0)
           # config.retry_delay = 60
 
-          # Configure Redis connection pool (defaults to $REDIS_URL)
+          # Configure the Redis client options
+          # config.redis_options = { url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0") }
+
+          # Or, configure the Redis client directly
           # config.redis = ConnectionPool.new(size: 5, timeout: 5) { Redis.new(url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0")) }
 
           # Configure logger

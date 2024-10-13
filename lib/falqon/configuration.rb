@@ -27,6 +27,10 @@ module Falqon
     sig { params(redis: ConnectionPool).returns(ConnectionPool) }
     attr_writer :redis
 
+    # Redis connection options
+    sig { params(redis_options: Hash).returns(Hash) }
+    attr_writer :redis_options
+
     # Logger instance
     sig { params(logger: Logger).returns(Logger) }
     attr_writer :logger
@@ -60,7 +64,14 @@ module Falqon
 
     sig { returns(ConnectionPool) }
     def redis
-      @redis ||= ConnectionPool.new(size: 5, timeout: 5) { Redis.new(url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0")) }
+      @redis ||= ConnectionPool.new(size: 5, timeout: 5) { Redis.new(**redis_options) }
+    end
+
+    sig { returns(Hash) }
+    def redis_options
+      @redis_options ||= {
+        url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0"),
+      }
     end
 
     sig { returns(Logger) }
