@@ -71,6 +71,7 @@ module Falqon
     def redis_options
       @redis_options ||= {
         url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0"),
+        middlewares: [Middlewares::Logger],
       }
     end
 
