@@ -24,12 +24,17 @@ Github Actions will automatically run the test suite, build the `.gem` file and 
 
 ## Documentation
 
-The documentation in `docs/` is automatically built by Github Pages and pushed to [docs.falqon.dev](https://docs.falqon.dev) on every push to the `main` branch.
-Locally, you can build the documentation using Jekyll:
+The documentation in `docs/` is automatically built by [YARD](https://yardoc.org) and pushed to [docs.falqon.dev](https://docs.falqon.dev) on every push to the `main` branch.
+Locally, you can build the documentation using the following commands:
 
 ```sh
-$ cd docs
-$ docker compose up docs
+rake yrad
+```
+
+In development, you can start a local server to preview the documentation:
+
+```sh
+yard server --reload
 ```
 
 ## Contributing
