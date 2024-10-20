@@ -35,16 +35,23 @@ module Falqon
     sig { params(logger: Logger).returns(Logger) }
     attr_writer :logger
 
+    # Queue name prefix, defaults to "falqon"
     sig { returns(String) }
     def prefix
       @prefix ||= "falqon"
     end
 
+    # Failed message retry strategy
+    #
+    # @see Falqon::Strategies
     sig { returns(Symbol) }
     def retry_strategy
       @retry_strategy ||= :linear
     end
 
+    # Failed message retry strategy
+    #
+    # @see Falqon::Strategies
     sig { params(retry_strategy: Symbol).returns(Symbol) }
     def retry_strategy=(retry_strategy)
       raise ArgumentError, "Invalid retry strategy #{retry_strategy.inspect}" unless [:none, :linear].include? retry_strategy
@@ -52,21 +59,33 @@ module Falqon
       @retry_strategy = retry_strategy
     end
 
+    # Maximum number of retries before a message is discarded
+    #
+    # Only applicable when using the +:linear+ retry strategy
+    #
+    # @see Falqon::Strategies::Linear
     sig { returns(Integer) }
     def max_retries
       @max_retries ||= 3
     end
 
+    # Delay between retries (in seconds)
+    #
+    # Only applicable when using the +:linear+ retry strategy
+    #
+    # @see Falqon::Strategies::Linear
     sig { returns(Integer) }
     def retry_delay
       @retry_delay ||= 0
     end
 
+    # Redis connection pool
     sig { returns(ConnectionPool) }
     def redis
       @redis ||= ConnectionPool.new(size: 5, timeout: 5) { Redis.new(**redis_options) }
     end
 
+    # Redis connection options passed to +Redis.new+
     sig { returns(Hash) }
     def redis_options
       @redis_options ||= {
@@ -75,6 +94,7 @@ module Falqon
       }
     end
 
+    # Logger instance
     sig { returns(Logger) }
     def logger
       @logger ||= Logger.new(File::NULL)

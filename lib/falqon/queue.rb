@@ -436,7 +436,7 @@ module Falqon
     # @return The identifiers of the scheduled messages
     #
     # @example Schedule failed messages
-    #  queue = Falqon::Queue.new("my_queue", max_retries: 0, retry_delay: 5, retry_strategy: "linear")
+    #  queue = Falqon::Queue.new("my_queue", max_retries: 0, retry_delay: 5, retry_strategy: :linear)
     #  queue.push("Hello, world!")
     #  queue.pop { raise Falqon::Error }
     #  queue.schedule # => []

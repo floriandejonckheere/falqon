@@ -7,6 +7,14 @@ module Falqon
     ##
     # Retry strategy that does not retry
     #
+    # When a message fails to process, it is immediately marked as dead and moved to the dead subqueue.
+    #
+    # @example
+    #  queue = Falqon::Queue.new("my_queue", retry_strategy: :none)
+    #  queue.push("Hello, World!")
+    #  queue.pop { raise Falqon::Error }
+    #  queue.inspect # => #<Falqon::Queue name="my_queue" pending=0 processing=0 scheduled=0 dead=1>
+    #
     class None < Strategy
       # @!visibility private
       sig { params(message: Message).void }
