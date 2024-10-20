@@ -6,14 +6,6 @@ nav_order: 3
 
 # Features
 
-## Acknowledgement
-
-When using the block-style `pop` method, the message will be acknowledged when the block returns without raising a `Falqon::Error` exception.
-Acknowledgement will remove the message and its data from the queue.
-If the block raises a `Falqon::Error` exception, the message will be retried according to the configured retry strategy.
-
-The return-style `pop` method immediately acknowledges the message before returning it.
-
 ## Hooks
 
 Hooks can be registered on a custom queue to execute code before and after certain events.

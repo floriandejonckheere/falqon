@@ -151,8 +151,14 @@ module Falqon
     # Pop data from the head of the queue
     #
     # This method blocks until a message is available.
+    #
+    # == Acknowledgement
+    #
     # If a block is given, the popped data is passed to the block. If the block raises a {Falqon::Error} exception, the message is retried according to the configured retry strategy.
+    # If no exception is raised, the message is ackwnowledged and removed from the queue.
+    #
     # If no block is given, the popped data is returned.
+    # The message is immediately acknowledged and removed from the queue.
     #
     # @param block A block to execute with the popped data (block-style)
     # @return The popped data (return-style)
