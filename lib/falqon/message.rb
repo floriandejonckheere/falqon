@@ -6,13 +6,35 @@ module Falqon
   ##
   # A message in a queue
   #
+  # This class should typically not be instantiated directly, but rather be created by a queue instance.
+  #
   class Message
     extend Forwardable
     extend T::Sig
 
+    # The queue instance the message belongs to
     sig { returns(Queue) }
     attr_reader :queue
 
+    # Create a new message
+    #
+    # @param queue [Queue] The queue instance the message belongs to
+    # @param id [Integer] The message identifier (optional if creating a new message)
+    # @param data [String] The message data (optional if fetching an existing message)
+    # @return The message instance
+    #
+    # @example Instantiate an existing message
+    #   queue = Falqon::Queue.new("my_queue")
+    #   id = queue.push("Hello, World!")
+    #   message = Falqon::Message.new(queue, id:)
+    #   message.data # => "Hello, World!"
+    #
+    # @example Create a new message
+    #   queue = Falqon::Queue.new("my_queue")
+    #   message = Falqon::Message.new(queue, data: "Hello, World!")
+    #   message.create
+    #   message.id # => 1
+    #
     sig { params(queue: Queue, id: T.nilable(Identifier), data: T.nilable(Data)).void }
     def initialize(queue, id: nil, data: nil)
       @queue = queue
@@ -20,41 +42,49 @@ module Falqon
       @data = data
     end
 
+    # The message identifier
     sig { returns(Identifier) }
     def id
       @id ||= redis.with { |r| r.incr("#{queue.id}:id") }
     end
 
+    # The message data
     sig { returns(String) }
     def data
       @data ||= redis.with { |r| r.get("#{queue.id}:data:#{id}") }
     end
 
+    # Whether the message status is unknown
     sig { returns(T::Boolean) }
     def unknown?
       metadata.status == "unknown"
     end
 
+    # Whether the message status is pending
     sig { returns(T::Boolean) }
     def pending?
       metadata.status == "pending"
     end
 
+    # Whether the message status is processing
     sig { returns(T::Boolean) }
     def processing?
       metadata.status == "processing"
     end
 
+    # Whether the message status is scheduled
     sig { returns(T::Boolean) }
     def scheduled?
       metadata.status == "scheduled"
     end
 
+    # Whether the message status is dead
     sig { returns(T::Boolean) }
     def dead?
       metadata.status == "dead"
     end
 
+    # Whether the message exists (i.e. has been created)
     sig { returns(T::Boolean) }
     def exists?
       redis.with do |r|
@@ -62,6 +92,12 @@ module Falqon
       end
     end
 
+    # Create the message in the queue
+    #
+    # This method will overwrite any existing message with the same identifier.
+    #
+    # @return The message instance
+    #
     sig { returns(Message) }
     def create
       redis.with do |r|
@@ -77,6 +113,10 @@ module Falqon
       self
     end
 
+    # Kill the message
+    #
+    # This method moves the message to the dead queue, and resets the retry count.
+    #
     sig { void }
     def kill
       logger.debug "Killing message #{id} on queue #{queue.name}"
@@ -94,6 +134,10 @@ module Falqon
       end
     end
 
+    # Delete the message, removing it from the queue
+    #
+    # This method deletes the message, metadata, and data from the queue.
+    #
     sig { void }
     def delete
       redis.with do |r|
@@ -106,6 +150,10 @@ module Falqon
       end
     end
 
+    # Message length
+    #
+    # @return The string length of the message (in bytes)
+    #
     sig { returns Integer }
     def size
       redis.with do |r|
@@ -113,6 +161,11 @@ module Falqon
       end
     end
 
+    # Metadata of the message
+    #
+    # @return The metadata of the message
+    # @see Falqon::Message::Metadata
+    #
     sig { returns Metadata }
     def metadata
       queue.redis.with do |r|
