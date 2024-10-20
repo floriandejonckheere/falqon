@@ -19,12 +19,12 @@ gem "jekyll", "~> 3.9"
 # If you have any plugins, put them here!
 group :jekyll_plugins do
   gem "jekyll-feed", "~> 0.15"
+  gem "jekyll-include-cache", "~> 0.2.1"
   gem "jekyll-remote-theme", "~> 0.4.3"
   gem "jekyll-seo-tag", "~> 2.8"
-  gem "jekyll-include-cache", "~> 0.2.1"
 end
 
-gem "rake"
 gem "ffi"
+gem "rake"
 
 gem "kramdown-parser-gfm"
