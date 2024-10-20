@@ -15,15 +15,6 @@ nav_order: 4
 
 ## Queue
 
-### Schedule failed messages
-
-Use `Falqon::Queue#schedule` to schedule eligible failed messages for retry.
-This will move the messages that can be retried according to the retry strategy and delay to the head of the pending queue.
-
-```ruby
-Falqon::Queue#schedule
-```
-
 ### Get the number of messages in the queue
 
 Use `Falqon::Queue#size` to get the number of messages in the queue.

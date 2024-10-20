@@ -400,7 +400,7 @@ module Falqon
     # @return The identifiers of the revived messages
     #
     # @example Revive the queue
-    #  queue = Falqon::Queue.new("my_queue", max_retries: 1)
+    #  queue = Falqon::Queue.new("my_queue", max_retries: 0)
     #  queue.push("Hello, world!")
     #  queue.pop { raise Falqon::Error }
     #  queue.revive # => ["1"]
@@ -428,6 +428,21 @@ module Falqon
       message_ids
     end
 
+    # Schedule failed messages for retry
+    #
+    # This method moves all eligible messages from the scheduled queue back to the head of the pending queue (in order).
+    # Messages are eligible for a retry according to the configured retry strategy.
+    #
+    # @return The identifiers of the scheduled messages
+    #
+    # @example Schedule failed messages
+    #  queue = Falqon::Queue.new("my_queue", max_retries: 0, retry_delay: 5, retry_strategy: "linear")
+    #  queue.push("Hello, world!")
+    #  queue.pop { raise Falqon::Error }
+    #  queue.schedule # => []
+    #  sleep 5
+    #  queue.schedule # => ["1"]
+    #
     sig { returns(T::Array[Identifier]) }
     def schedule
       logger.debug "Scheduling failed messages on queue #{name}"
