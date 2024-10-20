@@ -169,7 +169,7 @@ This will move the messages that can be retried according to the retry strategy 
 ```bash
 # Schedule eligible failed messages for retry
 $ falqon schedule --queue jobs
-Scheduled 3 messages in queue jobs
+Scheduled 3 messages for a retry in queue jobs
 ```
 
 ### Delete

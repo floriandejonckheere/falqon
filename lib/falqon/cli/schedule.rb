@@ -10,9 +10,8 @@ module Falqon
       def execute
         # Schedule failed messages
         message_ids = queue.schedule
-        puts queue.inspect
-        puts queue.retry_delay
-        puts "Scheduled #{pluralize(message_ids.count, 'failed message', 'failed messages')} for a retry"
+
+        puts "Scheduled #{pluralize(message_ids.count, 'failed message', 'failed messages')} for a retry in queue #{queue.name}"
       end
 
       private
