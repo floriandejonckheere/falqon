@@ -476,16 +476,31 @@ module Falqon
       message_ids
     end
 
+    # Size of the queue
+    #
+    # @return The number of messages in the queue
+    #
     sig { returns(Integer) }
     def size
       pending.size
     end
 
+    # Check if the queue is empty
+    #
+    # Only the pending queue is checked for emptiness.
+    #
+    # @return Whether the queue is empty
+    #
     sig { returns(T::Boolean) }
     def empty?
       size.zero?
     end
 
+    # Metadata of the queue
+    #
+    # @return The metadata of the queue
+    # @see Falqon::Queue::Metadata
+    #
     sig { returns Metadata }
     def metadata
       redis.with do |r|
@@ -497,32 +512,58 @@ module Falqon
       end
     end
 
+    # Subqueue for pending messages
+    # @!visibility private
+    #
+    # @return The subqueue for pending messages
+    #
     sig { returns(SubQueue) }
     def pending
       @pending ||= SubQueue.new(self)
     end
 
+    # Subqueue for processing messages
+    # @!visibility private
+    #
+    # @return The subqueue for processing messages
+    #
     sig { returns(SubQueue) }
     def processing
       @processing ||= SubQueue.new(self, "processing")
     end
 
+    # Subqueue for scheduled messages
+    # @!visibility private
+    #
+    # @return The subqueue for scheduled messages
+    #
     sig { returns(SubSet) }
     def scheduled
       @scheduled ||= SubSet.new(self, "scheduled")
     end
 
+    # Subqueue for dead messages
+    # @!visibility private
+    #
+    # @return The subqueue for dead messages
+    #
     sig { returns(SubQueue) }
     def dead
       @dead ||= SubQueue.new(self, "dead")
     end
 
+    # @!visibility private
     sig { returns(String) }
     def inspect
       "#<#{self.class} name=#{name.inspect} pending=#{pending.size} processing=#{processing.size} scheduled=#{scheduled.size} dead=#{dead.size}>"
     end
 
     class << self
+      # Get a list of all registered queues
+      #
+      # @return The queues
+      #
+      sig { returns(T::Array[Queue]) }
       def all
         Falqon.configuration.redis.with do |r|
           r
@@ -531,6 +572,11 @@ module Falqon
         end
       end
 
+      # Get the number of active (registered) queues
+      #
+      # @return The number of active (registered) queues
+      #
+      sig { returns(Integer) }
       def size
         Falqon.configuration.redis.with do |r|
           r
