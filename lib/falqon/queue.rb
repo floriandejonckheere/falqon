@@ -228,6 +228,18 @@ module Falqon
     # @param index The index of the message to peek at
     # @return The data of the peeked message
     #
+    # @example Peek at the next message
+    #   queue = Falqon::Queue.new("my_queue")
+    #   queue.push("Hello, world!")
+    #   queue.peek # => "Hello, world!"
+    #   queue.pop # => "Hello, world!"
+    #
+    # @example Peek at the next message with an offset
+    #   queue = Falqon::Queue.new("my_queue")
+    #   queue.push("Hello, world!", "Goodbye, world!")
+    #   queue.peek(1) # => "Goodbye, world!"
+    #   queue.pop # => "Hello, world!"
+    #
     sig { params(index: Integer).returns(T.nilable(Data)) }
     def peek(index: 0)
       logger.debug "Peeking at next message in queue #{name}"
@@ -253,6 +265,13 @@ module Falqon
     # @param start The start index of the range to peek at
     # @param stop The stop index of the range to peek at (set to -1 to peek at all messages)
     # @return The data of the peeked messages
+    #
+    # @example Peek at the next messages
+    #   queue = Falqon::Queue.new("my_queue")
+    #   queue.push("Hello, world!", "Goodbye, world!", "Hello again, world!")
+    #   queue.range(start: 1, stop: 2) # => ["Goodbye, world!", "Hello again, world!"]
+    #   queue.range(start: 1) # => ["Goodbye, world!", "Hello again, world!"]
+    #   queue.pop # => "Hello, world!"
     #
     sig { params(start: Integer, stop: Integer).returns(T::Array[Data]) }
     def range(start: 0, stop: -1)
