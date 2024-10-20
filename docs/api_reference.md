@@ -15,25 +15,6 @@ nav_order: 4
 
 ## Queue
 
-### Refill the queue
-
-Use `Falqon::Queue#refill` to refill the queue.
-This moves all processing messages to the head of the pending queue (in order).
-This method is useful when a worker crashes and messages are stuck in the processing queue.
-
-```ruby
-Falqon::Queue#refill
-```
-
-### Revive the queue
-
-Use `Falqon::Queue#revive` to revive the queue.
-This moves all dead messages to the head of the pending queue (in order).
-
-```ruby
-Falqon::Queue#refill
-```
-
 ### Schedule failed messages
 
 Use `Falqon::Queue#schedule` to schedule eligible failed messages for retry.

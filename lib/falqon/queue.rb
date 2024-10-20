@@ -355,6 +355,20 @@ module Falqon
       run_hook :delete, :after
     end
 
+    # Refill the queue with messages from the processing queue
+    #
+    # This method moves all messages from the processing queue back to the pending queue (in order).
+    # It is useful when a worker crashes or is stopped, and messages are left in the processing queue.
+    #
+    # @return The identifiers of the refilled messages
+    #
+    # @example Refill the queue
+    #  queue = Falqon::Queue.new("my_queue")
+    #  queue.push("Hello, world!")
+    #  queue.pop { Kernel.exit! }
+    #  ...
+    #  queue.refill # => ["1"]
+    #
     sig { returns(T::Array[Identifier]) }
     def refill
       logger.debug "Refilling queue #{name}"
@@ -378,6 +392,19 @@ module Falqon
       message_ids
     end
 
+    # Revive the queue with messages from the dead queue
+    #
+    # This method moves all messages from the dead queue back to the pending queue (in order).
+    # It is useful when messages are moved to the dead queue due to repeated failures, and need to be retried.
+    #
+    # @return The identifiers of the revived messages
+    #
+    # @example Revive the queue
+    #  queue = Falqon::Queue.new("my_queue", max_retries: 1)
+    #  queue.push("Hello, world!")
+    #  queue.pop { raise Falqon::Error }
+    #  queue.revive # => ["1"]
+    #
     sig { returns(T::Array[Identifier]) }
     def revive
       logger.debug "Reviving queue #{name}"
