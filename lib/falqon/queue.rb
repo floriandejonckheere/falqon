@@ -10,24 +10,31 @@ module Falqon
     include Hooks
     extend T::Sig
 
+    # The name of the queue (without prefix)
     sig { returns(String) }
     attr_reader :name
 
+    # The identifier of the queue (with prefix)
     sig { returns(String) }
     attr_reader :id
 
+    # The configured retry strategy of the queue
     sig { returns(Strategy) }
     attr_reader :retry_strategy
 
+    # The maximum number of retries before a message is considered failed
     sig { returns(Integer) }
     attr_reader :max_retries
 
+    # The delay in seconds before a message is eligible for a retry
     sig { returns(Integer) }
     attr_reader :retry_delay
 
+    # @!visibility private
     sig { returns(ConnectionPool) }
     attr_reader :redis
 
+    # @!visibility private
     sig { returns(Logger) }
     attr_reader :logger
 
@@ -69,6 +76,21 @@ module Falqon
       run_hook :initialize, :after
     end
 
+    # Push data onto the tail of the queue
+    #
+    # @param data The data to push onto the queue (one or more strings)
+    # @return The identifier(s) of the pushed message(s)
+    #
+    # @example Push a single message
+    #   queue = Falqon::Queue.new("my_queue")
+    #   queue.push("Hello, world!")
+    #   # => "1"
+    #
+    # @example Push multiple messages
+    #   queue = Falqon::Queue.new("my_queue")
+    #   queue.push("Hello, world!", "Goodbye, world!")
+    #   # => ["1", "2"]
+    #
     sig { params(data: Data).returns(T.any(Identifier, T::Array[Identifier])) }
     def push(*data)
       logger.debug "Pushing #{data.size} messages onto queue #{name}"
@@ -99,6 +121,29 @@ module Falqon
       ids
     end
 
+    # Pop data from the head of the queue
+    #
+    # This method blocks until a message is available.
+    # If a block is given, the popped data is passed to the block. If the block raises a {Falqon::Error} exception, the message is retried according to the configured retry strategy.
+    # If no block is given, the popped data is returned.
+    #
+    # @param block A block to execute with the popped data (block-style)
+    # @return The popped data (return-style)
+    #
+    # @example Pop a message (return-style)
+    #   queue = Falqon::Queue.new("my_queue")
+    #   queue.push("Hello, world!")
+    #   queue.pop
+    #   # => "Hello, world!"
+    #
+    # @example Pop a message (block-style)
+    #   queue = Falqon::Queue.new("my_queue")
+    #   queue.push("Hello, world!")
+    #   queue.pop do |data|
+    #     puts data
+    #   end
+    #   # => "Hello, world!"
+    #
     sig { params(block: T.nilable(T.proc.params(data: Data).void)).returns(T.nilable(Data)) }
     def pop(&block)
       logger.debug "Popping message from queue #{name}"
@@ -150,6 +195,14 @@ module Falqon
       nil
     end
 
+    # Peek at the next message in the queue
+    #
+    # Use {#range} to peek at a range of messages.
+    # This method does not block.
+    #
+    # @param index The index of the message to peek at
+    # @return The data of the peeked message
+    #
     sig { params(index: Integer).returns(T.nilable(Data)) }
     def peek(index: 0)
       logger.debug "Peeking at next message in queue #{name}"
@@ -167,6 +220,15 @@ module Falqon
       Message.new(self, id: message_id).data
     end
 
+    # Peek at the next messages in the queue
+    #
+    # Use {#peek} to peek at a single message.
+    # This method does not block.
+    #
+    # @param start The start index of the range to peek at
+    # @param stop The stop index of the range to peek at (set to -1 to peek at all messages)
+    # @return The data of the peeked messages
+    #
     sig { params(start: Integer, stop: Integer).returns(T::Array[Data]) }
     def range(start: 0, stop: -1)
       logger.debug "Peeking at next messages in queue #{name}"
