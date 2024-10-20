@@ -15,57 +15,6 @@ nav_order: 4
 
 ## Queue
 
-### Attributes
-
-- `name`: the queue name (e.g. `my_queue`)
-- `id`: the queue identifier (`name` prefixed with `Falqon.config.prefix` and a slash, e.g. `falqon/my_queue`)
-- `retry_strategy`: the retry strategy (defaults to `Falqon.config.retry_strategy` or `linear` if not set)
-- `max_retries`: the maximum number of retries before a message is discarded (defaults to `Falqon.config.max_retries` or `3` if not set)
-- `retry_delay`: the delay between retries (defaults to `Falqon.config.retry_delay` or `0` if not set)
-- `redis`: the Redis connection pool (defaults to `Falqon.config.redis`)
-- `logger`: the logger (defaults to `Falqon.config.logger`)
-- `version`: the queue protocol version (defaults to `Falqon::PROTOCOL`)
-
-### Create a queue
-
-Use `Falqon::Queue.new` to create a new queue.
-This will register the queue and set the appropriate metadata (timestamps, etc.).
-
-```ruby
-Falqon::Queue.new(name)
-```
-
-Arguments:
-
-- `name`: the name of the queue
-- `retry_strategy`: the retry strategy to use (defaults to `Falqon.configuration.retry_strategy`)
-- `max_retries` (optional): the maximum number of retries before a message is discarded (defaults to `Falqon.configuration.max_retries`)
-- `retry_delay` (optional): the delay between retries (defaults to `Falqon.configuration.retry_delay` or `0` if not set)
-- `redis` (optional): the Redis connection pool to use (defaults to `Falqon.configuration.redis`)
-- `logger` (optional): the logger to use (defaults to `Falqon.configuration.logger`)
-- `version` (optional): the queue protocol version to use (defaults to `Falqon::PROTOCOL`)
-
-Returns:
-
-- `Falqon::Queue`: the queue instance
-
-Raises:
-
-- `Falqon::VersionMismatchError`: if the queue protocol version does not match the current version
-
-Note: currently queues are not compatible between different protocol versions. In the future, it will be possible to upgrade queues to a newer protocol version.
-
-The id of the queue is the name of the queue prefixed with `Falqon.config.prefix` and a slash (if configured).
-
-```ruby
-Falqon.configuration.prefix = "falqon"
-
-queue = Falqon::Queue.new("my_queue")
-
-queue.name # => "my_queue"
-queue.id # => "falqon/my_queue"
-```
-
 ### Clear the queue
 
 Use `Falqon::Queue#clear` to clear the queue.

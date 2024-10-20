@@ -38,6 +38,35 @@ module Falqon
     sig { returns(Logger) }
     attr_reader :logger
 
+    # Create a new queue
+    #
+    # Create a new queue in Redis with the given name. If a queue with the same name already exists, it is reused.
+    # When registering a new queue, the following {Falqon::Queue::Metadata} is stored:
+    # - +created_at+: Timestamp of creation
+    # - +updated_at+: Timestamp of last update
+    # - +version+: Protocol version
+    #
+    # Initializing a queue with a different protocol version than the existing queue will raise a {Falqon::VersionMismatchError}.
+    # Currently queues are not compatible between different protocol versions, and must be deleted and recreated manually.
+    # In a future version, automatic migration between protocol versions may be supported.
+    #
+    # Please note that retry strategy, maximum retries, and retry delay are configured per queue instance, and are not shared between queue instances.
+    #
+    # @param name The name of the queue (without prefix)
+    # @param retry_strategy The retry strategy to use for failed messages
+    # @param max_retries The maximum number of retries before a message is considered failed
+    # @param retry_delay The delay in seconds before a message is eligible for a retry
+    # @param redis The Redis connection pool to use
+    # @param logger The logger to use
+    # @param version The protocol version to use
+    # @return The new queue
+    # @raise [Falqon::VersionMismatchError] if the protocol version of the existing queue does not match the protocol version of the new queue
+    #
+    # @example Create a new queue
+    #   queue = Falqon::Queue.new("my_queue")
+    #   queue.name # => "my_queue"
+    #   queue.id # => "falqon/my_queue"
+    #
     sig { params(name: String, retry_strategy: Symbol, max_retries: Integer, retry_delay: Integer, redis: ConnectionPool, logger: Logger, version: Integer).void }
     def initialize(
       name,
@@ -83,13 +112,11 @@ module Falqon
     #
     # @example Push a single message
     #   queue = Falqon::Queue.new("my_queue")
-    #   queue.push("Hello, world!")
-    #   # => "1"
+    #   queue.push("Hello, world!") # => "1"
     #
     # @example Push multiple messages
     #   queue = Falqon::Queue.new("my_queue")
-    #   queue.push("Hello, world!", "Goodbye, world!")
-    #   # => ["1", "2"]
+    #   queue.push("Hello, world!", "Goodbye, world!") # => ["1", "2"]
     #
     sig { params(data: Data).returns(T.any(Identifier, T::Array[Identifier])) }
     def push(*data)
@@ -133,16 +160,14 @@ module Falqon
     # @example Pop a message (return-style)
     #   queue = Falqon::Queue.new("my_queue")
     #   queue.push("Hello, world!")
-    #   queue.pop
-    #   # => "Hello, world!"
+    #   queue.pop # => "Hello, world!"
     #
     # @example Pop a message (block-style)
     #   queue = Falqon::Queue.new("my_queue")
     #   queue.push("Hello, world!")
     #   queue.pop do |data|
-    #     puts data
+    #     puts data # => "Hello, world!"
     #   end
-    #   # => "Hello, world!"
     #
     sig { params(block: T.nilable(T.proc.params(data: Data).void)).returns(T.nilable(Data)) }
     def pop(&block)
