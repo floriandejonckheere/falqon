@@ -3,6 +3,7 @@
 module Falqon
   ##
   # Connection pool that logs method calls
+  # @!visibility private
   #
   class ConnectionPoolSnooper < ConnectionPool
     def with(...)

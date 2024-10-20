@@ -2,6 +2,7 @@
 
 module Falqon
   class CLI
+    # @!visibility private
     class Base
       attr_reader :options
 

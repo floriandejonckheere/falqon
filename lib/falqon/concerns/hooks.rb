@@ -3,6 +3,7 @@
 # typed: true
 
 module Falqon
+  # @!visibility private
   module Hooks
     extend T::Sig
 
@@ -20,6 +21,7 @@ module Falqon
       T.unsafe(self).class.hooks[event][:after].each { |hook| instance_eval(&hook) } if type.nil? || type == :after
     end
 
+    # @!visibility private
     module ClassMethods
       include Kernel
       extend T::Sig

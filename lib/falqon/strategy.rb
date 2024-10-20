@@ -5,6 +5,7 @@
 module Falqon
   ##
   # Base class for retry strategies
+  # @!visibility private
   #
   class Strategy
     extend T::Sig

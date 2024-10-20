@@ -559,6 +559,7 @@ module Falqon
     end
 
     class << self
+      extend T::Sig
       # Get a list of all registered queues
       #
       # @return The queues

@@ -2,6 +2,7 @@
 
 module Falqon
   class CLI
+    # @!visibility private
     class Kill < Base
       def validate
         raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:name).include?(options[:queue])

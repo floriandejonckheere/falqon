@@ -2,6 +2,7 @@
 
 module Falqon
   class CLI
+    # @!visibility private
     class Show < Base
       def validate
         raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:name).include?(options[:queue])
@@ -84,6 +85,7 @@ module Falqon
         end
       end
 
+      # @!visibility private
       class Serializer
         attr_reader :message, :meta, :data
 

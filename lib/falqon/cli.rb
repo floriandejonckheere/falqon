@@ -3,6 +3,7 @@
 require "thor"
 
 module Falqon
+  # @!visibility private
   class CLI < Thor
     def self.exit_on_failure?
       true

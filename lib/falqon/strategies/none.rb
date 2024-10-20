@@ -8,6 +8,7 @@ module Falqon
     # Retry strategy that does not retry
     #
     class None < Strategy
+      # @!visibility private
       sig { params(message: Message).void }
       def retry(message)
         queue.redis.with do |r|

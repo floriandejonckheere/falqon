@@ -8,6 +8,7 @@ module Falqon
     # Retry strategy that retries a fixed number of times
     #
     class Linear < Strategy
+      # @!visibility private
       sig { params(message: Message).void }
       def retry(message)
         queue.redis.with do |r|

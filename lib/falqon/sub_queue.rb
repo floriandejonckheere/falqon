@@ -5,6 +5,7 @@
 module Falqon
   ##
   # Simple queue abstraction on top of Redis
+  # @!visibility private
   #
   class SubQueue
     extend T::Sig

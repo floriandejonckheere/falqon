@@ -2,6 +2,7 @@
 
 module Falqon
   class CLI
+    # @!visibility private
     class Version < Base
       def validate; end
 

@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 module Falqon
+  # @!visibility private
   module Middlewares
     ##
     # Redis client logger middleware
+    # @!visibility private
     #
     module Logger
       def connect(redis_config)

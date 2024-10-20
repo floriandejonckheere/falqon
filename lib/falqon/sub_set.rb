@@ -5,6 +5,7 @@
 module Falqon
   ##
   # Simple sorted set abstraction on top of Redis
+  # @!visibility private
   #
   class SubSet
     extend T::Sig
