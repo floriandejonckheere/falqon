@@ -5,6 +5,18 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in falqon.gemspec
 gemspec
 
+# Task runner
+gem "rake", "13.2.1", require: false
+
+group :development do
+  # Documentation
+  gem "yard", "0.9.37", require: false
+  gem "yard-sorbet", "0.9.0", require: false
+
+  # Simple server
+  gem "webrick", "1.8.2", require: false
+end
+
 group :development, :test do
   # Debugger
   gem "debug", "1.9.2", require: false
@@ -17,9 +29,6 @@ group :development, :test do
 
   # Mock Redis server
   gem "mock_redis", "0.45.0", require: false
-
-  # Task runner
-  gem "rake", "13.2.1", require: false
 
   # Behavior-driven test framework
   gem "rspec", "3.13.0", require: false
