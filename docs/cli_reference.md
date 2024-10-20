@@ -160,6 +160,18 @@ Options:
 - `--range N M`: Display messages from index N to M
 - `--id N`: Display message with ID N
 
+### Schedule
+
+The `schedule` command schedules eligible failed messages for retry.
+This will move the messages that can be retried according to the retry strategy and delay to the head of the pending queue.
+
+
+```bash
+# Schedule eligible failed messages for retry
+$ falqon schedule --queue jobs
+Scheduled 3 messages in queue jobs
+```
+
 ### Delete
 
 The `delete` command deletes messages in a queue.

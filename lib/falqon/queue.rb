@@ -288,8 +288,6 @@ module Falqon
         # FIXME: replace with zrange(by_score: true) when https://github.com/sds/mock_redis/issues/307 is resolved
         message_ids = r.zrangebyscore(scheduled.id, 0, Time.now.to_i).map(&:to_i)
 
-        # require "debug"; binding.b if Time.now.to_i == 0
-
         logger.debug "Scheduling messages #{message_ids.join(', ')} on queue #{name}"
 
         message_ids.each do |message_id|

@@ -124,5 +124,13 @@ module Falqon
         .new(options)
         .call
     end
+
+    desc "schedule", "Schedule failed messages for a retry"
+    option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
+    def schedule
+      Schedule
+        .new(options)
+        .call
+    end
   end
 end
