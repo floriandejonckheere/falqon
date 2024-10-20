@@ -290,6 +290,18 @@ module Falqon
       message_ids.map { |id| Message.new(self, id:).data }
     end
 
+    # Clear the queue, removing all messages
+    #
+    # This method clears all messages from the queue, including pending, processing, scheduled, and dead messages.
+    # It also resets the metadata counters for processed, failed, and retried messages, but does not deregister the queue.
+    #
+    # @return The identifiers of the cleared messages
+    #
+    # @example Clear the queue
+    #   queue = Falqon::Queue.new("my_queue")
+    #   queue.push("Hello, world!")
+    #   queue.clear # => ["1"]
+    #
     sig { returns(T::Array[Identifier]) }
     def clear
       logger.debug "Clearing queue #{name}"
@@ -313,6 +325,15 @@ module Falqon
       message_ids
     end
 
+    # Delete the queue, removing all messages and deregistering the queue
+    #
+    # This method deletes the queue, removing all messages, metadata, and deregisters the queue.
+    #
+    # @example Delete the queue
+    #   queue = Falqon::Queue.new("my_queue")
+    #   queue.push("Hello, world!")
+    #   queue.clear # => nil
+    #
     sig { void }
     def delete
       logger.debug "Deleting queue #{name}"

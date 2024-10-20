@@ -15,30 +15,6 @@ nav_order: 4
 
 ## Queue
 
-### Clear the queue
-
-Use `Falqon::Queue#clear` to clear the queue.
-This deletes the queue and all its messages.
-It also resets the metadata (except for creation/update timestamp), but does not deregister the queue.
-
-```ruby
-Falqon::Queue#clear
-```
-
-Returns:
-
-- `Array[Integer]`: the identifiers of the messages that were deleted
-
-### Delete the queue
-
-Use `Falqon::Queue#delete` to delete the queue.
-This deletes the queue and all its messages.
-It also resets the metadata and deregisters the queue.
-
-```ruby
-Falqon::Queue#delete
-```
-
 ### Refill the queue
 
 Use `Falqon::Queue#refill` to refill the queue.
