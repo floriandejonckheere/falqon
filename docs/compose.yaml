@@ -1,7 +1,0 @@
-services:
-  docs:
-    build: .
-    volumes:
-      - .:/app/:cached
-    ports:
-      - "4000:4000"
