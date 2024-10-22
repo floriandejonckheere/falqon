@@ -2,14 +2,32 @@
 
 module Falqon
   class CLI
-    # @!visibility private
+    # Display queue status
+    #
+    # Usage:
+    #   falqon status
+    #
+    # Options:
+    #   -q, [--queue=QUEUE]  # Queue name
+    #
+    # @example Print status of all queues
+    #   $ falqon status
+    #   jobs: 41 messages (34 pending, 2 processing, 0 scheduled, 5 dead)
+    # emails: empty
+    #
+    # @example Print status of a specific queue
+    #   $ falqon status --queue jobs
+    #   jobs: 41 messages (34 pending, 2 processing, 0 scheduled, 5 dead)
+    #
     class Status < Base
+      # @!visibility private
       def validate
         raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:name).include?(options[:queue])
 
         raise "No queues registered" if Falqon::Queue.all.empty?
       end
 
+      # @!visibility private
       def execute
         queues = options[:queue] ? [Falqon::Queue.new(options[:queue])] : Falqon::Queue.all
 

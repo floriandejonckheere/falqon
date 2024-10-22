@@ -2,8 +2,80 @@
 
 module Falqon
   class CLI
-    # @!visibility private
+    # Display messages in a queue
+    #
+    # Usage:
+    #   falqon show -q, --queue=QUEUE
+    #
+    # Options:
+    #   -q, --queue=QUEUE                                           # Queue name
+    #       [--pending], [--no-pending], [--skip-pending]           # Display pending messages (default)
+    #       [--processing], [--no-processing], [--skip-processing]  # Display processing messages
+    #       [--dead], [--no-dead], [--skip-dead]                    # Display dead messages
+    #   -d, [--data], [--no-data], [--skip-data]                    # Display raw data
+    #   -m, [--meta], [--no-meta], [--skip-meta]                    # Display additional metadata
+    #       [--head=N]                                              # Display N messages from head of queue
+    #       [--tail=N]                                              # Display N messages from tail of queue
+    #       [--index=N]                                             # Display message at index N
+    #       [--range=N M]                                           # Display messages at index N to M
+    #       [--id=N]                                                # Display message with ID N
+    #
+    # @example Print all messages in the queue (by default only pending messages are displayed)
+    #   $ falqon show --queue jobs
+    #   id = 1 data = 8742 bytes
+    #
+    # @example Display only pending messages
+    #   $ falqon show --queue jobs --pending
+    #   ...
+    #
+    # @example Display only processing messages
+    #   $ falqon show --queue jobs --processing
+    #   ...
+    #
+    # @example Display only scheduled messages
+    #   $ falqon show --queue jobs --scheduled
+    #   ...
+    #
+    # @example Display only dead messages
+    #   $ falqon show --queue jobs --dead
+    #   ...
+    #
+    # @example Display raw data
+    #   $ falqon show --queue jobs --data
+    #   {"id":1,"message":"Hello, world!"}
+    #
+    # @example Display additional metadata
+    #   $ falqon show --queue jobs --meta
+    #   id = 1 retries = 0 created_at = 1970-01-01 00:00:00 +0000 updated_at = 1970-01-01 00:00:00 +0000 data = 8742 bytes
+    #
+    # @example Display first 5 messages
+    #   $ falqon show --queue jobs --head 5
+    #   id = 1 data = 8742 bytes
+    #   id = 2 data = 8742 bytes
+    #   id = 3 data = 8742 bytes
+    #   id = 4 data = 8742 bytes
+    #   id = 5 data = 8742 bytes
+    #
+    # @example Display last 5 messages
+    #   $ falqon show --queue jobs --tail 5
+    #   ...
+    #
+    # @example Display message at index 5
+    #   $ falqon show --queue jobs --index 3 --index 5
+    #   id = 3 data = 8742 bytes
+    #   id = 5 data = 8742 bytes
+    #
+    # @example Display messages from index 5 to 10
+    #   $ falqon show --queue jobs --range 5 10
+    #   ...
+    #
+    # @example Display message with ID 5
+    #   $ falqon show --queue jobs --id 5 --id 1
+    #   id = 5 data = 8742 bytes
+    #   id = 1 data = 8742 bytes
+    #
     class Show < Base
+      # @!visibility private
       def validate
         raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:name).include?(options[:queue])
 
@@ -16,6 +88,7 @@ module Falqon
         raise "--id is mutually exclusive with --head, --tail, --index, and --range" if options[:id] && [options[:head], options[:tail], options[:index], options[:range]].count { |o| o }.positive?
       end
 
+      # @!visibility private
       def execute
         # Collect identifiers
         ids = if options[:id]

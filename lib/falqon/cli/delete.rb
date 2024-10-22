@@ -2,8 +2,66 @@
 
 module Falqon
   class CLI
-    # @!visibility private
+    # Delete messages from a queue
+    #
+    # Deleting a message removes it including its data from the queue.
+    #
+    # Usage:
+    #   falqon delete -q, --queue=QUEUE
+    #
+    # Options:
+    #   -q, --queue=QUEUE                                           # Queue name
+    #       [--pending], [--no-pending], [--skip-pending]           # Delete only pending messages (default)
+    #       [--processing], [--no-processing], [--skip-processing]  # Delete only processing messages
+    #       [--dead], [--no-dead], [--skip-dead]                    # Delete only dead messages
+    #       [--head=N]                                              # Delete N messages from head of queue
+    #       [--tail=N]                                              # Delete N messages from tail of queue
+    #       [--index=N]                                             # Delete message at index N
+    #       [--range=N M]                                           # Delete messages at index N to M
+    #       [--id=N]                                                # Delete message with ID N
+    #
+    # @example Delete all messages in the queue (by default only pending messages are deleted)
+    #   $ falqon delete --queue jobs
+    #   Deleted 10 messages from queue jobs
+    #
+    # @example Delete only pending messages
+    #   $ falqon delete --queue jobs --pending
+    #   Deleted 10 pending messages from queue jobs
+    #
+    # @example Delete only processing messages
+    #   $ falqon delete --queue jobs --processing
+    #   Deleted 1 processing message from queue jobs
+    #
+    # @example Delete only scheduled messages
+    #   $ falqon delete --queue jobs --scheduled
+    #   Deleted 1 scheduled message from queue jobs
+    #
+    # @example Delete only dead messages
+    #   $ falqon delete --queue jobs --dead
+    #   Deleted 5 dead messages from queue jobs
+    #
+    # @example Delete first 5 messages
+    #   $ falqon delete --queue jobs --head 5
+    #   Deleted 5 messages from queue jobs
+    #
+    # @example Delete last 5 messages
+    #   $ falqon delete --queue jobs --tail 5
+    #   Deleted 5 messages from queue jobs
+    #
+    # @example Delete message at index 5
+    #   $ falqon delete --queue jobs --index 3 --index 5
+    #   Deleted 1 message from queue jobs
+    #
+    # @example Delete messages from index 5 to 10
+    #   $ falqon delete --queue jobs --range 5 10
+    #   Deleted 6 messages from queue jobs
+    #
+    # @example Delete message with ID 5
+    #   $ falqon delete --queue jobs --id 5 --id 1
+    #   Deleted 2 messages from queue jobs
+    #
     class Delete < Base
+      # @!visibility private
       def validate
         raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:name).include?(options[:queue])
 
@@ -15,6 +73,7 @@ module Falqon
         raise "--id is mutually exclusive with --head, --tail, --index, and --range" if options[:id] && [options[:head], options[:tail], options[:index], options[:range]].count { |o| o }.positive?
       end
 
+      # @!visibility private
       def execute
         # Collect identifiers
         ids = if options[:id]

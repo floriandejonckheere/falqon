@@ -3,20 +3,42 @@
 require "thor"
 
 module Falqon
-  # @!visibility private
+  # Falqon includes a command-line interface (CLI) to manage queues and messages
+  #
+  # After installing Falqon, run +falqon+ to see the available commands.
+  #
+  #   $ falqon
+  #   Commands:
+  #     falqon help [COMMAND]  # Describe available commands or one specific command
+  #     falqon status          # Print queue status
+  #     falqon version         # Print version
+  #
+  # To see the available options for a command, run +falqon help COMMAND+.
+  # The command-line interface assumes the default Falqon configuration.
+  # To use a custom configuration, set the corresponding environment variables:
+  #
+  #   # Configure global queue name prefix
+  #   FALQON_PREFIX=falqon
+  #
+  #   # Configure Redis connection pool
+  #   REDIS_URL=redis://localhost:6379/0
+  #
   class CLI < Thor
+    # @!visibility private
     def self.exit_on_failure?
       true
     end
 
     desc "version", "Display version"
+    # @!visibility private
     def version
       Version
         .new(options)
         .call
     end
 
-    desc "list", "Display all queues"
+    desc "list", "Display all active (registered) queues"
+    # @!visibility private
     def list
       List
         .new(options)
@@ -25,6 +47,7 @@ module Falqon
 
     desc "status", "Display queue status"
     option :queue, aliases: "-q", type: :string, desc: "Queue name"
+    # @!visibility private
     def status
       Status
         .new(options)
@@ -33,6 +56,7 @@ module Falqon
 
     desc "stats", "Display queue statistics"
     option :queue, aliases: "-q", type: :string, desc: "Queue name"
+    # @!visibility private
     def stats
       Stats
         .new(options)
@@ -55,13 +79,14 @@ module Falqon
     option :range, type: :array, desc: "Display messages at index N to M", banner: "N M"
 
     option :id, type: :numeric, desc: "Display message with ID N", repeatable: true
+    # @!visibility private
     def show
       Show
         .new(options)
         .call
     end
 
-    desc "delete", "Delete messages in a queue"
+    desc "delete", "Delete messages from a queue"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
 
     option :pending, type: :boolean, desc: "Delete only pending messages (default)"
@@ -74,6 +99,7 @@ module Falqon
     option :range, type: :array, desc: "Delete messages at index N to M", banner: "N M"
 
     option :id, type: :numeric, desc: "Delete message with ID N", repeatable: true
+    # @!visibility private
     def delete
       Delete
         .new(options)
@@ -92,18 +118,20 @@ module Falqon
     option :range, type: :array, desc: "Kill messages at index N to M", banner: "N M"
 
     option :id, type: :numeric, desc: "Kill message with ID N", repeatable: true
+    # @!visibility private
     def kill
       Kill
         .new(options)
         .call
     end
 
-    desc "clear", "Clear all messages in a queue"
+    desc "clear", "Clear messages from a queue"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
 
     option :pending, type: :boolean, desc: "Clear only pending messages"
     option :processing, type: :boolean, desc: "Clear only processing messages"
     option :dead, type: :boolean, desc: "Clear only dead messages"
+    # @!visibility private
     def clear
       Clear
         .new(options)
@@ -112,6 +140,7 @@ module Falqon
 
     desc "refill", "Refill queue (move processing messages to pending)"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
+    # @!visibility private
     def refill
       Refill
         .new(options)
@@ -120,6 +149,7 @@ module Falqon
 
     desc "revive", "Revive queue (move dead messages to pending)"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
+    # @!visibility private
     def revive
       Revive
         .new(options)
@@ -128,6 +158,7 @@ module Falqon
 
     desc "schedule", "Schedule failed messages for a retry"
     option :queue, aliases: "-q", type: :string, desc: "Queue name", required: true
+    # @!visibility private
     def schedule
       Schedule
         .new(options)

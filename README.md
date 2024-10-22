@@ -23,6 +23,7 @@ Falqon offers an elegant solution for messaging queues in Ruby.
 
 - Install Falqon and get working with messaging queues in a heartbeat using the [quickstart guide](#quickstart)
 - Check out the [API documentation](https://docs.falqon.dev/) for more information on how to use Falqon in your application
+- Check out the CLI documentation](https://docs.falqon.dev/) for more information on how to manage queues and messages from the command line
 - Read the [architecture documentation](#architecture) to learn more about how Falqon works under the hood
 
 ## Quickstart
