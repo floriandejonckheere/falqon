@@ -19,14 +19,20 @@ RSpec.describe Falqon::Strategies::Linear do
         end
       end
 
-      it "sets the message status to pending" do
+      it "sets the message metadata" do
         id = queue.push("message1")
 
-        queue.pop { raise Falqon::Error }
+        Timecop.freeze do
+          queue.pop { raise Falqon::Error, "An error occurred" }
 
-        message = Falqon::Message.new(queue, id:)
+          message = Falqon::Message.new(queue, id:)
 
-        expect(message.metadata.status).to eq "pending"
+          expect(message.metadata.status).to eq "pending"
+
+          expect(message.metadata.retries).to eq 1
+          expect(message.metadata.retried_at).to eq Time.now.to_i
+          expect(message.metadata.retry_error).to eq "An error occurred"
+        end
       end
 
       context "when processing fails too many times" do

@@ -174,6 +174,8 @@ module Falqon
           if meta
             "id = #{message.id} " \
               "retries = #{message.metadata.retries} " \
+              "retried_at = #{message.metadata.retried_at ? Time.at(message.metadata.retried_at) : 'N/A'} " \
+              "retry_error = #{message.metadata.retry_error || 'N/A'} " \
               "created_at = #{Time.at(message.metadata.created_at)} " \
               "updated_at = #{Time.at(message.metadata.updated_at)} " \
               "data = #{message.data.length} bytes"

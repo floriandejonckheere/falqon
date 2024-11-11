@@ -32,11 +32,18 @@ module Falqon
     #
     class Linear < Strategy
       # @!visibility private
-      sig { params(message: Message).void }
-      def retry(message)
+      sig { params(message: Message, error: Error).void }
+      def retry(message, error)
         queue.redis.with do |r|
           # Increment retry count
           retries = r.hincrby("#{queue.id}:metadata:#{message.id}", :retries, 1)
+
+          # Set error metadata
+          r.hset(
+            "#{queue.id}:metadata:#{message.id}",
+            :retried_at, Time.now.to_i,
+            :retry_error, error.message,
+          )
 
           r.multi do |t|
             if retries < queue.max_retries || queue.max_retries == -1

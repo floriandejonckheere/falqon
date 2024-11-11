@@ -170,9 +170,7 @@ module Falqon
     def metadata
       queue.redis.with do |r|
         Metadata
-          .new(r
-            .hgetall("#{queue.id}:metadata:#{id}")
-            .to_h { |k, v| [k.to_sym, k == "status" ? v : v.to_i] }) # Transform all keys to symbols, and values to integers (except status)
+          .parse(r.hgetall("#{queue.id}:metadata:#{id}"))
       end
     end
 
@@ -194,11 +192,29 @@ module Falqon
       # Number of times the message has been retried
       prop :retries, Integer, default: 0
 
+      # Timestamp of last retry
+      prop :retried_at, T.nilable(Integer)
+
+      # Last error message
+      prop :retry_error, T.nilable(String)
+
       # Timestamp of creation
       prop :created_at, Integer
 
       # Timestamp of last update
       prop :updated_at, Integer
+
+      # Parse metadata from Redis hash
+      #
+      # @!visibility private
+      #
+      def self.parse(data)
+        # Keys that are not numeric
+        keys = ["status", "retry_error"]
+
+        # Transform keys to symbols, and values to integers
+        new(data.to_h { |k, v| [k.to_sym, keys.include?(k) ? v : v.to_i] })
+      end
     end
   end
 end

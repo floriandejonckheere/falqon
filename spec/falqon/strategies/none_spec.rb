@@ -14,14 +14,19 @@ RSpec.describe Falqon::Strategies::None do
       expect(queue.dead).not_to be_empty
     end
 
-    it "sets the message status to dead" do
+    it "sets the message metadata" do
       id = queue.push("message1")
 
-      queue.pop { raise Falqon::Error }
+      Timecop.freeze do
+        queue.pop { raise Falqon::Error, "An error occurred" }
 
-      message = Falqon::Message.new(queue, id:)
+        message = Falqon::Message.new(queue, id:)
 
-      expect(message.metadata.status).to eq "dead"
+        expect(message.metadata.status).to eq "dead"
+
+        expect(message.metadata.retried_at).to eq Time.now.to_i
+        expect(message.metadata.retry_error).to eq "An error occurred"
+      end
     end
   end
 end

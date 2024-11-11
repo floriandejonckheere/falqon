@@ -221,7 +221,7 @@ module Falqon
       redis.with { |r| r.hincrby("#{id}:metadata", :failed, 1) }
 
       # Retry message according to configured strategy
-      retry_strategy.retry(message)
+      retry_strategy.retry(message, e)
 
       nil
     end
@@ -511,10 +511,7 @@ module Falqon
     def metadata
       redis.with do |r|
         Metadata
-          .new r
-          .hgetall("#{id}:metadata")
-          .transform_keys(&:to_sym)
-          .transform_values(&:to_i)
+          .parse(r.hgetall("#{id}:metadata"))
       end
     end
 
@@ -613,6 +610,17 @@ module Falqon
 
       # Protocol version
       prop :version, Integer
+
+      # Parse metadata from Redis hash
+      #
+      # @!visibility private
+      #
+      def self.parse(data)
+        # Transform keys to symbols and values to integers
+        new data
+          .transform_keys(&:to_sym)
+          .transform_values(&:to_i)
+      end
     end
   end
 end

@@ -145,6 +145,8 @@ RSpec.describe Falqon::Message do
 
         expect(message.metadata.status).to eq "unknown"
         expect(message.metadata.retries).to eq 0
+        expect(message.metadata.retried_at).to be_nil
+        expect(message.metadata.retry_error).to be_nil
         expect(message.metadata.created_at).to eq time
         expect(message.metadata.updated_at).to eq time
       end
@@ -230,6 +232,8 @@ RSpec.describe Falqon::Message do
 
         expect(metadata.status).to eq "pending"
         expect(metadata.retries).to eq 0
+        expect(metadata.retried_at).to be_nil
+        expect(metadata.retry_error).to be_nil
         expect(metadata.created_at).to eq time
         expect(metadata.updated_at).to eq time
       end

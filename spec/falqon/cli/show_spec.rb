@@ -89,7 +89,7 @@ RSpec.describe Falqon::CLI::Show do
 
       it "prints the metadata" do
         expect { command.call }
-          .to output(/id = 3 retries = 1 created_at = .* updated_at = .* data = 17 bytes/)
+          .to output(/id = 3 retries = 1 retried_at = .* retry_error = .* created_at = .* updated_at = .* data = 17 bytes/)
           .to_stdout
       end
     end
