@@ -134,7 +134,7 @@ The documentation in `docs/` is automatically built by [YARD](https://yardoc.org
 Locally, you can build the documentation using the following commands:
 
 ```sh
-rake yrad
+rake yard
 ```
 
 In development, you can start a local server to preview the documentation:
