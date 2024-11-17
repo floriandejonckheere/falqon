@@ -23,8 +23,9 @@ Falqon offers an elegant solution for messaging queues in Ruby.
 
 - Install Falqon and get working with messaging queues in a heartbeat using the [quickstart guide](#quickstart)
 - Check out the [API documentation](https://docs.falqon.dev/) for more information on how to use Falqon in your application
-- Check out the CLI documentation](https://docs.falqon.dev/) for more information on how to manage queues and messages from the command line
+- Check out the [CLI documentation](https://docs.falqon.dev/Falqon/CLI.html) for more information on how to manage queues and messages from the command line
 - Read the [architecture documentation](#architecture) to learn more about how Falqon works under the hood
+- Read about [Falqon Pro](https://docs.falqon.dev/pro), the commercial addon for Falqon that offers additional features
 
 ## Quickstart
 
@@ -52,7 +53,7 @@ Or install it yourself as:
 ### Configuration
 
 The default configuration works out of the box with the provided `docker-compose.yml` file.
-See [configuration](#configuration) if you want to adjust the configuration.
+See [configuration](https://docs.falqon.dev/Falqon/Configuration.html) if you want to adjust the configuration.
 
 ### Usage
 
