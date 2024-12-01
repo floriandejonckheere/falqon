@@ -20,14 +20,14 @@ module Falqon
       sig { params(message: Message, error: Error).void }
       def retry(message, error)
         queue.redis.with do |r|
-          # Set error metadata
-          r.hset(
-            "#{queue.id}:metadata:#{message.id}",
-            :retried_at, Time.now.to_i,
-            :retry_error, error.message,
-          )
-
           r.multi do |t|
+            # Set error metadata
+            t.hset(
+              "#{queue.id}:metadata:#{message.id}",
+              :retried_at, Time.now.to_i,
+              :retry_error, error.message,
+            )
+
             # Kill message immediately
             message.kill
 

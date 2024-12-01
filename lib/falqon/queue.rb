@@ -91,15 +91,17 @@ module Falqon
 
         raise Falqon::VersionMismatchError, "Queue #{name} is using protocol version #{queue_version}, but this client is using protocol version #{version}" if queue_version && queue_version.to_i != @version
 
-        # Register the queue
-        r.sadd([Falqon.configuration.prefix, "queues"].compact.join(":"), name)
+        r.multi do |t|
+          # Register the queue
+          t.sadd([Falqon.configuration.prefix, "queues"].compact.join(":"), name)
 
-        # Set creation and update timestamp (if not set)
-        r.hsetnx("#{id}:metadata", :created_at, Time.now.to_i)
-        r.hsetnx("#{id}:metadata", :updated_at, Time.now.to_i)
+          # Set creation and update timestamp (if not set)
+          t.hsetnx("#{id}:metadata", :created_at, Time.now.to_i)
+          t.hsetnx("#{id}:metadata", :updated_at, Time.now.to_i)
 
-        # Set protocol version
-        r.hsetnx("#{id}:metadata", :version, @version)
+          # Set protocol version
+          t.hsetnx("#{id}:metadata", :version, @version)
+        end
       end
 
       run_hook :initialize, :after
@@ -185,18 +187,23 @@ module Falqon
         # Move identifier from pending queue to processing queue
         message_id = r.blmove(pending.id, processing.id, :left, :right).to_i
 
-        # Set message status
-        r.hset("#{id}:metadata:#{message_id}", :status, "processing")
+        # Get retry count
+        retries = r.hget("#{id}:metadata:#{message_id}", :retries).to_i
 
-        # Set update timestamp
-        r.hset("#{id}:metadata", :updated_at, Time.now.to_i)
-        r.hset("#{id}:metadata:#{message_id}", :updated_at, Time.now.to_i)
+        r.multi do |t|
+          # Set message status
+          t.hset("#{id}:metadata:#{message_id}", :status, "processing")
 
-        # Increment processing counter
-        r.hincrby("#{id}:metadata", :processed, 1)
+          # Set update timestamp
+          t.hset("#{id}:metadata", :updated_at, Time.now.to_i)
+          t.hset("#{id}:metadata:#{message_id}", :updated_at, Time.now.to_i)
 
-        # Increment retry counter if message is retried
-        r.hincrby("#{id}:metadata", :retried, 1) if r.hget("#{id}:metadata:#{message_id}", :retries).to_i.positive?
+          # Increment processing counter
+          t.hincrby("#{id}:metadata", :processed, 1)
+
+          # Increment retry counter if message is retried
+          t.hincrby("#{id}:metadata", :retried, 1) if retries.positive?
+        end
 
         Message.new(self, id: message_id)
       end
@@ -318,11 +325,13 @@ module Falqon
       message_ids = pending.clear + processing.clear + scheduled.clear + dead.clear
 
       redis.with do |r|
-        # Clear metadata
-        r.hdel("#{id}:metadata", :processed, :failed, :retried)
+        r.multi do |t|
+          # Clear metadata
+          t.hdel("#{id}:metadata", :processed, :failed, :retried)
 
-        # Set update timestamp
-        r.hset("#{id}:metadata", :updated_at, Time.now.to_i)
+          # Set update timestamp
+          t.hset("#{id}:metadata", :updated_at, Time.now.to_i)
+        end
       end
 
       run_hook :clear, :after
@@ -351,11 +360,13 @@ module Falqon
         .each(&:clear)
 
       redis.with do |r|
-        # Delete metadata
-        r.del("#{id}:metadata")
+        r.multi do |t|
+          # Delete metadata
+          t.del("#{id}:metadata")
 
-        # Deregister the queue
-        r.srem([Falqon.configuration.prefix, "queues"].compact.join(":"), name)
+          # Deregister the queue
+          t.srem([Falqon.configuration.prefix, "queues"].compact.join(":"), name)
+        end
       end
 
       run_hook :delete, :after
@@ -466,15 +477,17 @@ module Falqon
 
         logger.debug "Scheduling messages #{message_ids.join(', ')} on queue #{name}"
 
-        message_ids.each do |message_id|
-          # Set message status
-          r.hset("#{id}:metadata:#{message_id}", :status, "pending")
+        r.multi do |t|
+          message_ids.each do |message_id|
+            # Set message status
+            t.hset("#{id}:metadata:#{message_id}", :status, "pending")
 
-          # Add identifier to pending queue
-          pending.add(message_id)
+            # Add identifier to pending queue
+            pending.add(message_id)
 
-          # Remove identifier from scheduled queue
-          scheduled.remove(message_id)
+            # Remove identifier from scheduled queue
+            scheduled.remove(message_id)
+          end
         end
       end
 

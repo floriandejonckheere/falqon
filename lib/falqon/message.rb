@@ -101,13 +101,17 @@ module Falqon
     sig { returns(Message) }
     def create
       redis.with do |r|
-        # Store data
-        r.set("#{queue.id}:data:#{id}", data)
+        message_id = id
 
-        # Set metadata
-        r.hset("#{queue.id}:metadata:#{id}",
-               :created_at, Time.now.to_i,
-               :updated_at, Time.now.to_i,)
+        r.multi do |t|
+          # Store data
+          t.set("#{queue.id}:data:#{message_id}", data)
+
+          # Set metadata
+          t.hset("#{queue.id}:metadata:#{message_id}",
+                 :created_at, Time.now.to_i,
+                 :updated_at, Time.now.to_i,)
+        end
       end
 
       self
@@ -122,15 +126,17 @@ module Falqon
       logger.debug "Killing message #{id} on queue #{queue.name}"
 
       redis.with do |r|
-        # Add identifier to dead queue
-        queue.dead.add(id)
+        r.multi do |t|
+          # Add identifier to dead queue
+          queue.dead.add(id)
 
-        # Reset retry count and set status to dead
-        r.hdel("#{queue.id}:metadata:#{id}", :retries)
-        r.hset("#{queue.id}:metadata:#{id}", :status, "dead")
+          # Reset retry count and set status to dead
+          t.hdel("#{queue.id}:metadata:#{id}", :retries)
+          t.hset("#{queue.id}:metadata:#{id}", :status, "dead")
 
-        # Remove identifier from queues
-        queue.pending.remove(id)
+          # Remove identifier from queues
+          queue.pending.remove(id)
+        end
       end
     end
 
@@ -141,12 +147,14 @@ module Falqon
     sig { void }
     def delete
       redis.with do |r|
-        # Delete message from queue
-        queue.pending.remove(id)
-        queue.dead.remove(id)
+        r.multi do |t|
+          # Delete message from queue
+          queue.pending.remove(id)
+          queue.dead.remove(id)
 
-        # Delete data and metadata
-        r.del("#{queue.id}:data:#{id}", "#{queue.id}:metadata:#{id}")
+          # Delete data and metadata
+          t.del("#{queue.id}:data:#{id}", "#{queue.id}:metadata:#{id}")
+        end
       end
     end
 
@@ -156,9 +164,7 @@ module Falqon
     #
     sig { returns Integer }
     def size
-      redis.with do |r|
-        r.strlen("#{queue.id}:data:#{id}")
-      end
+      redis.with { |r| r.strlen("#{queue.id}:data:#{id}") }
     end
 
     # Metadata of the message

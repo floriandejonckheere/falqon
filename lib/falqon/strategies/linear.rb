@@ -38,14 +38,14 @@ module Falqon
           # Increment retry count
           retries = r.hincrby("#{queue.id}:metadata:#{message.id}", :retries, 1)
 
-          # Set error metadata
-          r.hset(
-            "#{queue.id}:metadata:#{message.id}",
-            :retried_at, Time.now.to_i,
-            :retry_error, error.message,
-          )
-
           r.multi do |t|
+            # Set error metadata
+            t.hset(
+              "#{queue.id}:metadata:#{message.id}",
+              :retried_at, Time.now.to_i,
+              :retry_error, error.message,
+            )
+
             if retries < queue.max_retries || queue.max_retries == -1
               if queue.retry_delay.positive?
                 queue.logger.debug "Scheduling message #{message.id} on queue #{queue.name} in #{queue.retry_delay} seconds (attempt #{retries})"
