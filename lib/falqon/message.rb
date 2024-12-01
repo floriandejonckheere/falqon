@@ -183,7 +183,7 @@ module Falqon
     def_delegator :queue, :logger
 
     ##
-    # Metadata for an message
+    # Metadata for a message
     #
     class Metadata < T::Struct
       # Status (unknown, pending, processing, scheduled, dead)
@@ -209,11 +209,8 @@ module Falqon
       # @!visibility private
       #
       def self.parse(data)
-        # Keys that are not numeric
-        keys = ["status", "retry_error"]
-
         # Transform keys to symbols, and values to integers
-        new(data.to_h { |k, v| [k.to_sym, keys.include?(k) ? v : v.to_i] })
+        new(data.to_h { |k, v| [k.to_sym, (send(props.dig(k.to_sym, :type).name.to_sym, v) if v)] })
       end
     end
   end
