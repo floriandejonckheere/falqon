@@ -65,6 +65,7 @@ module Falqon
         message_ids = r.lrange(id, 0, -1)
 
         # Delete all data and clear queue
+        # TODO: clear data in batches
         r.del(*message_ids.flat_map { |message_id| ["#{queue.id}:data:#{message_id}", "#{queue.id}:metadata:#{message_id}"] }, id, "#{queue.id}:id")
 
         # Return identifiers

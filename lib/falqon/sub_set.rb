@@ -58,6 +58,7 @@ module Falqon
     def clear
       queue.redis.with do |r|
         # Get all identifiers from queue
+        # TODO: work in batches
         message_ids = r.zrange(id, 0, -1)
 
         # Delete all data and clear queue

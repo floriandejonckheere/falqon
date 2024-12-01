@@ -461,6 +461,7 @@ module Falqon
       redis.with do |r|
         # Select all identifiers that are due (score <= current timestamp)
         # FIXME: replace with zrange(by_score: true) when https://github.com/sds/mock_redis/issues/307 is resolved
+        # TODO: work in batches
         message_ids = r.zrangebyscore(scheduled.id, 0, Time.now.to_i).map(&:to_i)
 
         logger.debug "Scheduling messages #{message_ids.join(', ')} on queue #{name}"
