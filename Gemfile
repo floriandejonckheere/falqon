@@ -14,7 +14,7 @@ group :development do
   gem "yard-sorbet", "0.9.0", require: false
 
   # Simple server
-  gem "webrick", "1.9.0", require: false
+  gem "webrick", "1.9.1", require: false
 end
 
 group :development, :test do
