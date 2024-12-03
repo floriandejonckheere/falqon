@@ -126,17 +126,15 @@ module Falqon
       logger.debug "Killing message #{id} on queue #{queue.name}"
 
       redis.with do |r|
-        r.multi do |t|
-          # Add identifier to dead queue
-          queue.dead.add(id)
+        # Add identifier to dead queue
+        queue.dead.add(id)
 
-          # Reset retry count and set status to dead
-          t.hdel("#{queue.id}:metadata:#{id}", :retries)
-          t.hset("#{queue.id}:metadata:#{id}", :status, "dead")
+        # Reset retry count and set status to dead
+        r.hdel("#{queue.id}:metadata:#{id}", :retries)
+        r.hset("#{queue.id}:metadata:#{id}", :status, "dead")
 
-          # Remove identifier from queues
-          queue.pending.remove(id)
-        end
+        # Remove identifier from queues
+        queue.pending.remove(id)
       end
     end
 
