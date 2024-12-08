@@ -28,7 +28,7 @@ group :development, :test do
   gem "ffaker", "2.23.0", require: false
 
   # Mock Redis server
-  gem "mock_redis", "0.48.1", require: false
+  gem "mock_redis", "0.49.0", require: false
 
   # Behavior-driven test framework
   gem "rspec", "3.13.0", require: false
