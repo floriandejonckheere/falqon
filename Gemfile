@@ -34,7 +34,7 @@ group :development, :test do
   gem "rspec", "3.13.0", require: false
 
   # Linter
-  gem "rubocop", "1.69.0", require: false
+  gem "rubocop", "1.69.1", require: false
   gem "rubocop-factory_bot", "2.26.1", require: false
   gem "rubocop-performance", "1.23.0", require: false
   gem "rubocop-rake", "0.6.0", require: false
