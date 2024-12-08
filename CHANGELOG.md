@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Rewrite `Falqon::Queue.all` to return queues alphabetically by name
+
 ### Removed
 
 ## Falqon v1.0.0 (2024-12-07)

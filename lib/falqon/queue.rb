@@ -586,6 +586,7 @@ module Falqon
         Falqon.configuration.redis.with do |r|
           r
             .smembers([Falqon.configuration.prefix, "queues"].compact.join(":"))
+            .sort
             .map { |id| new(id) }
         end
       end

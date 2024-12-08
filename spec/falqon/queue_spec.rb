@@ -450,10 +450,12 @@ RSpec.describe Falqon::Queue do
   end
 
   describe ".all" do
-    it "returns all queues" do
-      queue
+    it "returns all queues sorted by id" do
+      described_class.new("queue1")
+      described_class.new("queue0")
+      described_class.new("queue2")
 
-      expect(described_class.all.map(&:name)).to eq ["name"]
+      expect(described_class.all.map(&:name)).to eq ["queue0", "queue1", "queue2"]
     end
   end
 

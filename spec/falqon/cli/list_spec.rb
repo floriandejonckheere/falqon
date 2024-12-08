@@ -6,7 +6,7 @@ RSpec.describe Falqon::CLI::List do
   describe "#execute" do
     it "displays all queues" do
       expect { command.call }
-        .to output("queue2\nqueue1\nqueue0\n")
+        .to output("queue0\nqueue1\nqueue2\n")
         .to_stdout
     end
   end
