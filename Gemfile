@@ -19,7 +19,7 @@ end
 
 group :development, :test do
   # Debugger
-  gem "debug", "1.9.2", require: false
+  gem "debug", "1.10.0", require: false
 
   # Build objects for tests
   gem "factory_bot", "6.5.0", require: false
