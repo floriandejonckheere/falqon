@@ -42,7 +42,7 @@ group :development, :test do
 
   # Type checker
   gem "sorbet", "0.5.11718", require: false
-  gem "tapioca", "0.16.5", require: false
+  gem "tapioca", "0.16.7", require: false
 
   # Time control
   gem "timecop", "0.9.10", require: false
