@@ -25,7 +25,7 @@ group :development, :test do
   gem "factory_bot", "6.5.1", require: false
 
   # Generate fake data
-  gem "ffaker", "2.23.0", require: false
+  gem "ffaker", "2.24.0", require: false
 
   # Mock Redis server
   gem "mock_redis", "0.49.0", require: false
