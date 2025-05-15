@@ -37,7 +37,7 @@ group :development, :test do
   gem "rubocop", "1.72.2", require: false
   gem "rubocop-factory_bot", "2.26.1", require: false
   gem "rubocop-performance", "1.24.0", require: false
-  gem "rubocop-rake", "0.6.0", require: false
+  gem "rubocop-rake", "0.7.1", require: false
   gem "rubocop-rspec", "3.6.0", require: false
 
   # Type checker
