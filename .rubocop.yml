@@ -1,7 +1,9 @@
 require:
   - rubocop-factory_bot
-  - rubocop-performance
   - rubocop-rake
+
+plugins:
+  - rubocop-performance
   - rubocop-rspec
 
 AllCops:
