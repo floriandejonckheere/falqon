@@ -88,9 +88,9 @@ module Falqon
       @version = version
 
       redis.with do |r|
-        queue_version = r.hget("#{id}:metadata", :version)
+        queue_metadata = metadata
 
-        raise Falqon::VersionMismatchError, "Queue #{name} is using protocol version #{queue_version}, but this client is using protocol version #{version}" if queue_version && queue_version.to_i != @version
+        raise Falqon::VersionMismatchError, "Queue #{name} is using protocol version #{queue_metadata.version}, but this client is using protocol version #{version}" if queue_metadata.version && queue_metadata.version.to_i != @version
 
         r.multi do |t|
           # Register the queue
@@ -103,7 +103,7 @@ module Falqon
           # Set protocol version
           t.hsetnx("#{id}:metadata", :version, @version)
 
-          yield t if block_given?
+          yield t, queue_metadata if block_given?
         end
       end
 
