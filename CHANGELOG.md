@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Remove support for Ruby 3.1
+
 ## Falqon v1.0.0 (2024-12-07)
 
 ### Changed

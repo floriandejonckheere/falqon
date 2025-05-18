@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description   = "Simple, efficient, and reliable messaging queue for Ruby"
   spec.homepage      = "https://github.com/floriandejonckheere/falqon"
   spec.license       = "LGPL-3.0"
-  spec.required_ruby_version = Gem::Requirement.new(">= 3.1")
+  spec.required_ruby_version = Gem::Requirement.new(">= 3.2")
 
   spec.metadata["source_code_uri"] = "https://github.com/floriandejonckheere/falqon.git"
   spec.metadata["rubygems_mfa_required"] = "true"
