@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Removed
+
+## Falqon v1.1.0 (2025-05-18)
+
+### Changed
+
 - Rewrite `Falqon::Queue.all` to return queues alphabetically by name
 
 ### Removed
@@ -29,6 +35,7 @@ Initial release
 
 ## Falqon v0.0.1 (2023-06-22)
 
-[unreleased]: https://github.com/floriandejonckheere/falqon/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/floriandejonckheere/falqon/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/floriandejonckheere/falqon-pro/releases/tag/v1.1.0
 [1.0.0]: https://github.com/floriandejonckheere/falqon-pro/releases/tag/v1.0.0
 [0.1.0]: https://github.com/floriandejonckheere/falqon-pro/releases/tag/v0.1.0
