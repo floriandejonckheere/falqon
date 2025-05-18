@@ -185,37 +185,5 @@ module Falqon
 
     def_delegator :queue, :redis
     def_delegator :queue, :logger
-
-    ##
-    # Metadata for a message
-    #
-    class Metadata < T::Struct
-      # Status (unknown, pending, processing, scheduled, dead)
-      prop :status, String, default: "unknown"
-
-      # Number of times the message has been retried
-      prop :retries, Integer, default: 0
-
-      # Timestamp of last retry
-      prop :retried_at, T.nilable(Integer)
-
-      # Last error message
-      prop :retry_error, T.nilable(String)
-
-      # Timestamp of creation
-      prop :created_at, Integer
-
-      # Timestamp of last update
-      prop :updated_at, Integer
-
-      # Parse metadata from Redis hash
-      #
-      # @!visibility private
-      #
-      def self.parse(data)
-        # Transform keys to symbols, and values to integers
-        new(data.to_h { |k, v| [k.to_sym, (send(props.dig(k.to_sym, :type).name.to_sym, v) if v)] })
-      end
-    end
   end
 end
