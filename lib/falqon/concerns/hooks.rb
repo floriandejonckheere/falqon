@@ -44,7 +44,7 @@ module Falqon
     extend T::Sig
 
     # @!visibility private
-    sig { params(base: T.class_of(Hooks)).void }
+    sig { params(base: Class).void }
     def self.included(base)
       base.extend(ClassMethods)
     end
