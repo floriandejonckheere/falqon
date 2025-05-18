@@ -3,6 +3,7 @@
 # typed: true
 
 require "forwardable"
+require "pathname"
 
 require "sorbet-runtime"
 require "zeitwerk"
