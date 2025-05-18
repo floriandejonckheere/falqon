@@ -34,14 +34,14 @@ group :development, :test do
   gem "rspec", "3.13.0", require: false
 
   # Linter
-  gem "rubocop", "1.72.2", require: false
-  gem "rubocop-factory_bot", "2.26.1", require: false
-  gem "rubocop-performance", "1.24.0", require: false
+  gem "rubocop", "1.75.6", require: false
+  gem "rubocop-factory_bot", "2.27.1", require: false
+  gem "rubocop-performance", "1.25.0", require: false
   gem "rubocop-rake", "0.7.1", require: false
   gem "rubocop-rspec", "3.6.0", require: false
 
   # Type checker
-  gem "sorbet", "0.5.11851", require: false
+  gem "sorbet", "0.5.12115", require: false
   gem "tapioca", "0.16.11", require: false
 
   # Time control
