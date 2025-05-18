@@ -22,9 +22,9 @@ Gem::Specification.new do |spec|
   spec.executables   = ["falqon"]
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "connection_pool", "~> 2.4"
-  spec.add_dependency "redis", "~> 5.0"
+  spec.add_dependency "connection_pool", "~> 2.5"
+  spec.add_dependency "redis", "~> 5.4"
   spec.add_dependency "sorbet-runtime", "~> 0.5"
   spec.add_dependency "thor", "~> 1.3"
-  spec.add_dependency "zeitwerk", "~> 2.6"
+  spec.add_dependency "zeitwerk", "~> 2.7"
 end
