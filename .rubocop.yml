@@ -30,9 +30,7 @@ Metrics/AbcSize:
   Enabled: false
 
 Metrics/BlockLength:
-  Exclude:
-    - "*.gemspec"
-    - spec/**/*.rb
+  Enabled: false
 
 Metrics/ClassLength:
   Enabled: false
@@ -41,6 +39,9 @@ Metrics/CyclomaticComplexity:
   Enabled: false
 
 Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
   Enabled: false
 
 Metrics/ParameterLists:
