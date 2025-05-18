@@ -59,6 +59,7 @@ module Falqon
     # @param redis The Redis connection pool to use
     # @param logger The logger to use
     # @param version The protocol version to use
+    # @param block A block to execute within the Redis transaction
     # @return The new queue
     # @raise [Falqon::VersionMismatchError] if the protocol version of the existing queue does not match the protocol version of the new queue
     #
@@ -101,6 +102,8 @@ module Falqon
 
           # Set protocol version
           t.hsetnx("#{id}:metadata", :version, @version)
+
+          yield t if block_given?
         end
       end
 
