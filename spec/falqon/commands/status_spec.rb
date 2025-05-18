@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Falqon::CLI::Stats do
+RSpec.describe Falqon::Commands::Status do
   subject(:command) { described_class.new(options) }
 
   let(:options) { {} }
@@ -26,24 +26,24 @@ RSpec.describe Falqon::CLI::Stats do
   end
 
   describe "#execute" do
-    it "prints the statistics of all queues" do
+    it "prints the status of all queues" do
       expect { command.call }
-        .to output(/queue0: 5 processed, 2 failed, 0 retried \(created: .*, updated: .*\)/)
+        .to output(/queue0: 3 pending, 1 processing, 1 scheduled, 0 dead/)
         .to_stdout
 
       expect { command.call }
-        .to output(/queue1: 4 processed, 4 failed, 2 retried \(created: .*, updated: .*\)/)
+        .to output(/queue1: 0 pending, 0 processing, 0 scheduled, 2 dead/)
         .to_stdout
 
       expect { command.call }
-        .to output(/queue2: 0 processed, 0 failed, 0 retried \(created: .*, updated: .*\)/)
+        .to output(/queue2: empty/)
         .to_stdout
     end
 
     context "when the queue option is specified" do
       let(:options) { { queue: "queue0" } }
 
-      it "prints the statistics of a specific queue" do
+      it "prints the status of a specific queue" do
         expect { command.call }
           .to output(/queue0:/)
           .to_stdout

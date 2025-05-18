@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Falqon
-  class CLI
+  module Commands
     # Clear messages from a queue
     #
     # Clearing a subqueue removes all messages and their data from the subqueue.

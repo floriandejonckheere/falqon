@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Falqon
-  class CLI
+  module Commands
     # Refill queue (move processing messages to pending)
     #
     # This command moves all messages from the processing queue back to the pending queue (in order).

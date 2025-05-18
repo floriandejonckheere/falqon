@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Falqon
-  class CLI
+  module Commands
     # Delete messages from a queue
     #
     # Deleting a message removes it including its data from the queue.

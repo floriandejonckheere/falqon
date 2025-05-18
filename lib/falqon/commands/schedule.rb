@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Falqon
-  class CLI
+  module Commands
     # Schedule failed messages for a retry
     #
     # This command moves all eligible messages from the scheduled queue back to the head of the pending queue (in order).
@@ -16,7 +16,7 @@ module Falqon
     # @example Schedule eligible failed messages for retry
     #   $ falqon schedule --queue jobs
     #   Scheduled 3 messages for a retry in queue jobs
-    class Schedule < Falqon::CLI::Base
+    class Schedule < Falqon::Commands::Base
       # @!visibility private
       def validate
         raise "No queue registered with this name: #{options[:queue]}" if options[:queue] && !Falqon::Queue.all.map(&:name).include?(options[:queue])

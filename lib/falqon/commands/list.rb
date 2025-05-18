@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Falqon
-  class CLI
+  module Commands
     # Display all active (registered) queues
     #
     # Usage:

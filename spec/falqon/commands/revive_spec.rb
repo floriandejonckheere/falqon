@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Falqon::CLI::Revive do
+RSpec.describe Falqon::Commands::Revive do
   subject(:command) { described_class.new(options) }
 
   let(:options) { { queue: "queue1" } }

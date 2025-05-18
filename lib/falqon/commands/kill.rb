@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Falqon
-  class CLI
+  module Commands
     # Kill messages in a queue
     #
     # Killing a message removes it from the pending or scheduled queue, and moves it to the dead queue.

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Falqon::CLI::Refill do
+RSpec.describe Falqon::Commands::Refill do
   subject(:command) { described_class.new(options) }
 
   let(:options) { { queue: "queue0" } }

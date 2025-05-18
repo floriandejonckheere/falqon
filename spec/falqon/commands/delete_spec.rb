@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Falqon::CLI::Delete do
+RSpec.describe Falqon::Commands::Delete do
   subject(:command) { described_class.new(options) }
 
   let(:options) { { queue: "queue0" } }

@@ -3,7 +3,7 @@
 require "date"
 
 module Falqon
-  class CLI
+  module Commands
     # Display queue statistics
     #
     # Usage:

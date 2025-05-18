@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Falqon
-  class CLI
+  module Commands
     # Revive queue (move dead messages to pending)
     #
     # This command moves all messages from the dead queue back to the pending queue (in order).
