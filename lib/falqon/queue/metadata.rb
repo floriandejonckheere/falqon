@@ -7,7 +7,7 @@ module Falqon
     ##
     # Queue metadata storing various statistics and information about a queue
     #
-    class Metadata
+    class Metadata < Falqon::Metadata
       extend T::Sig
       include T::Props
 
@@ -32,25 +32,11 @@ module Falqon
       # Create a Metadata object
       sig { params(params: T::Hash[Symbol, T.untyped]).void }
       def initialize(params = {})
-        @processed = T.let(0, Integer)
-        @failed = T.let(0, Integer)
-        @retried = T.let(0, Integer)
+        self.processed = 0
+        self.failed = 0
+        self.retried = 0
 
-        params.each do |key, value|
-          send("#{key}=", value)
-        end
-      end
-
-      # Parse metadata from Redis hash
-      #
-      # @!visibility private
-      #
-      sig { params(data: T::Hash[String, String]).returns(T.attached_class) }
-      def self.parse(data)
-        # Transform keys to symbols and values to integers
-        new data
-          .transform_keys(&:to_sym)
-          .transform_values(&:to_i)
+        super
       end
     end
   end
