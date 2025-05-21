@@ -32,8 +32,8 @@ module Falqon
       # Create a Metadata object
       sig { params(params: T::Hash[Symbol, T.untyped]).void }
       def initialize(params = {})
-        self.status = "unknown"
-        self.retries = 0
+        @status = T.let("unknown", String)
+        @retries = T.let(0, Integer)
 
         super
       end
