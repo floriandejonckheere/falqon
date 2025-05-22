@@ -9,31 +9,61 @@ module Falqon
     #
     class Metadata < Falqon::Metadata
       extend T::Sig
-      include T::Props
 
       # Status (unknown, pending, processing, scheduled, dead)
-      prop :status, String
+      sig { returns(String) }
+      attr_accessor :status
 
       # Number of times the message has been retried
-      prop :retries, Integer
+      sig { returns(Integer) }
+      attr_reader :retries
+
+      sig { params(value: T.any(String, Integer)).void }
+      def retries=(value)
+        @retries = value.to_i
+      end
 
       # Timestamp of last retry
-      prop :retried_at, T.nilable(Integer)
+      sig { returns(T.nilable(Integer)) }
+      attr_reader :retried_at
+
+      sig { params(value: T.nilable(T.any(String, Integer))).void }
+      def retried_at=(value)
+        @retried_at = value&.to_i
+      end
 
       # Last error message
-      prop :retry_error, T.nilable(String)
+      sig { returns(T.nilable(String)) }
+      attr_accessor :retry_error
 
       # Timestamp of creation
-      prop :created_at, Integer
+      sig { returns(T.nilable(Integer)) }
+      attr_reader :created_at
+
+      sig { params(value: T.nilable(T.any(String, Integer))).void }
+      def created_at=(value)
+        @created_at = value&.to_i
+      end
 
       # Timestamp of last update
-      prop :updated_at, Integer
+      sig { returns(T.nilable(Integer)) }
+      attr_reader :updated_at
 
-      # Create a Metadata object
+      sig { params(value: T.nilable(T.any(String, Integer))).void }
+      def updated_at=(value)
+        @updated_at = value&.to_i
+      end
+
+      # @!visibility private
       sig { params(params: T::Hash[Symbol, T.untyped]).void }
       def initialize(params = {})
         @status = T.let("unknown", String)
         @retries = T.let(0, Integer)
+
+        @retried_at = T.let(nil, T.nilable(Integer))
+        @retry_error = T.let(nil, T.nilable(String))
+        @created_at = T.let(nil, T.nilable(Integer))
+        @updated_at = T.let(nil, T.nilable(Integer))
 
         super
       end

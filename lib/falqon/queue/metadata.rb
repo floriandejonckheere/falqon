@@ -9,32 +9,71 @@ module Falqon
     #
     class Metadata < Falqon::Metadata
       extend T::Sig
-      include T::Props
 
       # Total number of messages processed
-      prop :processed, Integer
+      sig { returns(Integer) }
+      attr_reader :processed
+
+      sig { params(value: T.any(String, Integer)).void }
+      def processed=(value)
+        @processed = value.to_i
+      end
 
       # Total number of messages failed
-      prop :failed, Integer
+      sig { returns(Integer) }
+      attr_reader :failed
+
+      sig { params(value: T.any(String, Integer)).void }
+      def failed=(value)
+        @failed = value.to_i
+      end
 
       # Total number of messages retried
-      prop :retried, Integer
+      sig { returns(Integer) }
+      attr_reader :retried
+
+      sig { params(value: T.any(String, Integer)).void }
+      def retried=(value)
+        @retried = value.to_i
+      end
 
       # Timestamp of creation
-      prop :created_at, Integer
+      sig { returns(T.nilable(Integer)) }
+      attr_reader :created_at
+
+      sig { params(value: T.nilable(T.any(String, Integer))).void }
+      def created_at=(value)
+        @created_at = value&.to_i
+      end
 
       # Timestamp of last update
-      prop :updated_at, Integer
+      sig { returns(T.nilable(Integer)) }
+      attr_reader :updated_at
+
+      sig { params(value: T.nilable(T.any(String, Integer))).void }
+      def updated_at=(value)
+        @updated_at = value&.to_i
+      end
 
       # Protocol version
-      prop :version, Integer
+      sig { returns(T.nilable(Integer)) }
+      attr_reader :version
 
-      # Create a Metadata object
+      sig { params(value: T.nilable(T.any(String, Integer))).void }
+      def version=(value)
+        @version = value&.to_i
+      end
+
+      # @!visibility private
       sig { params(params: T::Hash[Symbol, T.untyped]).void }
       def initialize(params = {})
         @processed = T.let(0, Integer)
         @failed = T.let(0, Integer)
         @retried = T.let(0, Integer)
+
+        @created_at = T.let(nil, T.nilable(Integer))
+        @updated_at = T.let(nil, T.nilable(Integer))
+        @version = T.let(nil, T.nilable(Integer))
 
         super
       end
