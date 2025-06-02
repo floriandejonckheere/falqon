@@ -31,7 +31,7 @@ group :development, :test do
   gem "mock_redis", "0.49.0", require: false
 
   # Behavior-driven test framework
-  gem "rspec", "3.13.0", require: false
+  gem "rspec", "3.13.1", require: false
 
   # Linter
   gem "rubocop", "1.75.6", require: false
